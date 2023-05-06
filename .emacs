@@ -11,15 +11,16 @@
  '(initial-frame-alist '((fullscreen . maximized)))
  '(ispell-dictionary nil)
  '(notmuch-saved-searches
-   '((:name "inbox" :query "tag:inbox" :key "i" :sort-order nil)
-     (:name "unread" :query "tag:unread" :key "u" :sort-order nil)
-     (:name "flagged" :query "tag:flagged" :key "f" :sort-order nil)
-     (:name "sent" :query "tag:sent" :key "t" :sort-order nil)
-     (:name "drafts" :query "tag:draft" :key "d" :sort-order nil)
-     (:name "all mail" :query "*" :key "a" :sort-order nil)))
- ;; '(notmuch-search-oldest-first nil) ;; ;;
+   '((:name "lpr" :query "tag:ti-linux-patch-review" :key "l" :sort-order newest-first)
+     (:name "uboot" :query "tag:uboot" :key "u" :sort-order newest-first)
+     (:name "meta-ti" :query "tag:meta-ti" :key "m" :sort-order newest-first)
+     (:name "tiL-5.10" :query "tag:tiL-5.10" :key "5" :sort-order newest-first)
+     (:name "tiU21" :query "tag:tiU21" :key "2" :sort-order newest-first)
+     (:name "Inbox" :query "tag:Inbox" :key "i" :sort-order newest-first)
+     (:name "direct" :query "tag:direct" :key "d" :sort-order newest-first)
+     (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
  '(package-selected-packages
-   '(smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
  '(safe-local-variable-values
    '((c-offsets-alist
       (arglist-close . c-lineup-arglist-tabs-only)
@@ -75,94 +76,218 @@
  '(term-color-white ((t (:background "white smoke" :foreground "white smoke"))))
  '(term-color-yellow ((t (:background "goldenrod" :foreground "goldenrod")))))
 
-  ;; working directory setup
+;; follow sym-link ;;
+(setq vc-follow-symlinks t)
 
-(defvar ti-u-boot "ti-u-boot")
-(defvar ti-kernel "ti-linux-kernel")
-(defvar ti-kig "k3-image-gen")
-(defvar ti-optee "optee_os")
-(defvar ti-meta-ti "meta-ti")
-(defvar u-boot "u-boot")
-(defvar linux "linux-next")
-(defvar atf "")
-(defvar working-project-path nil)
-(defvar am62x "am62x")
-(defvar am62ax "am62ax")
-(defvar am64 "am64")
-(defvar mainline "mainline")
-(defvar ti "ti")
+;; working directory setup
 
-(defvar boot-dir-debian "/media/kamlesh/BOOT")
-(defvar boot-dir-sdk "/media/kamlesh/boot")
-(defvar root-dir-debian "/media/kamlesh/rootfs/")
-(defvar root-dir-sdk "/media/kamlesh/root/")
-(defvar boot-node "/dev/sdb1")
-(defvar root-node "/dev/sdb2")
+(defun initial-path-setup()
+  (interactive )  
+  
+  (setq ti-u-boot "ti-u-boot")
+  (setq ti-kernel "ti-linux-kernel")
+  (setq ti-kig "k3-image-gen")
+  (setq ti-optee "optee_os")
+  (setq ti-meta-ti "meta-ti")
+  (setq u-boot "u-boot")
+  (setq linux "linux-next")
+  (setq atf "")
+  (setq working-project-path nil)
+  (setq am62x "am62x")
+  (setq am62ax "am62ax")
+  (setq am64x "am64x")
+  (setq mainline "mainline")
+  (setq ti "ti")
+  
+  (setq boot-dir-debian "/media/kamlesh/BOOT")
+  (setq boot-dir-sdk "/media/kamlesh/boot")
+  (setq root-dir-debian "/media/kamlesh/rootfs/")
+  (setq root-dir-sdk "/media/kamlesh/root/")
+  (setq boot-node "/dev/sdb1")
+  (setq root-node "/dev/sdb2")
+  (setq network-share-dir "~/network-share")
+  
+  (setq boot-dir boot-dir-sdk)
+  (setq root-dir root-dir-sdk)
+)
+
+(initial-path-setup)
 
 (defun ti-setup (device source)
   (interactive )
 
-  (setq boot-dir boot-dir-sdk)
-  (setq root-dir root-dir-sdk)
-  
-  (setq ti-u-boot-path (concat working-project-path ti-u-boot))
-  (setq ti-kernel-path (concat working-project-path ti-kernel))
-  (setq ti-kig-path (concat working-project-path ti-kig))
-  (setq ti-optee-path (concat working-project-path ti-optee))
-  (setq ti-meta-ti-path (concat working-project-path ti-meta-ti))
-  (setq u-boot-path (concat working-project-path u-boot))
-  (setq linux-path (concat working-project-path linux))
-  (setq atf-path (concat working-project-path atf))
-  
-  (setq work_dir_1 working-project-path)
-  (setq work_dir_4 ti-kig-path)
-  (setq work_dir_7 ti-optee-path)
-  (setq work_dir_8 ti-meta-ti-path)
-  (setq work_dir_5 u-boot-path)
-  (setq work_dir_6 linux-path)
-  (setq work_dir_9 atf-path)
-  
-  (setq remote_work_dir_3 "/ssh:root@172.24.145.160:~/")
-  
-  (if (string= device am62x)
+  (defun path-setup ()
+    (interactive )
+    
+    (setq ti-u-boot-path (concat working-project-path ti-u-boot))
+    (setq ti-kernel-path (concat working-project-path ti-kernel))
+    (setq ti-kig-path (concat working-project-path ti-kig))
+    (setq ti-optee-path (concat working-project-path ti-optee))
+    (setq ti-meta-ti-path (concat working-project-path ti-meta-ti))
+    (setq u-boot-path (concat working-project-path u-boot))
+    (setq linux-path (concat working-project-path linux))
+    (setq atf-path (concat working-project-path atf))
+    
+    (setq work_dir_1 working-project-path)
+    (setq work_dir_4 ti-kig-path)
+    (setq work_dir_7 ti-optee-path)
+    (setq work_dir_8 ti-meta-ti-path)
+    (setq work_dir_5 u-boot-path)
+    (setq work_dir_6 linux-path)
+    (setq work_dir_9 atf-path)
+    
+    (setq remote_work_dir_3 "/ssh:root@172.24.145.160:~/")
+    
+    (cond
+     ((string= device am62x)
       (progn
 	(message "Device is am62x")
-	(setq connected_device am62x)
-	(setq r5-mmc-defconfig "am62x_evm_r5_defconfig")
-	(setq r5-usbdfu-defconfig "am62x_evm_r5_usbdfu_defconfig")
-	(setq r5_ethboot_defconfig "am62x_evm_r5_ethboot_defconfig")
-	(setq a53-gp-defconfig "am62x_evm_a53_defconfig"))
-    (progn
-      (message "Device is am62ax")
-      (setq connected_device am62ax)
-      (setq r5-mmc-defconfig "am62ax_evm_r5_defconfig")
-      (setq r5-usbdfu-defconfig "am62ax_evm_r5_usbdfu_defconfig")
-      (setq r5_ethboot_defconfig "am62ax_evm_r5_ethboot_defconfig")
-      (setq a53-gp-defconfig "am62ax_evm_a53_defconfig"))
-    )
+	(setq connected_device am62x)))
+     ((string= device am62ax)
+      (progn
+	(message "Device is am62ax")
+	(setq connected_device am62ax)))	    
+     ((string= device am64x)
+      (progn
+	(message "Device is am64x")
+	(setq connected_device am64x)))
+     )
 
-  (if (string= source mainline)
+    (setq r5-mmc-defconfig (concat connected_device "_evm_r5_defconfig"))
+    (setq r5-usbdfu-defconfig (concat connected_device "_evm_r5_usbdfu_defconfig"))
+    (setq r5_ethboot_defconfig (concat connected_device "_evm_r5_ethboot_defconfig"))
+    (setq a53-gp-defconfig (concat connected_device "_evm_a53_defconfig"))
+    
+    (cond
+     ((string= source mainline)
       (progn
 	(message "Source is mainline")
 	(setq work_dir_2 u-boot-path)
 	(setq u-boot-type u-boot)
 	(setq work_dir_3 linux-path)
 	(setq work_dir_5 ti-u-boot-path)
+	))
+     ((string= source ti)
+      (progn
+	(message "Source is ti")
+	(setq work_dir_2 ti-u-boot-path)
+	(setq u-boot-type ti-u-boot)
+	(setq work_dir_3 ti-kernel-path)
 	)
-    (progn
-      (message "Source is ti")
-      (setq work_dir_2 ti-u-boot-path)
-      (setq u-boot-type ti-u-boot)
-      (setq work_dir_3 ti-kernel-path)
+      )
+     )
+    )
+  
+  (defun cmd-setup ()
+    (interactive )
+
+    (setq hsse-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
+    (setq hsfs-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
+
+    (setq r5-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabihf- ")
+    (setq a53-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ")
+    (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
+    (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
+    (setq atf-base-make-cmd " make -j32 ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ")
+    (setq r5-set-out-dir (concat " O=out/" connected_device "/r5"))
+    (setq a53-set-out-dir (concat " O=out/" connected_device  "/a53"))
+    (setq r5-out-dir (concat "out/" connected_device "/r5"))
+    (setq a53-out-dir (concat "out/" connected_device  "/a53"))
+
+    (setq atf-unsigned (concat " ATF=../../../" connected_device "/bl31.bin.unsigned "))
+    (setq atf-signed (concat " ATF=../../../" connected_device "/bl31.bin "))
+    (setq optee-unsigned (concat " TEE=../../../" connected_device "/bl32.bin.unsigned "))
+    (setq optee-signed (concat " TEE=../../../" connected_device "/bl32.bin "))
+    (setq dm-unsigned (concat " DM=../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned "))
+    (setq dm-signed (concat " DM=../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f "))
+
+    ;;binman
+    
+    (setq bl31-unsigned (concat " BL31=../../../" connected_device "/bl31.bin.unsigned "))
+    (setq ti-linux-firmware-set " BINMAN_INDIRS=../../../../ti-linux-firmware/ ")
+    (setq r5-binman-compile (concat hsse-env  " &&"  r5-base-make-cmd ti-linux-firmware-set r5-set-out-dir))
+    (setq a53-binman-make-cmd (concat hsse-env " && " a53-base-make-cmd bl31-unsigned optee-unsigned ti-linux-firmware-set a53-set-out-dir))
+    
+    (cond
+     ((string= connected_device am62x)
+      (progn
+	;; (message "Device is am62x") ;;
+	nil))
+     ((string= connected_device am62ax)
+      (progn
+	;; (message "Device is am62ax") ;;
+	nil))
+     ((string= connected_device am64x)
+      (progn
+	;; (message "Device is am64x") ;;
+	(setq dm-unsigned " ")
+	(setq dm-signed "  ")
+	))
+     )
+
+
+    (setq soc (concat " SOC=" connected_device " "))
+    (cond ((string= connected_device am64x) (setq soc (concat " SOC=" connected_device "_sr2 "))))
+    (setq sbl (concat  " SBL=" work_dir_2 "/out/" connected_device "/r5/spl/u-boot-spl.bin"))
+    
+    (setq soc-type-hs " SOC_TYPE=hs ")
+    (setq soc-type-hsfs " SOC_TYPE=hs-fs ")
+    (setq sysfw-dir (concat " SYSFW_DIR=" work_dir_1 "/ti-linux-firmware/ti-sysfw/ "))
+    (setq make-clean " && make -j16 clean")
+
+    
+    (setq a53-defconfig-cmd  (concat " && " a53-base-make-cmd a53-gp-defconfig a53-set-out-dir))
+    (setq a53-gp-make-cmd (concat " && " a53-base-make-cmd atf-unsigned optee-unsigned dm-unsigned a53-set-out-dir))
+    (setq a53-hs-make-cmd (concat " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
+    (setq build-type "hsfs")
+    (setq a53-make-cmd a53-hs-make-cmd)
+    (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
+    (setq kig-make-cmd kig-hsfs-make-cmd)
+    (defun soc-type-get ()
+      "Prompt user for soc-type"
+      (interactive)
+      (setq soc-type-input (read-string "Enter soc-type-input:"))
+      (message "soc type is %s" soc-type-input)
+      (cond
+       (
+	(string= soc-type-input "hs")
+	(progn
+	  (setq build-type "hs")
+	  (setq a53-make-cmd a53-hs-make-cmd)
+	  (setq kig-hs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs sbl ));;sysfw-dir))
+	  (setq kig-make-cmd kig-hs-make-cmd)
+	  )
+	)
+       (
+	(string= soc-type-input "hsfs")
+	(progn
+	  (setq build-type "hsfs")
+	  (setq a53-make-cmd a53-hs-make-cmd)
+	  (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
+	  (setq kig-make-cmd kig-hsfs-make-cmd)
+	  )
+	)
+       (
+	(string= soc-type-input "gp")
+	(progn
+	  (setq build-type "gp")
+	  (setq a53-make-cmd a53-gp-make-cmd)
+	  (setq kig-gp-make-cmd (concat " ; " r5-base-make-cmd soc sbl ));sysfw-dir))
+	  (setq kig-make-cmd kig-gp-make-cmd)
+	  )
+	)
+       )
       )
     )
-
+  
+  (path-setup)
+  (cmd-setup)
   (dir-locals-set-directory-class
    (expand-file-name work_dir_3)
    'linux-kernel)
 
   (setq bookmark-default-file (concat work_dir_1 "bookmarks"))
-  (shell-am62-hsfs)
+  (shell-working-dir)
   (shell-pico)
   (shortcuts-after-setup)   
   )
@@ -239,6 +364,80 @@ overrides the current directory, which would otherwise be used."
       mail-envelope-from 'header)
 (global-set-key (kbd "M-m") 'notmuch)
 
+(defun notmuch-check-patch (repo branch &optional reroll-count)
+  "Extract patch series in current thread to branch BRANCH in repo REPO.
+
+The target branch may or may not already exist.
+
+With an optional prefix numeric argument REROLL-COUNT, try to
+extract the nth revision of a series.  See the --reroll-count
+option detailed in mbox-extract-patch(1).
+
+See notmuch-extract-patch(1) manpage for limitations: in
+particular, this Emacs Lisp function supports passing only entire
+threads to the notmuch-extract-patch(1) command."
+  (interactive
+   "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \nP")
+  (let ((thread-id
+         ;; If `notmuch-show' was called with a notmuch query rather
+         ;; than a thread ID, as `org-notmuch-follow-link' in
+         ;; org-notmuch.el does, then `notmuch-show-thread-id' might
+         ;; be an arbitrary notmuch query instead of a thread ID.  We
+         ;; need to wrap such a query in thread:{} before passing it
+         ;; to notmuch-extract-patch(1), or we might not get a whole
+         ;; thread extracted (e.g. if the query is just id:foo)
+         (if (string= (substring notmuch-show-thread-id 0 7) "thread:")
+             notmuch-show-thread-id
+           (concat "thread:{" notmuch-show-thread-id "}")))
+        (default-directory (expand-file-name repo)))
+    (mailscripts--check-out-branch branch)
+    (message "thread-id %s" thread-id) 
+    (shell-command
+     (if reroll-count
+         (format "notmuch-extract-patch -v%d %s | ./scripts/checkpatch.pl --strict"
+                 (prefix-numeric-value reroll-count)
+                 (shell-quote-argument thread-id))
+       (format "notmuch-extract-patch %s | ./scripts/checkpatch.pl --strict"
+               (shell-quote-argument thread-id)))
+     "*notmuch-apply-thread-series*")))
+
+(defun notmuch-maildir-check-patch (repo branch &optional reroll-count)
+  "Extract patch series in current thread to branch BRANCH in repo REPO.
+
+The target branch may or may not already exist.
+
+With an optional prefix numeric argument REROLL-COUNT, try to
+extract the nth revision of a series.  See the --reroll-count
+option detailed in mbox-extract-patch(1).
+
+See notmuch-extract-patch(1) manpage for limitations: in
+particular, this Emacs Lisp function supports passing only entire
+threads to the notmuch-extract-patch(1) command."
+  (interactive
+   "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \nP")
+  (let ((search-terms-list (notmuch-show-get-message-ids-for-open-messages)
+	(thread-id
+         ;; If `notmuch-show' was called with a notmuch query rather
+         ;; than a thread ID, as `org-notmuch-follow-link' in
+         ;; org-notmuch.el does, then `notmuch-show-thread-id' might
+         ;; be an arbitrary notmuch query instead of a thread ID.  We
+         ;; need to wrap such a query in thread:{} before passing it
+         ;; to notmuch-extract-patch(1), or we might not get a whole
+         ;; thread extracted (e.g. if the query is just id:foo)
+         (if (string= (substring notmuch-show-thread-id 0 7) "thread:")
+             notmuch-show-thread-id
+           (concat "thread:{" notmuch-show-thread-id "}")))
+        (default-directory (expand-file-name repo)))
+    (mailscripts--check-out-branch branch)
+    (message "thread-id %s" thread-id) 
+    (shell-command
+     (if reroll-count
+         (format "notmuch-extract-patch -v%d %s | ./scripts/checkpatch.pl --strict"
+                 (prefix-numeric-value reroll-count)
+                 (shell-quote-argument thread-id))
+       (format "notmuch-extract-patch %s | ./scripts/checkpatch.pl --strict"
+               (shell-quote-argument thread-id)))
+     "*notmuch-apply-thread-series*")))
 
 (defun mbox-open-notmuch-messages ()
   "When this function is executed in notmuch-show buffer all the \"open\"
@@ -251,6 +450,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
     (buffer-disable-undo)
     (pop-to-buffer buffer)
     (goto-char (point-max))
+    (message "notmuch-command %s" notmuch-command)
     (if (> (buffer-size) 0)
 	(insert "\n\n"))
     (insert (format-time-string
@@ -792,7 +992,7 @@ kernel."
 (define-skeleton cp-tib
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  "cp -p ~/am62/cr_valid/k3-image-gen/tiboot3.bin ."
+  (concat "cp " work_dir_4 "/tiboot3.bin tiboot3.bin")
   )
 
 (define-skeleton cp-dts
@@ -810,8 +1010,38 @@ kernel."
 (define-skeleton cp-tispl
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS u-boot.img")
+  (concat "cp " work_dir_2 "/" a53-out-dir "/tispl.bin tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img u-boot.img")
   )
+
+(define-skeleton cp-boot-to-network-share
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  (concat "cp " work_dir_4 "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img")
+  )
+
+(define-skeleton cp-binman-boot-to-network-share-hs
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img")
+  )
+
+(define-skeleton cp-binman-boot-to-network-share-fs
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_fs " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img")
+  )
+
+(define-skeleton cp-binman-boot-to-network-share-gp
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_unsigned " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " network-share-dir "/u-boot.img")
+  )
+
+(define-skeleton cp-network-share-to-mmc
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  (concat "cp " network-share-dir "/* .")
+  )	
 
 (define-skeleton modules-install
   "In-buffer settings info for a emacs-org file."
@@ -822,7 +1052,7 @@ kernel."
 (define-skeleton ex-core-sec
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  "TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3 && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh"
+  "export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3 && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh"
   )
 
 (define-skeleton make-image
@@ -961,7 +1191,7 @@ kernel."
 (define-skeleton dfu-cmd
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "sudo dfu-util -R -a bootloader -D k3-image-gen/tiboot3.bin && sleep 2 && sudo dfu-util -R -a tispl.bin -D " work_dir_2"/out/a53/tispl.bin && sleep 2 && sudo dfu-util -R  -a u-boot.img -D "work_dir_2"/out/a53/u-boot.img")
+  (concat "sudo dfu-util -R -a bootloader -D k3-image-gen/tiboot3.bin" " && sleep 2 && sudo dfu-util -R -a tispl.bin -D " u-boot-type "/out/" connected_device "/a53/" "tispl.bin"  " && sleep 2 && sudo dfu-util -R  -a u-boot.img -D " u-boot-type "/out/" connected_device "/a53/" "u-boot.img")
   )
 
 (define-skeleton notmuch-update
@@ -1173,14 +1403,15 @@ kernel."
 (defun shortcuts-before-setup()
   (interactive)
   (global-set-key (kbd "M-1") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup am62x ti)))
-  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup am62x mainline)))
-  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/vatf/") (ti-setup am62x ti)))
-  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62a/wakeup/") (ti-setup am62ax ti)))		
-  (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/dm_test/") (ti-setup am62x ti)))
-  (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62x mainline)))		
-  (global-set-key (kbd "M-7") 'gaia-csdcd4-setup)
-
-
+  (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup am62x mainline))) ;;
+  ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/crypto/") (ti-setup am62x ti))) ;; ;; ;;
+  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62a/wakeup/") (ti-setup am62ax ti)))
+  (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am64x mainline)))
+  (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62x mainline)))
+  ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
+  ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
+  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup am62x mainline)))
+  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup am64x mainline)))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
 
@@ -1208,7 +1439,7 @@ kernel."
   ;; (global-set-key (kbd "M-5") 'ubuntu-wd)
   (global-set-key (kbd "M-6") (lambda () (interactive) (switch-to-buffer (find-file (concat work_dir_6 "")))))
   (global-set-key (kbd "C-c 6") (lambda () (interactive)(shell-pico)))
-  (global-set-key (kbd "C-c 5") (lambda () (interactive)(shell-am62-hsfs)))
+  (global-set-key (kbd "C-c 5") (lambda () (interactive)(shell-working-dir)))
   (global-set-key (kbd "C-c 7") (lambda () (interactive)(shell-extra)))
   
   (global-set-key (kbd "C-c 3") (lambda () (interactive) (switch-to-buffer (find-file (concat remote_work_dir_3 "")))))
@@ -1362,27 +1593,37 @@ kernel."
 (defun r5-clean ()
   (interactive)
   (let ((default-directory work_dir_2))	  
-    (compile (concat hsse-env  " &&" r5-base-make-cmd "clean " r5-out-dir))))	
+    (compile (concat hsse-env  " &&" r5-base-make-cmd "clean " r5-set-out-dir))))	
 
 (defun r5-mmc-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&"  r5-base-make-cmd r5-mmc-defconfig r5-out-dir ))))
+    (compile (concat hsse-env  " &&"  r5-base-make-cmd r5-mmc-defconfig r5-set-out-dir ))))
 
 (defun r5-usbdfu-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-usbdfu-defconfig r5-out-dir))))
+    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-usbdfu-defconfig r5-set-out-dir))))
 
 (defun r5-ethboot-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-ethboot-defconfig r5-out-dir))))
+    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-ethboot-defconfig r5-set-out-dir))))
 
 (defun r5-compile ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-out-dir))))
+    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-set-out-dir))))
+
+(defun r5-binman-compile ()
+  (interactive)
+  (let ((default-directory work_dir_2))
+    (compile r5-binman-compile)))
+
+(defun a53-binman-compile ()
+  (interactive)
+  (let ((default-directory work_dir_2))
+    (compile a53-binman-make-cmd)))
 
 (defun a53-clean ()
   (interactive)
@@ -1437,64 +1678,14 @@ kernel."
 (defun atf-compile ()
   (interactive)
   (let ((default-directory work_dir_2))	  
-    (compile (concat hsse-env atf-base-make-cmd))))	
+    (compile (concat hsse-env atf-base-make-cmd))))
 
-(defun shell-am62-hsfs()
+
+(defun shell-working-dir()
   (interactive )
   (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name-1 "am62-shell")
-  (setq r5-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabihf- ")
-  (setq a53-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ")
-  (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
-  (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
-  (setq atf-base-make-cmd " make -j32 ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ")
-  (setq r5-out-dir (concat " O=out/" connected_device "/r5"))
-  (setq a53-out-dir (concat " O=out/" connected_device  "/a53"))
-  (setq atf-unsigned " ATF=../../../bl31.bin ")
-  (setq optee-unsigned " TEE=../../../bl32.bin ")
-  (setq dm-unsigned " DM=../../../ipc_echo_testb_mcu1_0_release_strip.xer5f ")
-  (setq atf-signed " ATF=../../../bl31.bin.signed ")
-  (setq optee-signed " TEE=../../../bl32.bin.signed ")
-  (setq dm-signed " DM=../../../ipc_echo_testb_mcu1_0_release_strip.xer5f.signed ")
+  (setq buffer-name-1 "shell-working-dir")
 
-  (setq soc (concat " SOC=" connected_device " "))
-  (setq sbl (concat  " SBL=" work_dir_2 "/out/" connected_device "/r5/spl/u-boot-spl.bin"))
-		
-  (setq soc-type-hs " SOC_TYPE=hs ")
-  (setq soc-type-hsfs " SOC_TYPE=hs-fs ")
-  (setq sysfw-dir (concat " SYSFW_DIR=" work_dir_1 "/ti-linux-firmware/ti-sysfw/ "))
-  (setq make-clean " && make -j16 clean")
-
-  (setq hsse-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
-  (setq hsfs-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
-
-  (setq a53-defconfig-cmd  (concat " && " a53-base-make-cmd a53-gp-defconfig a53-out-dir))
-  (setq a53-gp-make-cmd (concat " && " a53-base-make-cmd atf-unsigned optee-unsigned dm-unsigned a53-out-dir))
-  (setq a53-hs-make-cmd (concat " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-out-dir))
-  (setq build-type "gp")
-
-  (defun hs-or-gp ()
-    "hs or gp"
-    (interactive)
-    (if (y-or-n-p "press y for HS")
-	(progn
-	  (setq build-type "hs")
-	  (setq a53-make-cmd a53-hs-make-cmd)
-	  (setq kig-hs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs sbl sysfw-dir))
-	  (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
-	  (setq kig-make-cmd kig-hsfs-make-cmd)
-	  (setq pico-cmd pico-cmd-gp)
-	  )
-      (progn
-	(setq build-type "gp")
-	(setq a53-make-cmd a53-gp-make-cmd)
-	(setq kig-gp-make-cmd (concat " ; " r5-base-make-cmd soc sbl ));sysfw-dir))
-	(setq kig-make-cmd kig-gp-make-cmd)
-	(setq pico-cmd pico-cmd-gp)
-	)
-      )
-    )
-  
   (if (get-buffer buffer-name-1)
       (switch-to-buffer buffer-name-1)
     (let ((default-directory work_dir_1)) (shell buffer-name-1) (format hsse-env)))
@@ -1502,8 +1693,9 @@ kernel."
 
 (defun shell-pico()
   (interactive)
-  (setq pico-cmd-gp (concat "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx k3-image-gen/tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " u-boot-type "/out/" connected_device "/a53/" "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " u-boot-type "/out/" connected_device "/a53/" "u-boot.img\""))
-  (setq pico-cmd pico-cmd-gp)
+  (setq pico-cmd-gp (concat "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " u-boot-type "/out/" connected_device "/a53/" "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " u-boot-type "/out/" connected_device "/a53/" "u-boot.img\""))
+  (setq pico-binman-cmd (concat "cd ~/network-share" " && "  "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "u-boot.img\""))
+  (setq pico-cmd pico-binman-cmd)
   (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
   (setq buffer-name "pico")
   

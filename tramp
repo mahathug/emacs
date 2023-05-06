@@ -1,4 +1,4 @@
-;; -*- emacs-lisp -*- <23/04/06 18:21:23 /home/kamlesh/.emacs.d/tramp>
+;; -*- emacs-lisp -*- <23/05/01 11:45:40 /home/kamlesh/.emacs.d/tramp>
 ;; Tramp connection history.  Don't change this file.
 ;; Run `M-x tramp-cleanup-all-connections' instead.
 
@@ -100,4 +100,6 @@
   ("ls--dired" "--dired")
   ("df-blocksize" 1)
   ("df" "\\df --block-size=1 --output=size,used,avail")
-  ("git" "\\git")))
+  ("git" "\\git"))
+ ((tramp-file-name "ssh" "root" nil "172.24.145.160" nil nil nil)
+  nil))
