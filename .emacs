@@ -13,6 +13,8 @@
  '(notmuch-saved-searches
    '((:name "lpr" :query "tag:ti-linux-patch-review" :key "l" :sort-order newest-first)
      (:name "uboot" :query "tag:uboot" :key "u" :sort-order newest-first)
+     (:name "tbr" :query "tag:tiL-tbr" :key "t" :sort-order newest-first)
+     (:name "reviewed" :query "tag:tiL-reviewed" :key "r" :sort-order newest-first)
      (:name "meta-ti" :query "tag:meta-ti" :key "m" :sort-order newest-first)
      (:name "tiL-5.10" :query "tag:tiL-5.10" :key "5" :sort-order newest-first)
      (:name "tiU21" :query "tag:tiU21" :key "2" :sort-order newest-first)
@@ -81,40 +83,52 @@
 
 ;; working directory setup
 
-(defun initial-path-setup()
-  (interactive )  
-  
-  (setq ti-u-boot "ti-u-boot")
-  (setq ti-kernel "ti-linux-kernel")
-  (setq ti-kig "k3-image-gen")
-  (setq ti-optee "optee_os")
-  (setq ti-meta-ti "meta-ti")
-  (setq u-boot "u-boot")
-  (setq linux "linux-next")
-  (setq atf "")
-  (setq working-project-path nil)
-  (setq am62x "am62x")
-  (setq am62ax "am62ax")
-  (setq am64x "am64x")
-  (setq mainline "mainline")
-  (setq ti "ti")
-  
-  (setq boot-dir-debian "/media/kamlesh/BOOT")
-  (setq boot-dir-sdk "/media/kamlesh/boot")
-  (setq root-dir-debian "/media/kamlesh/rootfs/")
-  (setq root-dir-sdk "/media/kamlesh/root/")
-  (setq boot-node "/dev/sdb1")
-  (setq root-node "/dev/sdb2")
-  (setq network-share-dir "~/network-share")
-  
-  (setq boot-dir boot-dir-sdk)
-  (setq root-dir root-dir-sdk)
-)
 
-(initial-path-setup)
 
-(defun ti-setup (device source)
+(defun ti-setup ()
   (interactive )
+
+  (defun default-path-setup()
+    (interactive )  
+    
+    (setq ti-u-boot "ti-u-boot")
+    (setq ti-kernel "ti-linux-kernel")
+    (setq ti-kig "k3-image-gen")
+    (setq ti-optee "optee_os")
+    (setq ti-meta-ti "meta-ti")
+    (setq u-boot "u-boot")
+    (setq linux "linux-next")
+    (setq atf "")
+    ;; (setq working-project-path nil) ;;
+    (setq am62x "am62x")
+    (setq am62ax "am62ax")
+    (setq am64x "am64x")
+    (setq mainline "mainline")
+    (setq ti "ti")
+    
+    (setq boot-dir-debian "/media/kamlesh/BOOT")
+    (setq boot-dir-sdk "/media/kamlesh/boot")
+    (setq root-dir-debian "/media/kamlesh/rootfs/")
+    (setq root-dir-sdk "/media/kamlesh/root/")
+    (setq boot-node "/dev/sdb1")
+    (setq root-node "/dev/sdb2")
+    (setq network-share-dir "~/network-share")
+    
+    (setq boot-dir boot-dir-sdk)
+    (setq root-dir root-dir-sdk)
+    )
+
+  (defun default-cmd-setup()
+    (interactive )  
+    (defvar soc-type "hsfs")
+    (defvar sign-type "kig")
+    (defvar device am62x)
+    (defvar source mainline)
+    )
+
+  
+  (default-path-setup)
+  (default-cmd-setup)
 
   (defun path-setup ()
     (interactive )
@@ -155,7 +169,7 @@
 
     (setq r5-mmc-defconfig (concat connected_device "_evm_r5_defconfig"))
     (setq r5-usbdfu-defconfig (concat connected_device "_evm_r5_usbdfu_defconfig"))
-    (setq r5_ethboot_defconfig (concat connected_device "_evm_r5_ethboot_defconfig"))
+    (setq r5-ethboot-defconfig (concat connected_device "_evm_r5_ethboot_defconfig"))
     (setq a53-gp-defconfig (concat connected_device "_evm_a53_defconfig"))
     
     (cond
@@ -189,24 +203,19 @@
     (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
     (setq atf-base-make-cmd " make -j32 ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ")
-    (setq r5-set-out-dir (concat " O=out/" connected_device "/r5"))
-    (setq a53-set-out-dir (concat " O=out/" connected_device  "/a53"))
-    (setq r5-out-dir (concat "out/" connected_device "/r5"))
-    (setq a53-out-dir (concat "out/" connected_device  "/a53"))
 
-    (setq atf-unsigned (concat " ATF=../../../" connected_device "/bl31.bin.unsigned "))
-    (setq atf-signed (concat " ATF=../../../" connected_device "/bl31.bin "))
-    (setq optee-unsigned (concat " TEE=../../../" connected_device "/bl32.bin.unsigned "))
-    (setq optee-signed (concat " TEE=../../../" connected_device "/bl32.bin "))
-    (setq dm-unsigned (concat " DM=../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned "))
-    (setq dm-signed (concat " DM=../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f "))
-
-    ;;binman
     
-    (setq bl31-unsigned (concat " BL31=../../../" connected_device "/bl31.bin.unsigned "))
-    (setq ti-linux-firmware-set " BINMAN_INDIRS=../../../../ti-linux-firmware/ ")
-    (setq r5-binman-compile (concat hsse-env  " &&"  r5-base-make-cmd ti-linux-firmware-set r5-set-out-dir))
-    (setq a53-binman-make-cmd (concat hsse-env " && " a53-base-make-cmd bl31-unsigned optee-unsigned ti-linux-firmware-set a53-set-out-dir))
+    (setq r5-out-dir (concat "out/" sign-type "/"  connected_device "/" soc-type "/r5"))
+    (setq a53-out-dir (concat "out/" sign-type "/" connected_device "/" soc-type "/a53"))
+    (setq r5-set-out-dir (concat " O=" r5-out-dir))
+    (setq a53-set-out-dir (concat " O=" a53-out-dir))
+
+    (setq atf-unsigned (concat " ATF=../../../../../" connected_device "/bl31.bin.unsigned "))
+    (setq atf-signed (concat " ATF=../../../../../" connected_device "/bl31.bin "))
+    (setq optee-unsigned (concat " TEE=../../../../../" connected_device "/bl32.bin.unsigned "))
+    (setq optee-signed (concat " TEE=../../../../../" connected_device "/bl32.bin "))
+    (setq dm-unsigned (concat " DM=../../../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned "))
+    (setq dm-signed (concat " DM=../../../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f "))
     
     (cond
      ((string= connected_device am62x)
@@ -228,64 +237,194 @@
 
     (setq soc (concat " SOC=" connected_device " "))
     (cond ((string= connected_device am64x) (setq soc (concat " SOC=" connected_device "_sr2 "))))
-    (setq sbl (concat  " SBL=" work_dir_2 "/out/" connected_device "/r5/spl/u-boot-spl.bin"))
+    (setq sbl (concat  " SBL=" work_dir_2 "/" r5-out-dir "/spl/u-boot-spl.bin"))
     
     (setq soc-type-hs " SOC_TYPE=hs ")
     (setq soc-type-hsfs " SOC_TYPE=hs-fs ")
     (setq sysfw-dir (concat " SYSFW_DIR=" work_dir_1 "/ti-linux-firmware/ti-sysfw/ "))
     (setq make-clean " && make -j16 clean")
 
+    (setq r5-mmc-defconfig-cmd (concat hsse-env  " &&"  r5-base-make-cmd r5-mmc-defconfig r5-set-out-dir ))
+    (setq r5-usbdfu-defconfig-cmd (concat hsse-env  " &&" r5-base-make-cmd r5-usbdfu-defconfig r5-set-out-dir))
+    (setq r5-ethboot-defconfig-cmd (concat hsse-env  " &&" r5-base-make-cmd r5-ethboot-defconfig r5-set-out-dir))
     
-    (setq a53-defconfig-cmd  (concat " && " a53-base-make-cmd a53-gp-defconfig a53-set-out-dir))
-    (setq a53-gp-make-cmd (concat " && " a53-base-make-cmd atf-unsigned optee-unsigned dm-unsigned a53-set-out-dir))
-    (setq a53-hs-make-cmd (concat " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
-    (setq build-type "hsfs")
-    (setq a53-make-cmd a53-hs-make-cmd)
+    (setq a53-defconfig-cmd  (concat hsse-env " && " a53-base-make-cmd a53-gp-defconfig a53-set-out-dir))
+    
+    (setq a53-gp-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-unsigned optee-unsigned dm-unsigned a53-set-out-dir))
+    (setq a53-hs-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
+    (setq r5-make-cmd-kig (concat hsse-env  " && " r5-base-make-cmd r5-set-out-dir))
+    
+    (setq a53-make-cmd-kig a53-hs-make-cmd)
     (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
     (setq kig-make-cmd kig-hsfs-make-cmd)
-    (defun soc-type-get ()
-      "Prompt user for soc-type"
-      (interactive)
-      (setq soc-type-input (read-string "Enter soc-type-input:"))
-      (message "soc type is %s" soc-type-input)
-      (cond
-       (
-	(string= soc-type-input "hs")
-	(progn
-	  (setq build-type "hs")
-	  (setq a53-make-cmd a53-hs-make-cmd)
-	  (setq kig-hs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs sbl ));;sysfw-dir))
-	  (setq kig-make-cmd kig-hs-make-cmd)
-	  )
+
+
+    (setq r5-make-cmd r5-make-cmd-kig)
+    (setq  a53-make-cmd a53-make-cmd-kig)
+
+    (cond
+     (
+      (string= soc-type "hs")
+      (progn
+	;; (setq a53-make-cmd-kig a53-hs-make-cmd)	    ;;
+	(setq a53-make-cmd-kig a53-hs-make-cmd)
+	(setq r5-make-cmd-kig r5-make-cmd-kig)
+	(setq kig-hs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs sbl ));;sysfw-dir))
+	(setq kig-make-cmd-kig kig-hs-make-cmd)
 	)
-       (
-	(string= soc-type-input "hsfs")
-	(progn
-	  (setq build-type "hsfs")
-	  (setq a53-make-cmd a53-hs-make-cmd)
-	  (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
-	  (setq kig-make-cmd kig-hsfs-make-cmd)
-	  )
+      )
+     (
+      (string= soc-type "hsfs")
+      (progn
+	;; (setq a53-make-cmd-kig a53-hs-make-cmd)	    ;;
+	(setq a53-make-cmd-kig a53-hs-make-cmd)
+	(setq r5-make-cmd-kig r5-make-cmd-kig)
+	(setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
+	(setq kig-make-cmd-kig kig-hsfs-make-cmd)
 	)
-       (
-	(string= soc-type-input "gp")
-	(progn
-	  (setq build-type "gp")
-	  (setq a53-make-cmd a53-gp-make-cmd)
-	  (setq kig-gp-make-cmd (concat " ; " r5-base-make-cmd soc sbl ));sysfw-dir))
-	  (setq kig-make-cmd kig-gp-make-cmd)
-	  )
+      )
+     (
+      (string= soc-type "gp")
+      (progn
+	;; (setq a53-make-cmd-kig a53-gp-make-cmd)	    ;;
+	(setq a53-make-cmd-kig a53-gp-make-cmd)
+	(setq r5-make-cmd-kig r5-make-cmd-kig)
+	(setq kig-gp-make-cmd (concat " ; " r5-base-make-cmd soc sbl ));sysfw-dir))
+	(setq kig-make-cmd-kig kig-gp-make-cmd)
 	)
+      )
+     )
+    
+    (cond
+     (
+      (string= sign-type "kig")
+      (progn
+	(setq r5-make-cmd r5-make-cmd-kig)
+	(setq a53-make-cmd a53-make-cmd-kig)
+	(setq kig-make-cmd kig-make-cmd-kig)
+	)
+      )
+     (
+      (string= sign-type "binman")
+      (progn
+    	(setq bl31-unsigned (concat " BL31=../../../../../" connected_device "/bl31.bin.unsigned "))
+	(setq ti-linux-firmware-set " BINMAN_INDIRS=../../../../../../ti-linux-firmware/ ")
+	(setq r5-make-cmd-binman (concat hsse-env  " &&"  r5-base-make-cmd ti-linux-firmware-set r5-set-out-dir))
+	(setq a53-make-cmd-binman (concat hsse-env " && " a53-base-make-cmd bl31-unsigned optee-unsigned ti-linux-firmware-set a53-set-out-dir))
+	(setq r5-make-cmd r5-make-cmd-binman)
+	(setq a53-make-cmd a53-make-cmd-binman)
+	)
+      )
+     )
+
+  (defun soc-type ()
+    "Prompt user for soc-type"
+    (interactive)
+    (setq soc-type-input (read-string "Enter soc-type-input: 1 for hs, 2 for hsfs, 3 for gp"))
+    (cond
+     (
+      (string= soc-type-input "1")
+      (progn
+	(setq soc-type "hs")	
+	)
+      )
+     (
+      (string= soc-type-input "2")
+      (progn
+	(setq soc-type "hsfs")	
+	)
+      )
+     (
+      (string= soc-type-input "3")
+      (progn
+	(setq soc-type "gp")
+	)
+      )
+     )
+    (message "soc type is %s" soc-type)
+    (ti-setup)
+    )
+    
+  (defun sign-type()
+    "Prompt user for sign-type"
+    (interactive)
+    (setq sign-type-input (read-string "Enter sign-type-input, k for kig, b for binman:"))
+    (cond
+     (
+      (string= sign-type-input "k")
+      (progn
+	(setq sign-type "kig")
+	)
+      )
+     (
+      (string= sign-type-input "b")
+      (progn
+	(setq sign-type "binman")
+	)
+      )
+     )
+    (message "sign type is %s" sign-type)
+    (ti-setup)
+    )
+
+  (defun device-type()
+    "Prompt user for device-type"
+    (interactive)
+    (setq device-type-input (read-string "Enter device-type-input, 1 for am62, 2 for am62a, 3 for am64:"))
+    (cond
+     (
+      (string= device-type-input "1")
+      (progn
+	(setq device am62x)
+	)
+      )
+     (
+      (string= device-type-input "2")
+      (progn
+	(setq device am62ax)
+	)
+      )
+      (
+       (string= device-type-input "3")
+       (progn
+	 (setq device am64x)
+	 )
        )
       )
+    (message "device type is %s" device)
+    (ti-setup)
     )
+
+  (defun source-type()
+    "Prompt user for sign-type"
+    (interactive)
+    (setq source-type-input (read-string "Enter source-type-input, m for mainline, t for ti:"))
+    (cond
+     (
+      (string= source-type-input "m")
+      (progn
+	(setq source-type "mainline")
+	)
+      )
+     (
+      (string= source-type-input "t")
+      (progn
+	(setq source-type "ti")
+	)
+      )
+     )
+    (message "source type is %s" source-type)
+    (ti-setup)
+    )
+  )
   
   (path-setup)
   (cmd-setup)
+  (message "%s %s %s %s" device soc-type source sign-type)
   (dir-locals-set-directory-class
    (expand-file-name work_dir_3)
    'linux-kernel)
-
+  
   (setq bookmark-default-file (concat work_dir_1 "bookmarks"))
   (shell-working-dir)
   (shell-pico)
@@ -318,7 +457,8 @@ overrides the current directory, which would otherwise be used."
 overrides the current directory, which would otherwise be used."
   (interactive "Dworking-project Directory: ")
   (setq working-project-path path)
-  (setq work_dir_1 working-project-path))
+  (ti-setup)
+  )
 
 
 (defun bdkcamp-setup()
@@ -342,7 +482,7 @@ overrides the current directory, which would otherwise be used."
   (setq cscope-initial-directory cscope_dir)
   (shortcuts-after-setup)
   (fset 'cscope-init-dir
-      "\C-xrbcscope-build\C-m\C-csa\C-m")
+	"\C-xrbcscope-build\C-m\C-csa\C-m")
 
   (execute-kbd-macro (symbol-function 'cscope-init-dir))
   ;; (defun clean-ci () (interactive) ((let ((default-directory concat (work_dir_4 "/rawdata/")))(shell "ls"))))
@@ -401,43 +541,31 @@ threads to the notmuch-extract-patch(1) command."
                (shell-quote-argument thread-id)))
      "*notmuch-apply-thread-series*")))
 
-(defun notmuch-maildir-check-patch (repo branch &optional reroll-count)
-  "Extract patch series in current thread to branch BRANCH in repo REPO.
 
-The target branch may or may not already exist.
-
-With an optional prefix numeric argument REROLL-COUNT, try to
-extract the nth revision of a series.  See the --reroll-count
-option detailed in mbox-extract-patch(1).
-
-See notmuch-extract-patch(1) manpage for limitations: in
-particular, this Emacs Lisp function supports passing only entire
-threads to the notmuch-extract-patch(1) command."
-  (interactive
-   "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \nP")
-  (let ((search-terms-list (notmuch-show-get-message-ids-for-open-messages)
-	(thread-id
-         ;; If `notmuch-show' was called with a notmuch query rather
-         ;; than a thread ID, as `org-notmuch-follow-link' in
-         ;; org-notmuch.el does, then `notmuch-show-thread-id' might
-         ;; be an arbitrary notmuch query instead of a thread ID.  We
-         ;; need to wrap such a query in thread:{} before passing it
-         ;; to notmuch-extract-patch(1), or we might not get a whole
-         ;; thread extracted (e.g. if the query is just id:foo)
-         (if (string= (substring notmuch-show-thread-id 0 7) "thread:")
-             notmuch-show-thread-id
-           (concat "thread:{" notmuch-show-thread-id "}")))
-        (default-directory (expand-file-name repo)))
-    (mailscripts--check-out-branch branch)
-    (message "thread-id %s" thread-id) 
-    (shell-command
-     (if reroll-count
-         (format "notmuch-extract-patch -v%d %s | ./scripts/checkpatch.pl --strict"
-                 (prefix-numeric-value reroll-count)
-                 (shell-quote-argument thread-id))
-       (format "notmuch-extract-patch %s | ./scripts/checkpatch.pl --strict"
-               (shell-quote-argument thread-id)))
-     "*notmuch-apply-thread-series*")))
+(defun mbox-check-patch-notmuch-messages ()
+  "When this function is executed in notmuch-show buffer all the \"open\"
+messages will be written to the file ~/tmp-check-patch (overwriting it)."
+  (interactive)
+  (let* ((search-terms-list (notmuch-show-get-message-ids-for-open-messages))
+	 (default-directory work_dir_3)
+	 (buffer (get-buffer-create "output-mbox")))
+    (set-buffer buffer)
+    (setq buffer-read-only nil)
+    (buffer-disable-undo)
+    (pop-to-buffer buffer)
+    (goto-char (point-max))
+    (if (> (buffer-size) 0)
+	(insert "\n\n"))
+    (insert (format-time-string
+	     "%c: Writing the following messages to ~/tmp-mbox:\n ")
+	    (mapconcat 'identity search-terms-list "\n ") "\n")
+    (with-temp-file "~/check-patch-output" 
+      (while search-terms-list
+	(call-process-shell-command
+	 (format (concat "notmuch show --format=mbox " (pop search-terms-list) " | tee tmp" " | " "if grep -q \"Re:\"; then : ;else ./scripts/checkpatch.pl tmp;fi")) nil t nil)	  ;;
+	)
+      )
+    ))
 
 (defun mbox-open-notmuch-messages ()
   "When this function is executed in notmuch-show buffer all the \"open\"
@@ -462,6 +590,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
     (insert "\nMessages in ~/tmp-mbox:\n")
     (call-process "mail" nil t nil
 		  "-H" "-f" (expand-file-name "~/tmp-mbox"))))
+
 
 ;; (use-package notmuch-bookmarks
 ;;   :after notmuch
@@ -500,18 +629,18 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   '(define-key notmuch-show-mode-map "`" 'notmuch-show-apply-tag-macro))
 
 (setq notmuch-show-tag-macro-alist
-  (list
-   '("m" "+notmuch::patch" "+notmuch::moreinfo" "-notmuch::needs-review")
-   '("n" "+notmuch::patch" "+notmuch::needs-review" "-notmuch::pushed")
-   '("o" "+notmuch::patch" "+notmuch::obsolete"
+      (list
+       '("m" "+notmuch::patch" "+notmuch::moreinfo" "-notmuch::needs-review")
+       '("n" "+notmuch::patch" "+notmuch::needs-review" "-notmuch::pushed")
+       '("o" "+notmuch::patch" "+notmuch::obsolete"
          "-notmuch::needs-review" "-notmuch::moreinfo")
-   '("p" "-notmuch::pushed" "-notmuch::needs-review"
-     "-notmuch::moreinfo" "+pending")
-   '("P" "-pending" "-notmuch::needs-review" "-notmuch::moreinfo" "+notmuch::pushed")
-   '("r" "-notmuch::patch" "+notmuch::review")
-   '("s" "+notmuch::patch" "-notmuch::obsolete" "-notmuch::needs-review" "-notmuch::moreinfo" "+notmuch::stale")
-   '("t" "+notmuch::patch" "-notmuch::needs-review" "+notmuch::trivial")
-   '("w" "+notmuch::patch" "+notmuch::wip" "-notmuch::needs-review")))
+       '("p" "-notmuch::pushed" "-notmuch::needs-review"
+	 "-notmuch::moreinfo" "+pending")
+       '("P" "-pending" "-notmuch::needs-review" "-notmuch::moreinfo" "+notmuch::pushed")
+       '("r" "-notmuch::patch" "+notmuch::review")
+       '("s" "+notmuch::patch" "-notmuch::obsolete" "-notmuch::needs-review" "-notmuch::moreinfo" "+notmuch::stale")
+       '("t" "+notmuch::patch" "-notmuch::needs-review" "+notmuch::trivial")
+       '("w" "+notmuch::patch" "+notmuch::wip" "-notmuch::needs-review")))
 
 (defun notmuch-show-apply-tag-macro (key)
   (interactive "k")
@@ -521,8 +650,8 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 ;; packages
 
 
-;(with-eval-after-load 'gnutls
-;    (add-to-list 'gnutls-trustfiles "/etc/ssl/certs/ca-certificates.crt"))
+					;(with-eval-after-load 'gnutls
+					;    (add-to-list 'gnutls-trustfiles "/etc/ssl/certs/ca-certificates.crt"))
 ;;(setq url-using-proxy t)
 (setq url-debug t)
 ;;(url-retrieve-synchronously (url-generic-parse-url "https://elpa.gnu.org/"))
@@ -533,13 +662,13 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
         ("ftp" . "webproxy.ext.ti.com:80")))
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")  ;;
 (setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
-			 ;("gnu-mirror" . "http://mirrors.163.com/elpa/gnu/")
+					;("gnu-mirror" . "http://mirrors.163.com/elpa/gnu/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ;("marmalade" . "http://marmalade-repo.org/packages/")
+					;("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
-			 ;("melpa-m" . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
-			 ;("org-n"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
-			 ;("gnu-m"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))
+					;("melpa-m" . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
+					;("org-n"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
+					;("gnu-m"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -635,13 +764,13 @@ isn't there and triggers an error"
   (docker-global-mode)) ;; manage docker containers
 
 ;; (push
- ;; (cons
-  ;; "docker"
-  ;; '((tramp-login-program "docker")
-    ;; (tramp-login-args (("exec" "-w" "/workspace" "-it") ("%h") ("/bin/bash")))
-    ;; (tramp-remote-shell "/bin/sh")
-    ;; (tramp-remote-shell-args ("-i") ("-c"))))
- ;; tramp-methods)
+;; (cons
+;; "docker"
+;; '((tramp-login-program "docker")
+;; (tramp-login-args (("exec" "-w" "/workspace" "-it") ("%h") ("/bin/bash")))
+;; (tramp-remote-shell "/bin/sh")
+;; (tramp-remote-shell-args ("-i") ("-c"))))
+;; tramp-methods)
 
 ;; (defadvice tramp-completion-handle-file-name-all-completions
 ;;     (around dotemacs-completion-docker activate)
@@ -674,28 +803,28 @@ isn't there and triggers an error"
 (bash-completion-setup)
 
 ;;outline-code
- ; Outline-minor-mode key map
- ;; (define-prefix-command 'cm-map nil "Outline-")
- ;; ; HIDE
- ;; (define-key cm-map "q" 'outline-hide-sublevels)    ; Hide everything but the top-level headings
- ;; (define-key cm-map "t" 'outline-hide-body)         ; Hide everything but headings (all body lines)
- ;; (define-key cm-map "o" 'outline-hide-other)        ; Hide other branches
- ;; (define-key cm-map "c" 'outline-hide-entry)        ; Hide this entry's body
- ;; (define-key cm-map "l" 'outline-hide-leaves)       ; Hide body lines in this entry and sub-entries
- ;; (define-key cm-map "d" 'outline-hide-subtree)      ; Hide everything in this entry and sub-entries
- ;; ; SHOW
- ;; (define-key cm-map "a" 'outline-show-all)          ; Show (expand) everything
- ;; (define-key cm-map "e" 'outline-show-entry)        ; Show this heading's body
- ;; (define-key cm-map "i" 'outline-show-children)     ; Show this heading's immediate child sub-headings
- ;; (define-key cm-map "k" 'outline-show-branches)     ; Show all sub-headings under this heading
- ;; (define-key cm-map "s" 'outline-show-subtree)      ; Show (expand) everything in this heading & below
- ;; ; MOVE
- ;; (define-key cm-map "u" 'outline-up-heading)                ; Up
- ;; (define-key cm-map "n" 'outline-next-visible-heading)      ; Next
- ;; (define-key cm-map "p" 'outline-previous-visible-heading)  ; Previous
- ;; (define-key cm-map "f" 'outline-forward-same-level)        ; Forward - same level
- ;; (define-key cm-map "b" 'outline-backward-same-level)       ; Backward - same level
- ;; (global-set-key "\M-p" cm-map)
+					; Outline-minor-mode key map
+;; (define-prefix-command 'cm-map nil "Outline-")
+;; ; HIDE
+;; (define-key cm-map "q" 'outline-hide-sublevels)    ; Hide everything but the top-level headings
+;; (define-key cm-map "t" 'outline-hide-body)         ; Hide everything but headings (all body lines)
+;; (define-key cm-map "o" 'outline-hide-other)        ; Hide other branches
+;; (define-key cm-map "c" 'outline-hide-entry)        ; Hide this entry's body
+;; (define-key cm-map "l" 'outline-hide-leaves)       ; Hide body lines in this entry and sub-entries
+;; (define-key cm-map "d" 'outline-hide-subtree)      ; Hide everything in this entry and sub-entries
+;; ; SHOW
+;; (define-key cm-map "a" 'outline-show-all)          ; Show (expand) everything
+;; (define-key cm-map "e" 'outline-show-entry)        ; Show this heading's body
+;; (define-key cm-map "i" 'outline-show-children)     ; Show this heading's immediate child sub-headings
+;; (define-key cm-map "k" 'outline-show-branches)     ; Show all sub-headings under this heading
+;; (define-key cm-map "s" 'outline-show-subtree)      ; Show (expand) everything in this heading & below
+;; ; MOVE
+;; (define-key cm-map "u" 'outline-up-heading)                ; Up
+;; (define-key cm-map "n" 'outline-next-visible-heading)      ; Next
+;; (define-key cm-map "p" 'outline-previous-visible-heading)  ; Previous
+;; (define-key cm-map "f" 'outline-forward-same-level)        ; Forward - same level
+;; (define-key cm-map "b" 'outline-backward-same-level)       ; Backward - same level
+;; (global-set-key "\M-p" cm-map)
 
 ;; cscope start
 
@@ -835,36 +964,36 @@ kernel."
 (dir-locals-set-class-variables
  'linux-kernel
  '((c-mode . (
-        (c-basic-offset . 8)
-        (c-label-minimum-indentation . 0)
-        (c-offsets-alist . (
-                (arglist-close         . c-lineup-arglist-tabs-only)
-                (arglist-cont-nonempty .
-                    (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
-                (arglist-intro         . +)
-                (brace-list-intro      . +)
-                (c                     . c-lineup-C-comments)
-                (case-label            . 0)
-                (comment-intro         . c-lineup-comment)
-                (cpp-define-intro      . +)
-                (cpp-macro             . -1000)
-                (cpp-macro-cont        . +)
-                (defun-block-intro     . +)
-                (else-clause           . 0)
-                (func-decl-cont        . +)
-                (inclass               . +)
-                (inher-cont            . c-lineup-multi-inher)
-                (knr-argdecl-intro     . 0)
-                (label                 . -1000)
-                (statement             . 0)
-                (statement-block-intro . +)
-                (statement-case-intro  . +)
-                (statement-cont        . +)
-                (substatement          . +)
-                ))
-        (indent-tabs-mode . t)
-        (show-trailing-whitespace . t)
-        ))))
+              (c-basic-offset . 8)
+              (c-label-minimum-indentation . 0)
+              (c-offsets-alist . (
+				  (arglist-close         . c-lineup-arglist-tabs-only)
+				  (arglist-cont-nonempty .
+							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
+				  (arglist-intro         . +)
+				  (brace-list-intro      . +)
+				  (c                     . c-lineup-C-comments)
+				  (case-label            . 0)
+				  (comment-intro         . c-lineup-comment)
+				  (cpp-define-intro      . +)
+				  (cpp-macro             . -1000)
+				  (cpp-macro-cont        . +)
+				  (defun-block-intro     . +)
+				  (else-clause           . 0)
+				  (func-decl-cont        . +)
+				  (inclass               . +)
+				  (inher-cont            . c-lineup-multi-inher)
+				  (knr-argdecl-intro     . 0)
+				  (label                 . -1000)
+				  (statement             . 0)
+				  (statement-block-intro . +)
+				  (statement-case-intro  . +)
+				  (statement-cont        . +)
+				  (substatement          . +)
+				  ))
+              (indent-tabs-mode . t)
+              (show-trailing-whitespace . t)
+              ))))
 
 ;; indentaion style end
 
@@ -904,8 +1033,8 @@ kernel."
   (interactive)
   (let (beg end)
     (if (region-active-p)
-	 (setq beg (region-beginning) end (region-end) comment-style 'multi-line)
-       (setq beg (line-beginning-position) end (line-end-position) comment-style 'aligned))
+	(setq beg (region-beginning) end (region-end) comment-style 'multi-line)
+      (setq beg (line-beginning-position) end (line-end-position) comment-style 'aligned))
     (comment-or-uncomment-region beg end)))
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region-or-line)
 ;; comment style end
@@ -1270,7 +1399,7 @@ kernel."
       (switch-to-buffer buffer-name-1)
     (make-serial-process :port "/dev/ttyUSB1" :speed 115200)
     (switch-to-buffer buffer-name-1)
-  ))
+    ))
 
 ;; term mode control characters
 (defun term-send-esc ()
@@ -1402,16 +1531,16 @@ kernel."
 
 (defun shortcuts-before-setup()
   (interactive)
-  (global-set-key (kbd "M-1") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup am62x ti)))
-  (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup am62x mainline))) ;;
+  (global-set-key (kbd "M-1") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup)))
+  (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup))) ;;
   ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/crypto/") (ti-setup am62x ti))) ;; ;; ;;
-  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62a/wakeup/") (ti-setup am62ax ti)))
-  (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am64x mainline)))
-  (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62x mainline)))
+  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup )))
+  (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup )))
+  (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup )))
   ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
-  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup am62x mainline)))
-  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup am64x mainline)))
+  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup )))
+  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup )))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
 
@@ -1469,7 +1598,7 @@ kernel."
   (global-set-key (kbd "M-k") 'previous-buffer)
   (global-unset-key (kbd "M-l"))
   (global-set-key (kbd "M-l") 'next-buffer) 
-		
+  
 
 
   ;; ctrl
@@ -1500,7 +1629,7 @@ kernel."
   ;; (global-set-key (kbd "C-1") 'sr-speedbar-toggle)
 
   ;; (global-set-key (kbd "C-2") 'sr-speedbar-select-window)
- 
+  
   ;; (global-unset-key (kbd "C-l"))
 
   ;; ;; (global-unset-key (kbd "C-i"))
@@ -1598,22 +1727,22 @@ kernel."
 (defun r5-mmc-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&"  r5-base-make-cmd r5-mmc-defconfig r5-set-out-dir ))))
+    (compile r5-mmc-defconfig-cmd)))
 
 (defun r5-usbdfu-defconfig ()
-  (interactive)
+  (interactive)/
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-usbdfu-defconfig r5-set-out-dir))))
+    (compile r5-usbdfu-defconfig-cmd)))
 
 (defun r5-ethboot-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-ethboot-defconfig r5-set-out-dir))))
+    (compile r5-ethboot-defconfig-cmd)))
 
 (defun r5-compile ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env  " &&" r5-base-make-cmd r5-set-out-dir))))
+    (compile r5-make-cmd)))
 
 (defun r5-binman-compile ()
   (interactive)
@@ -1701,7 +1830,7 @@ kernel."
   
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
-      
+    
     (let ((default-directory work_dir_1))
       (multi-term)
       ;; (term)
@@ -1715,10 +1844,10 @@ kernel."
   (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
   (setq buffer-name "extra")
   (define-skeleton extra-cmd
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format extra-cmd)
-  )
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format extra-cmd)
+    )
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
     (let ((default-directory work_dir_1)) (shell buffer-name) (format "cd ~/pycrc/src/\r")))
@@ -1731,7 +1860,7 @@ kernel."
   
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
-      
+    
     (let ((default-directory work_dir_1))
       (multi-term)
       ;; (term)
@@ -1746,7 +1875,7 @@ kernel."
   
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
-      
+    
     (let ((default-directory work_dir_1))
       (multi-term)
       ;; (term)
@@ -1761,14 +1890,14 @@ kernel."
   (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
   (setq buffer-name-1 "docker-catkin")
   ;; (when (get-buffer buffer-name-1)
-    ;; (kill-buffer buffer-name-1))
-    (let ((default-directory work_dir_5))
-      (shell buffer-name-1)
-      (process-send-string
-       (get-buffer-process buffer-name-1)
-       (format "ls\r")))
-    ;; (rst)
-    )
+  ;; (kill-buffer buffer-name-1))
+  (let ((default-directory work_dir_5))
+    (shell buffer-name-1)
+    (process-send-string
+     (get-buffer-process buffer-name-1)
+     (format "ls\r")))
+  ;; (rst)
+  )
 
 
 ;;add temp setups here
@@ -1793,41 +1922,41 @@ kernel."
 
 
 (fset 'tty
-   (kmacro-lambda-form [?\C-x ?3 ?\C-c ?1 ?\C-x ?o ?\C-c ?2] 0 "%d"))
+      (kmacro-lambda-form [?\C-x ?3 ?\C-c ?1 ?\C-x ?o ?\C-c ?2] 0 "%d"))
 
 
 (fset 'ttyr
       (kmacro-lambda-form [?\C-x ?k ?\C-m ?\C-x ?o ?\C-x ?k ?\C-m ?\C-x ?1 ?\C-\[ ?x ?t ?t ?y ?\C-m ?\C-x ?o] 0 "%d"))
 
 (fset 'set-hs
-   (kmacro-lambda-form [?\C-\[ ?x ?h ?s ?- ?o ?r ?- ?g ?p ?\C-m ?y] 0 "%d"))
+      (kmacro-lambda-form [?\C-\[ ?x ?h ?s ?- ?o ?r ?- ?g ?p ?\C-m ?y] 0 "%d"))
 
 
 ;; (fset 'mcrc
 ;;    (kmacro-lambda-form [?\C-x ?b ?m ?c ?r ?c ?. ?c ?\C-m] 0 "%d"))
 
 (fset 'line-mode
-   (kmacro-lambda-form [?\C-\[ ?x ?t ?e ?r ?m ?- ?l ?i ?\C-i ?\C-m] 0 "%d"))
+      (kmacro-lambda-form [?\C-\[ ?x ?t ?e ?r ?m ?- ?l ?i ?\C-i ?\C-m] 0 "%d"))
 (put 'erase-buffer 'disabled nil)
 
 (fset 'mcrc
-   (kmacro-lambda-form [?\C-x ?\C-f ?\C-\[ ?O ?H ?\C-@ ?\C-e ?\C-? ?~ ?/ ?a ?m ?6 ?2 ?/ ?m ?c ?r ?c ?/ ?t ?i ?- ?l ?i ?n ?u ?x ?- ?k ?e ?r ?n ?e ?l ?/ ?d ?r ?i ?v ?e ?r ?\C-i ?c ?r ?y ?p ?\C-i ?t ?i ?\C-i ?m ?c ?r ?c ?. ?c ?\C-m] 0 "%d"))
+      (kmacro-lambda-form [?\C-x ?\C-f ?\C-\[ ?O ?H ?\C-@ ?\C-e ?\C-? ?~ ?/ ?a ?m ?6 ?2 ?/ ?m ?c ?r ?c ?/ ?t ?i ?- ?l ?i ?n ?u ?x ?- ?k ?e ?r ?n ?e ?l ?/ ?d ?r ?i ?v ?e ?r ?\C-i ?c ?r ?y ?p ?\C-i ?t ?i ?\C-i ?m ?c ?r ?c ?. ?c ?\C-m] 0 "%d"))
 
 
 (fset 'jump-to-M-1
-   (kmacro-lambda-form [?\C-s ?M ?- ?1] 0 "%d"))
+      (kmacro-lambda-form [?\C-s ?M ?- ?1] 0 "%d"))
 
 (fset 'mail-update
-   (kmacro-lambda-form [?\C-\[ ?& ?\C-\[ ?x ?n ?- ?u ?p ?d ?\C-m ?\C-m] 0 "%d"))
+      (kmacro-lambda-form [?\C-\[ ?& ?\C-\[ ?x ?n ?- ?u ?p ?d ?\C-m ?\C-m] 0 "%d"))
 
 (fset 'single-screen
-   (kmacro-lambda-form [?\C-x ?1] 0 "%d"))
+      (kmacro-lambda-form [?\C-x ?1] 0 "%d"))
 
 (fset 'remove-names-from-mail
-   (kmacro-lambda-form [?\C-@ ?\C-s ?< ?\C-m ?\C-w ?\C-s ?> ?\C-\[ ?O ?D ?\C-k ?\C-\[ ?O ?B ?\C-a] 0 "%d"))
+      (kmacro-lambda-form [?\C-@ ?\C-s ?< ?\C-m ?\C-w ?\C-s ?> ?\C-\[ ?O ?D ?\C-k ?\C-\[ ?O ?B ?\C-a] 0 "%d"))
 
 (fset 'add-to-to-mail
-   (kmacro-lambda-form [?- ?- ?t ?o ?= ?\C-\[ ?O ?B ?\C-a] 0 "%d"))
+      (kmacro-lambda-form [?- ?- ?t ?o ?= ?\C-\[ ?O ?B ?\C-a] 0 "%d"))
 
 
 (mail-update)
