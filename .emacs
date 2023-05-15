@@ -250,7 +250,7 @@
     
     (setq a53-defconfig-cmd  (concat hsse-env " && " a53-base-make-cmd a53-gp-defconfig a53-set-out-dir))
     
-    (setq a53-gp-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-unsigned optee-unsigned dm-unsigned a53-set-out-dir))
+    (setq a53-gp-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-unsigned optee-unsigned dm-signed a53-set-out-dir))
     (setq a53-hs-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
     (setq r5-make-cmd-kig (concat hsse-env  " && " r5-base-make-cmd r5-set-out-dir))
     
@@ -403,17 +403,17 @@
      (
       (string= source-type-input "m")
       (progn
-	(setq source-type "mainline")
+	(setq source "mainline")
 	)
       )
      (
       (string= source-type-input "t")
       (progn
-	(setq source-type "ti")
+	(setq source"ti")
 	)
       )
      )
-    (message "source type is %s" source-type)
+    (message "source type is %s" source)
     (ti-setup)
     )
   )
@@ -1145,7 +1145,7 @@ kernel."
 (define-skeleton cp-boot-to-network-share
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "cp " work_dir_4 "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img")
+  (concat "cp " work_dir_4 "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " network-share-dir "/u-boot.img")
   )
 
 (define-skeleton cp-binman-boot-to-network-share-hs
@@ -1322,6 +1322,13 @@ kernel."
   "Title: "
   (concat "sudo dfu-util -R -a bootloader -D k3-image-gen/tiboot3.bin" " && sleep 2 && sudo dfu-util -R -a tispl.bin -D " u-boot-type "/out/" connected_device "/a53/" "tispl.bin"  " && sleep 2 && sudo dfu-util -R  -a u-boot.img -D " u-boot-type "/out/" connected_device "/a53/" "u-boot.img")
   )
+
+(define-skeleton devstat-cmd
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  "python3 ~/repos/devstat/devstat.py am62e2 -m sdmmc"
+  )
+
 
 (define-skeleton notmuch-update
   "In-buffer settings info for a emacs-org file."
