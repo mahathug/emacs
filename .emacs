@@ -214,8 +214,8 @@
     (setq atf-signed (concat " ATF=../../../../../" connected_device "/bl31.bin "))
     (setq optee-unsigned (concat " TEE=../../../../../" connected_device "/bl32.bin.unsigned "))
     (setq optee-signed (concat " TEE=../../../../../" connected_device "/bl32.bin "))
-    (setq dm-unsigned (concat " DM=../../../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned "))
-    (setq dm-signed (concat " DM=../../../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f "))
+    ;; (setq dm-unsigned (concat " DM=../../../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned ")) ;;
+    (setq dm-signed (concat " DM=../../../../../../ti-linux-firmware/ti-dm/" connected_device "x/ipc_echo_testb_mcu1_0_release_strip.xer5f.signed "))
     
     (cond
      ((string= connected_device am62x)
@@ -250,13 +250,13 @@
     
     (setq a53-defconfig-cmd  (concat hsse-env " && " a53-base-make-cmd a53-gp-defconfig a53-set-out-dir))
     
-    (setq a53-gp-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-unsigned optee-unsigned dm-signed a53-set-out-dir))
+    (setq a53-gp-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
     (setq a53-hs-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
     (setq r5-make-cmd-kig (concat hsse-env  " && " r5-base-make-cmd r5-set-out-dir))
     
     (setq a53-make-cmd-kig a53-hs-make-cmd)
-    (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
-    (setq kig-make-cmd kig-hsfs-make-cmd)
+    ;; (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl sysfw-dir)) ;;
+    ;; (setq kig-make-cmd kig-hsfs-make-cmd) ;;
 
 
     (setq r5-make-cmd r5-make-cmd-kig)
@@ -269,7 +269,7 @@
 	;; (setq a53-make-cmd-kig a53-hs-make-cmd)	    ;;
 	(setq a53-make-cmd-kig a53-hs-make-cmd)
 	(setq r5-make-cmd-kig r5-make-cmd-kig)
-	(setq kig-hs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs sbl ));;sysfw-dir))
+	(setq kig-hs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs sbl sysfw-dir))
 	(setq kig-make-cmd-kig kig-hs-make-cmd)
 	)
       )
@@ -279,7 +279,7 @@
 	;; (setq a53-make-cmd-kig a53-hs-make-cmd)	    ;;
 	(setq a53-make-cmd-kig a53-hs-make-cmd)
 	(setq r5-make-cmd-kig r5-make-cmd-kig)
-	(setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl ));;sysfw-dir))
+	(setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl sysfw-dir))
 	(setq kig-make-cmd-kig kig-hsfs-make-cmd)
 	)
       )
@@ -289,7 +289,7 @@
 	;; (setq a53-make-cmd-kig a53-gp-make-cmd)	    ;;
 	(setq a53-make-cmd-kig a53-gp-make-cmd)
 	(setq r5-make-cmd-kig r5-make-cmd-kig)
-	(setq kig-gp-make-cmd (concat " ; " r5-base-make-cmd soc sbl ));sysfw-dir))
+	(setq kig-gp-make-cmd (concat " ; " r5-base-make-cmd soc sbl sysfw-dir))
 	(setq kig-make-cmd-kig kig-gp-make-cmd)
 	)
       )
@@ -317,10 +317,9 @@
       )
      )
 
-  (defun soc-type ()
+  (defun soc-type (soc-type-input)
     "Prompt user for soc-type"
-    (interactive)
-    (setq soc-type-input (read-string "Enter soc-type-input: 1 for hs, 2 for hsfs, 3 for gp"))
+    (interactive "sEnter soc-type-input: 1 for hs, 2 for hsfs, 3 for gp")
     (cond
      (
       (string= soc-type-input "1")
@@ -345,10 +344,9 @@
     (ti-setup)
     )
     
-  (defun sign-type()
+  (defun sign-type(sign-type-input)
     "Prompt user for sign-type"
-    (interactive)
-    (setq sign-type-input (read-string "Enter sign-type-input, k for kig, b for binman:"))
+    (interactive "sEnter sign-type-input, k for kig, b for binman:")
     (cond
      (
       (string= sign-type-input "k")
@@ -367,10 +365,9 @@
     (ti-setup)
     )
 
-  (defun device-type()
+  (defun device-type(device-type-input)
     "Prompt user for device-type"
-    (interactive)
-    (setq device-type-input (read-string "Enter device-type-input, 1 for am62, 2 for am62a, 3 for am64:"))
+    (interactive "sEnter device-type-input, 1 for am62, 2 for am62a, 3 for am64:")
     (cond
      (
       (string= device-type-input "1")
@@ -397,8 +394,7 @@
 
   (defun source-type()
     "Prompt user for sign-type"
-    (interactive)
-    (setq source-type-input (read-string "Enter source-type-input, m for mainline, t for ti:"))
+    (interactive "sEnter source-type-input, m for mainline, t for ti:")
     (cond
      (
       (string= source-type-input "m")
@@ -427,8 +423,21 @@
   
   (setq bookmark-default-file (concat work_dir_1 "bookmarks"))
   (shell-working-dir)
-  (shell-pico)
-  (shortcuts-after-setup)   
+  ;; (shell-pico) ;;
+  (shortcuts-after-setup)
+
+  (defun cp-command-setup()
+    (interactive)
+    (setq cp-boot-to-network-share-cmd (concat "cp " work_dir_4 "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " network-share-dir "/u-boot.img"))
+
+    (setq cp-binman-boot-to-network-share-hs-cmd (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img"))
+
+    (setq cp-binman-boot-to-network-share-fs-cmd  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_fs " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img"))
+
+    (setq cp-binman-boot-to-network-share-gp-cmd (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_unsigned " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " network-share-dir "/u-boot.img"))
+    )
+
+  (cp-command-setup)
   )
 
 (defun set-u-boot-directory (path)
@@ -1142,28 +1151,29 @@ kernel."
   (concat "cp " work_dir_2 "/" a53-out-dir "/tispl.bin tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img u-boot.img")
   )
 
+
 (define-skeleton cp-boot-to-network-share
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "cp " work_dir_4 "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " network-share-dir "/u-boot.img")
+  (format cp-boot-to-network-share-cmd)
   )
 
 (define-skeleton cp-binman-boot-to-network-share-hs
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img")
+  (format cp-binman-boot-to-network-share-hs-cmd)
   )
 
 (define-skeleton cp-binman-boot-to-network-share-fs
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_fs " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img")
+
   )
 
 (define-skeleton cp-binman-boot-to-network-share-gp
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_unsigned " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " network-share-dir "/u-boot.img")
+  
   )
 
 (define-skeleton cp-network-share-to-mmc
@@ -1546,8 +1556,8 @@ kernel."
   (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup )))
   ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
-  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup )))
-  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (ti-setup )))
+  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq sign-type "binman") (ti-setup )))
+  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq sign-type "binman")(ti-setup )))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
 
@@ -1734,6 +1744,7 @@ kernel."
 (defun r5-mmc-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
+    (message "r5-mmc-defconfig")
     (compile r5-mmc-defconfig-cmd)))
 
 (defun r5-usbdfu-defconfig ()
@@ -1749,6 +1760,7 @@ kernel."
 (defun r5-compile ()
   (interactive)
   (let ((default-directory work_dir_2))
+    (message "r5-compile")
     (compile r5-make-cmd)))
 
 (defun r5-binman-compile ()
@@ -1769,13 +1781,103 @@ kernel."
 (defun a53-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
+    (message "a53-defconfig")
     (compile (concat hsse-env a53-defconfig-cmd))))
 
 (defun a53-compile ()
   (interactive)
   (let ((default-directory work_dir_2))
-    (compile (concat hsse-env a53-make-cmd))))
+    (message "a53-compile")
+    (compile (concat hsse-env a53-make-cmd)))
+  )
 
+(defun my-compilation-finish-function (process-name status)
+  (interactive)
+  (setq wait-for-completion nil)
+  (message "compilation finished with %s %s" process-name status))
+
+(setq sec 0)
+(setq msec 1)
+
+(defun synchronous-compile ()
+  (interactive)
+  (setq compilation-finish-functions 'my-compilation-finish-function)
+  (setq wait-for-completion t)
+  (r5-mmc-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+  (setq wait-for-completion t)
+  (r5-compile)
+  (while wait-for-completion (sleep-for sec msec))
+  (setq wait-for-completion t)
+  (a53-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+  (setq wait-for-completion t)
+  (a53-compile)
+  (while wait-for-completion (sleep-for sec msec))
+  (setq wait-for-synchronous-completion nil)
+  )
+
+(defun all-device-compile ()
+  (interactive)
+
+  (funcall-interactively 'device-type "1")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+  
+  (funcall-interactively 'device-type "2")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+
+  (funcall-interactively 'device-type "3")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+  )
+
+(defun all-soc-compile ()
+  (interactive)
+
+  (funcall-interactively 'soc-type "1")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+
+  (funcall-interactively 'soc-type "2")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+
+  (funcall-interactively 'soc-type "3")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+  (setq wait-for-all-soc-compile nil)
+  )
+
+(defun all-compile-no-thread ()
+  (interactive)
+  (funcall-interactively 'device-type "1")
+  (setq wait-for-all-soc-compile t)
+  (all-soc-compile)
+  (while wait-for-all-soc-compile (sleep-for sec msec))
+
+  (funcall-interactively 'device-type "2")
+  (setq wait-for-all-soc-compile t)
+  (all-soc-compile)
+  (while wait-for-all-soc-compile (sleep-for sec msec))
+  
+  (funcall-interactively 'device-type "3")
+  (setq wait-for-all-soc-compile t)
+  (all-soc-compile)
+  (while wait-for-all-soc-compile (sleep-for sec msec))
+  )
+
+(defun all-compile()
+  (interactive)
+  (make-thread 'all-compile-no-thread))
+    
 (defun kig-clean ()
   (interactive)
   (let ((default-directory work_dir_4))
