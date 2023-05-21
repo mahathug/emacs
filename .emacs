@@ -112,7 +112,7 @@
     (setq root-dir-sdk "/media/kamlesh/root/")
     (setq boot-node "/dev/sdb1")
     (setq root-node "/dev/sdb2")
-    (setq network-share-dir "~/network-share")
+    (setq all-builds-dir "~/all-builds")
     
     (setq boot-dir boot-dir-sdk)
     (setq root-dir root-dir-sdk)
@@ -156,21 +156,21 @@
      ((string= device am62x)
       (progn
 	(message "Device is am62x")
-	(setq connected_device am62x)))
+	(setq device am62x)))
      ((string= device am62ax)
       (progn
 	(message "Device is am62ax")
-	(setq connected_device am62ax)))	    
+	(setq device am62ax)))	    
      ((string= device am64x)
       (progn
 	(message "Device is am64x")
-	(setq connected_device am64x)))
+	(setq device am64x)))
      )
 
-    (setq r5-mmc-defconfig (concat connected_device "_evm_r5_defconfig"))
-    (setq r5-usbdfu-defconfig (concat connected_device "_evm_r5_usbdfu_defconfig"))
-    (setq r5-ethboot-defconfig (concat connected_device "_evm_r5_ethboot_defconfig"))
-    (setq a53-gp-defconfig (concat connected_device "_evm_a53_defconfig"))
+    (setq r5-mmc-defconfig (concat device "_evm_r5_defconfig"))
+    (setq r5-usbdfu-defconfig (concat device "_evm_r5_usbdfu_defconfig"))
+    (setq r5-ethboot-defconfig (concat device "_evm_r5_ethboot_defconfig"))
+    (setq a53-gp-defconfig (concat device "_evm_a53_defconfig"))
     
     (cond
      ((string= source mainline)
@@ -205,28 +205,28 @@
     (setq atf-base-make-cmd " make -j32 ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ")
 
     
-    (setq r5-out-dir (concat "out/" sign-type "/"  connected_device "/" soc-type "/r5"))
-    (setq a53-out-dir (concat "out/" sign-type "/" connected_device "/" soc-type "/a53"))
+    (setq r5-out-dir (concat "out/" sign-type "/"  device "/" soc-type "/r5"))
+    (setq a53-out-dir (concat "out/" sign-type "/" device "/" soc-type "/a53"))
     (setq r5-set-out-dir (concat " O=" r5-out-dir))
     (setq a53-set-out-dir (concat " O=" a53-out-dir))
 
-    (setq atf-unsigned (concat " ATF=../../../../../" connected_device "/bl31.bin.unsigned "))
-    (setq atf-signed (concat " ATF=../../../../../" connected_device "/bl31.bin "))
-    (setq optee-unsigned (concat " TEE=../../../../../" connected_device "/bl32.bin.unsigned "))
-    (setq optee-signed (concat " TEE=../../../../../" connected_device "/bl32.bin "))
-    ;; (setq dm-unsigned (concat " DM=../../../../../" connected_device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned ")) ;;
-    (setq dm-signed (concat " DM=../../../../../../ti-linux-firmware/ti-dm/" connected_device "x/ipc_echo_testb_mcu1_0_release_strip.xer5f.signed "))
+    (setq atf-unsigned (concat " ATF=../../../../../" device "/bl31.bin.unsigned "))
+    (setq atf-signed (concat " ATF=../../../../../" device "/bl31.bin "))
+    (setq optee-unsigned (concat " TEE=../../../../../" device "/bl32.bin.unsigned "))
+    (setq optee-signed (concat " TEE=../../../../../" device "/bl32.bin "))
+    ;; (setq dm-unsigned (concat " DM=../../../../../" device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned ")) ;;
+    (setq dm-signed (concat " DM=../../../../../../ti-linux-firmware/ti-dm/" device "x/ipc_echo_testb_mcu1_0_release_strip.xer5f.signed "))
     
     (cond
-     ((string= connected_device am62x)
+     ((string= device am62x)
       (progn
 	;; (message "Device is am62x") ;;
 	nil))
-     ((string= connected_device am62ax)
+     ((string= device am62ax)
       (progn
 	;; (message "Device is am62ax") ;;
 	nil))
-     ((string= connected_device am64x)
+     ((string= device am64x)
       (progn
 	;; (message "Device is am64x") ;;
 	(setq dm-unsigned " ")
@@ -235,8 +235,8 @@
      )
 
 
-    (setq soc (concat " SOC=" connected_device " "))
-    (cond ((string= connected_device am64x) (setq soc (concat " SOC=" connected_device "_sr2 "))))
+    (setq soc (concat " SOC=" device " "))
+    (cond ((string= device am64x) (setq soc (concat " SOC=" device "_sr2 "))))
     (setq sbl (concat  " SBL=" work_dir_2 "/" r5-out-dir "/spl/u-boot-spl.bin"))
     
     (setq soc-type-hs " SOC_TYPE=hs ")
@@ -307,7 +307,7 @@
      (
       (string= sign-type "binman")
       (progn
-    	(setq bl31-unsigned (concat " BL31=../../../../../" connected_device "/bl31.bin.unsigned "))
+    	(setq bl31-unsigned (concat " BL31=../../../../../" device "/bl31.bin.unsigned "))
 	(setq ti-linux-firmware-set " BINMAN_INDIRS=../../../../../../ti-linux-firmware/ ")
 	(setq r5-make-cmd-binman (concat hsse-env  " &&"  r5-base-make-cmd ti-linux-firmware-set r5-set-out-dir))
 	(setq a53-make-cmd-binman (concat hsse-env " && " a53-base-make-cmd bl31-unsigned optee-unsigned ti-linux-firmware-set a53-set-out-dir))
@@ -317,102 +317,102 @@
       )
      )
 
-  (defun soc-type (soc-type-input)
-    "Prompt user for soc-type"
-    (interactive "sEnter soc-type-input: 1 for hs, 2 for hsfs, 3 for gp")
-    (cond
-     (
-      (string= soc-type-input "1")
-      (progn
-	(setq soc-type "hs")	
+    (defun soc-type (soc-type-input)
+      "Prompt user for soc-type"
+      (interactive "sEnter soc-type-input: 1 for hs, 2 for hsfs, 3 for gp")
+      (cond
+       (
+	(string= soc-type-input "1")
+	(progn
+	  (setq soc-type "hs")	
+	  )
 	)
-      )
-     (
-      (string= soc-type-input "2")
-      (progn
-	(setq soc-type "hsfs")	
+       (
+	(string= soc-type-input "2")
+	(progn
+	  (setq soc-type "hsfs")	
+	  )
 	)
-      )
-     (
-      (string= soc-type-input "3")
-      (progn
-	(setq soc-type "gp")
+       (
+	(string= soc-type-input "3")
+	(progn
+	  (setq soc-type "gp")
+	  )
 	)
-      )
-     )
-    (message "soc type is %s" soc-type)
-    (ti-setup)
-    )
-    
-  (defun sign-type(sign-type-input)
-    "Prompt user for sign-type"
-    (interactive "sEnter sign-type-input, k for kig, b for binman:")
-    (cond
-     (
-      (string= sign-type-input "k")
-      (progn
-	(setq sign-type "kig")
-	)
-      )
-     (
-      (string= sign-type-input "b")
-      (progn
-	(setq sign-type "binman")
-	)
-      )
-     )
-    (message "sign type is %s" sign-type)
-    (ti-setup)
-    )
-
-  (defun device-type(device-type-input)
-    "Prompt user for device-type"
-    (interactive "sEnter device-type-input, 1 for am62, 2 for am62a, 3 for am64:")
-    (cond
-     (
-      (string= device-type-input "1")
-      (progn
-	(setq device am62x)
-	)
-      )
-     (
-      (string= device-type-input "2")
-      (progn
-	(setq device am62ax)
-	)
-      )
-      (
-       (string= device-type-input "3")
-       (progn
-	 (setq device am64x)
-	 )
        )
+      (message "soc type is %s" soc-type)
+      (ti-setup)
       )
-    (message "device type is %s" device)
-    (ti-setup)
-    )
+    
+    (defun sign-type(sign-type-input)
+      "Prompt user for sign-type"
+      (interactive "sEnter sign-type-input, k for kig, b for binman:")
+      (cond
+       (
+	(string= sign-type-input "k")
+	(progn
+	  (setq sign-type "kig")
+	  )
+	)
+       (
+	(string= sign-type-input "b")
+	(progn
+	  (setq sign-type "binman")
+	  )
+	)
+       )
+      (message "sign type is %s" sign-type)
+      (ti-setup)
+      )
 
-  (defun source-type()
-    "Prompt user for sign-type"
-    (interactive "sEnter source-type-input, m for mainline, t for ti:")
-    (cond
-     (
-      (string= source-type-input "m")
-      (progn
-	(setq source "mainline")
+    (defun device-type(device-type-input)
+      "Prompt user for device-type"
+      (interactive "sEnter device-type-input, 1 for am62, 2 for am62a, 3 for am64:")
+      (cond
+       (
+	(string= device-type-input "1")
+	(progn
+	  (setq device am62x)
+	  )
 	)
-      )
-     (
-      (string= source-type-input "t")
-      (progn
-	(setq source"ti")
+       (
+	(string= device-type-input "2")
+	(progn
+	  (setq device am62ax)
+	  )
 	)
+       (
+	(string= device-type-input "3")
+	(progn
+	  (setq device am64x)
+	  )
+	)
+       )
+      (message "device type is %s" device)
+      (ti-setup)
       )
-     )
-    (message "source type is %s" source)
-    (ti-setup)
+
+    (defun source-type(source-type-input)
+      "Prompt user for source-type"
+      (interactive "sEnter source-type-input, m for mainline, t for ti:")
+      (cond
+       (
+	(string= source-type-input "m")
+	(progn
+	  (setq source "mainline")
+	  )
+	)
+       (
+	(string= source-type-input "t")
+	(progn
+	  (setq source"ti")
+	  )
+	)
+       )
+      (message "source type is %s" source)
+      (ti-setup)
+      )
     )
-  )
   
   (path-setup)
   (cmd-setup)
@@ -422,22 +422,62 @@
    'linux-kernel)
   
   (setq bookmark-default-file (concat work_dir_1 "bookmarks"))
-  (shell-working-dir)
+  ;; (shell-working-dir) ;;
   ;; (shell-pico) ;;
   (shortcuts-after-setup)
 
-  (defun cp-command-setup()
+  (defun cp-cmd-setup()
     (interactive)
-    (setq cp-boot-to-network-share-cmd (concat "cp " work_dir_4 "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " network-share-dir "/u-boot.img"))
+    (setq all-builds-dev-dir (concat all-builds-dir "/" device))
+    (setq all-builds-dev-hs-dir (concat all-builds-dev-dir "/" soc-type))
+    (setq all-builds-dev-hsfs-dir (concat all-builds-dev-dir "/" soc-type))
+    (setq all-builds-dev-gp-dir (concat all-builds-dev-dir "/" soc-type))
 
-    (setq cp-binman-boot-to-network-share-hs-cmd (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img"))
+    (setq cp-binman-boot-to-all-builds-cmd-hs (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin " all-builds-dev-hs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-dir "/u-boot.img"))
 
-    (setq cp-binman-boot-to-network-share-fs-cmd  (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_fs " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " network-share-dir "/u-boot.img"))
+    (setq cp-binman-boot-to-all-builds-cmd-hsfs (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_fs " all-builds-dev-hsfs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hsfs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hsfs-dir "/u-boot.img"))
 
-    (setq cp-binman-boot-to-network-share-gp-cmd (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_unsigned " network-share-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " network-share-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " network-share-dir "/u-boot.img"))
+    (setq cp-binman-boot-to-all-builds-cmd-gp (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_unsigned " all-builds-dev-gp-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " all-builds-dev-gp-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " all-builds-dev-gp-dir "/u-boot.img"))
+
+    (setq cp-kig-boot-to-all-builds-cmd-hs (concat "cp " work_dir_4 "/tiboot3.bin " all-builds-dev-hs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " all-builds-dev-hs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " all-builds-dev-hs-dir "/u-boot.img"))
+
+    (setq cp-kig-boot-to-all-builds-cmd-hsfs (concat "cp " work_dir_4 "/tiboot3.bin " all-builds-dev-hsfs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " all-builds-dev-hsfs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " all-builds-dev-hsfs-dir "/u-boot.img"))
+
+    (setq cp-kig-boot-to-all-builds-cmd-gp (concat "cp " work_dir_4 "/tiboot3.bin " all-builds-dev-gp-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-gp-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-gp-dir "/u-boot.img"))
+
+    (cond
+     (
+      (string= soc-type "hs")
+      (progn
+	(setq cp-binman-boot-to-all-builds-cmd cp-binman-boot-to-all-builds-cmd-hs)
+	(setq cp-kig-boot-to-all-builds-cmd  cp-kig-boot-to-all-builds-cmd-hs)
+	(setq all-builds-dev-dir-generic all-builds-dev-hs-dir) 
+	)
+      )
+     (
+      (string= soc-type "hsfs")
+      (progn
+	(setq cp-binman-boot-to-all-builds-cmd cp-binman-boot-to-all-builds-cmd-hsfs)
+	(setq cp-kig-boot-to-all-builds-cmd  cp-kig-boot-to-all-builds-cmd-hsfs)
+	(setq all-builds-dev-dir-generic all-builds-dev-hsfs-dir) 
+	)
+      )
+     (
+      (string= soc-type "gp")
+      (progn
+	(setq cp-binman-boot-to-all-builds-cmd cp-binman-boot-to-all-builds-cmd-gp)
+	(setq cp-kig-boot-to-all-builds-cmd  cp-kig-boot-to-all-builds-cmd-gp)
+	(setq all-builds-dev-dir-generic all-builds-dev-gp-dir) 
+	)
+      )
+     )
+
+   
+    (setq pico-binman-cmd (concat "cd " all-builds-dev-dir-generic " && "  "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "u-boot.img\""))
+    
+    (setq pico-cmd pico-binman-cmd)
     )
-
-  (cp-command-setup)
+  (cp-cmd-setup)
   )
 
 (defun set-u-boot-directory (path)
@@ -547,8 +587,23 @@ threads to the notmuch-extract-patch(1) command."
                  (prefix-numeric-value reroll-count)
                  (shell-quote-argument thread-id))
        (format "notmuch-extract-patch %s | ./scripts/checkpatch.pl --strict"
-               (shell-quote-argument thread-id)))
+	       (shell-quote-argument thread-id)))
      "*notmuch-apply-thread-series*")))
+
+
+(defun b4-check-patch (repo branch)
+  (interactive
+   "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \n")
+  (let ( (message-id (notmuch-show-get-message-id t)) ;;
+        (default-directory (expand-file-name work_dir_2)) ;;
+	)
+    (mailscripts--check-out-branch branch) ;;
+    (message "message-id %s" message-id) 
+    (call-process-shell-command
+     (format (concat "rm -rf patches; mkdir -p patches && b4 am -Q " message-id " -o patches > ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict patches/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else b4 am patches/*.mbx ;fi")) nil t nil)	
+    )
+  )
+
 
 
 (defun mbox-check-patch-notmuch-messages ()
@@ -740,9 +795,9 @@ isn't there and triggers an error"
            (let ((buf-A (find-file-noselect file-A))
                  (buf-B (find-file-noselect file-B)))
              (with-current-buffer buf-A
-               (hexl-mode 1))
+	       (hexl-mode 1))
              (with-current-buffer buf-B
-               (hexl-mode 1))
+	       (hexl-mode 1))
              (ediff-buffers buf-A buf-B))
          (error (error-message-string err)))))))
 
@@ -973,9 +1028,9 @@ kernel."
 (dir-locals-set-class-variables
  'linux-kernel
  '((c-mode . (
-              (c-basic-offset . 8)
-              (c-label-minimum-indentation . 0)
-              (c-offsets-alist . (
+	      (c-basic-offset . 8)
+	      (c-label-minimum-indentation . 0)
+	      (c-offsets-alist . (
 				  (arglist-close         . c-lineup-arglist-tabs-only)
 				  (arglist-cont-nonempty .
 							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
@@ -1000,9 +1055,9 @@ kernel."
 				  (statement-cont        . +)
 				  (substatement          . +)
 				  ))
-              (indent-tabs-mode . t)
-              (show-trailing-whitespace . t)
-              ))))
+	      (indent-tabs-mode . t)
+	      (show-trailing-whitespace . t)
+	      ))))
 
 ;; indentaion style end
 
@@ -1011,19 +1066,19 @@ kernel."
 ;; (setq tramp-default-method "ssh") ;;
 (with-eval-after-load 'tramp
   (add-to-list 'tramp-methods
-               '("ssh"
+	       '("ssh"
                  (tramp-login-program        "ssh")
                  (tramp-login-args           (("-l" "%u") ("-p" "%p") ("%c")
-                                              ("-A" "-oHostKeyAlgorithms=+ssh-rsa")
+					      ("-A" "-oHostKeyAlgorithms=+ssh-rsa")
 					      ("-e" "none") ("-X") ("%h")))
                  (tramp-async-args           (("-q")))
                  (tramp-remote-shell         "/bin/sh")
                  (tramp-remote-shell-login   ("-l"))
                  (tramp-remote-shell-args    ("-c"))
                  (tramp-gw-args              (("-o" "GlobalKnownHostsFile=/dev/null")
-                                              ("-o" "UserKnownHostsFile=/dev/null")
-                                              ("-o" "StrictHostKeyChecking=no")
-                                              ("-o" "ForwardX11=yes")))
+					      ("-o" "UserKnownHostsFile=/dev/null")
+					      ("-o" "StrictHostKeyChecking=no")
+					      ("-o" "ForwardX11=yes")))
                  (tramp-default-port         22))))
 
 ;; emacs client
@@ -1104,7 +1159,7 @@ kernel."
 (with-eval-after-load 'info
   (info-initialize)
   (add-to-list 'Info-directory-list
-               "~/.emacs.d/site-lisp/magit/Documentation/"))
+	       "~/.emacs.d/site-lisp/magit/Documentation/"))
 ;; magit end
 
 
@@ -1133,6 +1188,12 @@ kernel."
   (concat "cp " work_dir_4 "/tiboot3.bin tiboot3.bin")
   )
 
+(define-skeleton launcher
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  (concat "cd ~/ && python3 -m http.server 8080 & python3 launcher-test/launcher-test.py launcher-test/template.yaml ; cd -")
+  )
+
 (define-skeleton cp-dts
   "In-buffer settings info for a emacs-org file."
   "Title: "
@@ -1152,34 +1213,34 @@ kernel."
   )
 
 
-(define-skeleton cp-boot-to-network-share
+(define-skeleton cp-kig-boot-to-all-builds
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (format cp-boot-to-network-share-cmd)
+  (format cp-kig-boot-to-all-builds-cmd)
   )
 
-(define-skeleton cp-binman-boot-to-network-share-hs
+(define-skeleton cp-binman-boot-to-all-builds-hs
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (format cp-binman-boot-to-network-share-hs-cmd)
+  (format cp-binman-boot-to-all-builds-cmd-hs)
   )
 
-(define-skeleton cp-binman-boot-to-network-share-fs
+(define-skeleton cp-binman-boot-to-all-builds-fs
   "In-buffer settings info for a emacs-org file."
   "Title: "
-
+  (format cp-binman-boot-to-all-builds-cmd-hsfs)
   )
 
-(define-skeleton cp-binman-boot-to-network-share-gp
+(define-skeleton cp-binman-boot-to-all-builds-gp
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  
+  (format cp-binman-boot-to-all-builds-cmd-gp)  
   )
 
-(define-skeleton cp-network-share-to-mmc
+(define-skeleton cp-all-builds-to-mmc
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "cp " network-share-dir "/* .")
+  (concat "cp " all-builds-dev-dir-generic "/* .")
   )	
 
 (define-skeleton modules-install
@@ -1330,7 +1391,7 @@ kernel."
 (define-skeleton dfu-cmd
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "sudo dfu-util -R -a bootloader -D k3-image-gen/tiboot3.bin" " && sleep 2 && sudo dfu-util -R -a tispl.bin -D " u-boot-type "/out/" connected_device "/a53/" "tispl.bin"  " && sleep 2 && sudo dfu-util -R  -a u-boot.img -D " u-boot-type "/out/" connected_device "/a53/" "u-boot.img")
+  (concat "sudo dfu-util -R -a bootloader -D k3-image-gen/tiboot3.bin" " && sleep 2 && sudo dfu-util -R -a tispl.bin -D " u-boot-type "/out/" device "/a53/" "tispl.bin"  " && sleep 2 && sudo dfu-util -R  -a u-boot.img -D " u-boot-type "/out/" device "/a53/" "u-boot.img")
   )
 
 (define-skeleton devstat-cmd
@@ -1763,6 +1824,18 @@ kernel."
     (message "r5-compile")
     (compile r5-make-cmd)))
 
+(defun cp-boot-binman-compile ()
+  (interactive)
+  (let ((default-directory work_dir_2))
+    (message "cp-boot-binman-compile")
+    (compile cp-binman-boot-to-all-builds-cmd)))
+
+(defun cp-boot-kig-compile ()
+  (interactive)
+  (let ((default-directory work_dir_2))
+    (message "cp-boot-kig-compile")
+    (compile cp-kig-boot-to-all-builds-cmd)))
+
 (defun r5-binman-compile ()
   (interactive)
   (let ((default-directory work_dir_2))
@@ -1802,19 +1875,62 @@ kernel."
 (defun synchronous-compile ()
   (interactive)
   (setq compilation-finish-functions 'my-compilation-finish-function)
+
   (setq wait-for-completion t)
   (r5-mmc-defconfig)
   (while wait-for-completion (sleep-for sec msec))
+
   (setq wait-for-completion t)
   (r5-compile)
   (while wait-for-completion (sleep-for sec msec))
+
   (setq wait-for-completion t)
   (a53-defconfig)
   (while wait-for-completion (sleep-for sec msec))
+
   (setq wait-for-completion t)
   (a53-compile)
   (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (cp-boot-binman-compile)
+  (while wait-for-completion (sleep-for sec msec))
+  
   (setq wait-for-synchronous-completion nil)
+
+  )
+
+
+(defun synchronous-compile-kig ()
+  (interactive)
+  (setq compilation-finish-functions 'my-compilation-finish-function)
+
+  (setq wait-for-completion t)
+  (r5-mmc-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (r5-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (kig-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (a53-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (a53-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (cp-boot-kig-compile)
+  (while wait-for-completion (sleep-for sec msec))
+  
+  (setq wait-for-synchronous-completion nil)
+
   )
 
 (defun all-device-compile ()
@@ -1856,6 +1972,46 @@ kernel."
   (setq wait-for-all-soc-compile nil)
   )
 
+(defun all-device-compile-kig ()
+  (interactive)
+
+  (funcall-interactively 'device-type "1")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile-kig)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+  
+  (funcall-interactively 'device-type "2")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile-kig)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+
+  (funcall-interactively 'device-type "3")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile-kig)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+  )
+
+(defun all-soc-compile-kig ()
+  (interactive)
+
+  (funcall-interactively 'soc-type "1")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile-kig)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+
+  (funcall-interactively 'soc-type "2")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile-kig)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+
+  (funcall-interactively 'soc-type "3")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile-kig)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+  (setq wait-for-all-soc-compile nil)
+  )
+
+
 (defun all-compile-no-thread ()
   (interactive)
   (funcall-interactively 'device-type "1")
@@ -1877,7 +2033,7 @@ kernel."
 (defun all-compile()
   (interactive)
   (make-thread 'all-compile-no-thread))
-    
+
 (defun kig-clean ()
   (interactive)
   (let ((default-directory work_dir_4))
@@ -1911,7 +2067,7 @@ kernel."
 (defun kernel-defconfig ()
   (interactive)
   (let ((default-directory work_dir_3))
-    (compile (concat kernel-base-make-cmd "tisdk_" connected_device "-evm_defconfig"))))
+    (compile (concat kernel-base-make-cmd "tisdk_" device "-evm_defconfig"))))
 
 (defun atf-compile ()
   (interactive)
@@ -1931,9 +2087,6 @@ kernel."
 
 (defun shell-pico()
   (interactive)
-  (setq pico-cmd-gp (concat "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " u-boot-type "/out/" connected_device "/a53/" "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " u-boot-type "/out/" connected_device "/a53/" "u-boot.img\""))
-  (setq pico-binman-cmd (concat "cd ~/network-share" " && "  "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "u-boot.img\""))
-  (setq pico-cmd pico-binman-cmd)
   (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
   (setq buffer-name "pico")
   
