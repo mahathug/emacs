@@ -591,20 +591,25 @@ threads to the notmuch-extract-patch(1) command."
      "*notmuch-apply-thread-series*")))
 
 
-(defun b4-check-patch (repo branch)
+(defun b4-check-patch-process (repo branch)
   (interactive
    "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \n")
   (let ( (message-id (notmuch-show-get-message-id t)) ;;
         (default-directory (expand-file-name work_dir_2)) ;;
 	)
-    (mailscripts--check-out-branch branch) ;;
+    (call-process-shell-command (format "git checkout -b" message-id)) ;;
     (message "message-id %s" message-id) 
     (call-process-shell-command
-     (format (concat "rm -rf patches; mkdir -p patches && b4 am -Q " message-id " -o patches > ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict patches/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else b4 am patches/*.mbx ;fi")) nil t nil)	
+     (format (concat "rm -rf patches; mkdir -p patches && b4 am -Q " message-id " -o patches > ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict patches/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am patches/*.mbx > ~/b4-check-patch 2>&1;fi ")) nil t nil)	
     )
+  (pop-to-buffer (find-file "~/b4-check-patch")) 
   )
 
 
+(defun b4-check-patch ()
+  (interactive)
+  (funcall-interactively 'b4-check-patch-process work_dir_2 "b4-new")
+)
 
 (defun mbox-check-patch-notmuch-messages ()
   "When this function is executed in notmuch-show buffer all the \"open\"
@@ -1391,7 +1396,7 @@ kernel."
 (define-skeleton dfu-cmd
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (concat "sudo dfu-util -R -a bootloader -D k3-image-gen/tiboot3.bin" " && sleep 2 && sudo dfu-util -R -a tispl.bin -D " u-boot-type "/out/" device "/a53/" "tispl.bin"  " && sleep 2 && sudo dfu-util -R  -a u-boot.img -D " u-boot-type "/out/" device "/a53/" "u-boot.img")
+  (concat "cd " all-builds-dev-dir-generic " && "  " sudo dfu-util -R -a bootloader -D tiboot3.bin" " && sleep 1 && sudo dfu-util -R -a tispl.bin -D tispl.bin"   " && sleep 1 && sudo dfu-util -R  -a u-boot.img -D u-boot.img")
   )
 
 (define-skeleton devstat-cmd
@@ -1809,7 +1814,7 @@ kernel."
     (compile r5-mmc-defconfig-cmd)))
 
 (defun r5-usbdfu-defconfig ()
-  (interactive)/
+  (interactive)
   (let ((default-directory work_dir_2))
     (compile r5-usbdfu-defconfig-cmd)))
 
