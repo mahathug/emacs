@@ -120,10 +120,10 @@
 
   (defun default-cmd-setup()
     (interactive )  
-    (defvar soc-type "hsfs")
+    (defvar soc-type "hs-fs")
     (defvar sign-type "kig")
     (defvar device am62x)
-    (defvar source mainline)
+    (defvar source ti)
     )
 
   
@@ -196,7 +196,7 @@
     (interactive )
 
     (setq hsse-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
-    (setq hsfs-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
+    (setq hs-fs-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
 
     (setq r5-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabihf- ")
     (setq a53-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ")
@@ -204,7 +204,6 @@
     (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
     (setq atf-base-make-cmd " make -j32 ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ")
 
-    
     (setq r5-out-dir (concat "out/" sign-type "/"  device "/" soc-type "/r5"))
     (setq a53-out-dir (concat "out/" sign-type "/" device "/" soc-type "/a53"))
     (setq r5-set-out-dir (concat " O=" r5-out-dir))
@@ -240,7 +239,7 @@
     (setq sbl (concat  " SBL=" work_dir_2 "/" r5-out-dir "/spl/u-boot-spl.bin"))
     
     (setq soc-type-hs " SOC_TYPE=hs ")
-    (setq soc-type-hsfs " SOC_TYPE=hs-fs ")
+    (setq soc-type-hs-fs " SOC_TYPE=hs-fs ")
     (setq sysfw-dir (concat " SYSFW_DIR=" work_dir_1 "/ti-linux-firmware/ti-sysfw/ "))
     (setq make-clean " && make -j16 clean")
 
@@ -255,8 +254,8 @@
     (setq r5-make-cmd-kig (concat hsse-env  " && " r5-base-make-cmd r5-set-out-dir))
     
     (setq a53-make-cmd-kig a53-hs-make-cmd)
-    ;; (setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl sysfw-dir)) ;;
-    ;; (setq kig-make-cmd kig-hsfs-make-cmd) ;;
+    ;; (setq kig-hs-fs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs-fs sbl sysfw-dir)) ;;
+    ;; (setq kig-make-cmd kig-hs-fs-make-cmd) ;;
 
 
     (setq r5-make-cmd r5-make-cmd-kig)
@@ -274,13 +273,13 @@
 	)
       )
      (
-      (string= soc-type "hsfs")
+      (string= soc-type "hs-fs")
       (progn
 	;; (setq a53-make-cmd-kig a53-hs-make-cmd)	    ;;
 	(setq a53-make-cmd-kig a53-hs-make-cmd)
 	(setq r5-make-cmd-kig r5-make-cmd-kig)
-	(setq kig-hsfs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hsfs sbl sysfw-dir))
-	(setq kig-make-cmd-kig kig-hsfs-make-cmd)
+	(setq kig-hs-fs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs-fs sbl sysfw-dir))
+	(setq kig-make-cmd-kig kig-hs-fs-make-cmd)
 	)
       )
      (
@@ -319,7 +318,7 @@
 
     (defun soc-type (soc-type-input)
       "Prompt user for soc-type"
-      (interactive "sEnter soc-type-input: 1 for hs, 2 for hsfs, 3 for gp")
+      (interactive "sEnter soc-type-input: 1 for hs, 2 for hs-fs, 3 for gp")
       (cond
        (
 	(string= soc-type-input "1")
@@ -330,7 +329,7 @@
        (
 	(string= soc-type-input "2")
 	(progn
-	  (setq soc-type "hsfs")	
+	  (setq soc-type "hs-fs")	
 	  )
 	)
        (
@@ -430,18 +429,19 @@
     (interactive)
     (setq all-builds-dev-dir (concat all-builds-dir "/" device))
     (setq all-builds-dev-hs-dir (concat all-builds-dev-dir "/" soc-type))
-    (setq all-builds-dev-hsfs-dir (concat all-builds-dev-dir "/" soc-type))
+    (setq all-builds-dev-hs-fs-dir (concat all-builds-dev-dir "/" soc-type))
     (setq all-builds-dev-gp-dir (concat all-builds-dev-dir "/" soc-type))
+    (setq tiboot3 (concat "tiboot3-" device "-" soc-type "-" "evm.bin"))
+    (cond ((and (string= device am64x)  (not (string= soc-type "gp")) ) (setq tiboot3 (concat "tiboot3-" device "_sr2" "-" soc-type "-" "evm.bin"))))
+    (setq cp-binman-boot-to-all-builds-cmd-hs (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-hs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-dir "/u-boot.img"))
 
-    (setq cp-binman-boot-to-all-builds-cmd-hs (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin " all-builds-dev-hs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-dir "/u-boot.img"))
+    (setq cp-binman-boot-to-all-builds-cmd-hs-fs (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-hs-fs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hs-fs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-fs-dir "/u-boot.img"))
 
-    (setq cp-binman-boot-to-all-builds-cmd-hsfs (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_fs " all-builds-dev-hsfs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hsfs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hsfs-dir "/u-boot.img"))
-
-    (setq cp-binman-boot-to-all-builds-cmd-gp (concat "cp " work_dir_2 "/" r5-out-dir "/tiboot3.bin_unsigned " all-builds-dev-gp-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " all-builds-dev-gp-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " all-builds-dev-gp-dir "/u-boot.img"))
+    (setq cp-binman-boot-to-all-builds-cmd-gp (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-gp-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " all-builds-dev-gp-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " all-builds-dev-gp-dir "/u-boot.img"))
 
     (setq cp-kig-boot-to-all-builds-cmd-hs (concat "cp " work_dir_4 "/tiboot3.bin " all-builds-dev-hs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " all-builds-dev-hs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " all-builds-dev-hs-dir "/u-boot.img"))
 
-    (setq cp-kig-boot-to-all-builds-cmd-hsfs (concat "cp " work_dir_4 "/tiboot3.bin " all-builds-dev-hsfs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " all-builds-dev-hsfs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " all-builds-dev-hsfs-dir "/u-boot.img"))
+    (setq cp-kig-boot-to-all-builds-cmd-hs-fs (concat "cp " work_dir_4 "/tiboot3.bin " all-builds-dev-hs-fs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_HS " all-builds-dev-hs-fs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_HS " all-builds-dev-hs-fs-dir "/u-boot.img"))
 
     (setq cp-kig-boot-to-all-builds-cmd-gp (concat "cp " work_dir_4 "/tiboot3.bin " all-builds-dev-gp-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-gp-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-gp-dir "/u-boot.img"))
 
@@ -455,11 +455,11 @@
 	)
       )
      (
-      (string= soc-type "hsfs")
+      (string= soc-type "hs-fs")
       (progn
-	(setq cp-binman-boot-to-all-builds-cmd cp-binman-boot-to-all-builds-cmd-hsfs)
-	(setq cp-kig-boot-to-all-builds-cmd  cp-kig-boot-to-all-builds-cmd-hsfs)
-	(setq all-builds-dev-dir-generic all-builds-dev-hsfs-dir) 
+	(setq cp-binman-boot-to-all-builds-cmd cp-binman-boot-to-all-builds-cmd-hs-fs)
+	(setq cp-kig-boot-to-all-builds-cmd  cp-kig-boot-to-all-builds-cmd-hs-fs)
+	(setq all-builds-dev-dir-generic all-builds-dev-hs-fs-dir) 
 	)
       )
      (
@@ -1233,7 +1233,7 @@ kernel."
 (define-skeleton cp-binman-boot-to-all-builds-fs
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  (format cp-binman-boot-to-all-builds-cmd-hsfs)
+  (format cp-binman-boot-to-all-builds-cmd-hs-fs)
   )
 
 (define-skeleton cp-binman-boot-to-all-builds-gp
