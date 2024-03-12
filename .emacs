@@ -3,6 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(column-number-mode t)
  '(comment-multi-line t)
  '(comment-style 'aligned)
  '(custom-enabled-themes '(misterioso))
@@ -22,7 +23,7 @@
      (:name "direct" :query "tag:direct" :key "d" :sort-order newest-first)
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
  '(package-selected-packages
-   '(mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
  '(safe-local-variable-values
    '((c-offsets-alist
       (arglist-close . c-lineup-arglist-tabs-only)
@@ -98,20 +99,26 @@
     (setq ti-meta-ti "meta-ti")
     (setq u-boot "u-boot")
     (setq linux "linux-next")
-    (setq atf "")
+    (setq atf "trusted-firmware-a")
     ;; (setq working-project-path nil) ;;
     (setq am62x "am62x")
     (setq am62ax "am62ax")
     (setq am64x "am64x")
+    (setq am62x_lpsk "am62x_lpsk")
+    (setq am65x "am65x")
+    (setq am62l "am62l")
     (setq mainline "mainline")
     (setq ti "ti")
-    
+
+
     (setq boot-dir-debian "/media/kamlesh/BOOT")
     (setq boot-dir-sdk "/media/kamlesh/boot")
     (setq root-dir-debian "/media/kamlesh/rootfs/")
     (setq root-dir-sdk "/media/kamlesh/root/")
-    (setq boot-node "/dev/sdb1")
-    (setq root-node "/dev/sdb2")
+    (setq boot-node "/dev/sda1")
+    (setq root-node "/dev/sda2")
+    (setq relay-number-am62x "1")
+    (setq relay-number-am64x "3")
     (setq all-builds-dir "~/all-builds")
     
     (setq boot-dir boot-dir-sdk)
@@ -121,9 +128,10 @@
   (defun default-cmd-setup()
     (interactive )  
     (defvar soc-type "hs-fs")
-    (defvar sign-type "kig")
+    (defvar sign-type "binman")
     (defvar device am62x)
     (defvar source ti)
+    (defvar boot-type "mmc")
     )
 
   
@@ -150,13 +158,18 @@
     (setq work_dir_6 linux-path)
     (setq work_dir_9 atf-path)
     
-    (setq remote_work_dir_3 "/ssh:root@172.24.145.160:~/")
+    ;; (setq remote_work_dir_3 "/ssh:debian@10.24.68.197:~/") ;;
+    (setq remote_work_dir_3 "/ssh:root@10.24.69.153:~/")
     
     (cond
      ((string= device am62x)
       (progn
 	(message "Device is am62x")
 	(setq device am62x)))
+     ((string= device am62x_lpsk)
+      (progn
+	(message "Device is am62x_lpsk")
+	(setq device am62x_lpsk)))
      ((string= device am62ax)
       (progn
 	(message "Device is am62ax")
@@ -165,6 +178,10 @@
       (progn
 	(message "Device is am64x")
 	(setq device am64x)))
+     ((string= device am64x)
+      (progn
+	(message "Device is am65x")
+	(setq device am65x)))
      )
 
     (setq r5-mmc-defconfig (concat device "_evm_r5_defconfig"))
@@ -176,10 +193,10 @@
      ((string= source mainline)
       (progn
 	(message "Source is mainline")
-	(setq work_dir_2 u-boot-path)
+	(setq work_dir_2 u-boot-path)        ;;
 	(setq u-boot-type u-boot)
 	(setq work_dir_3 linux-path)
-	(setq work_dir_5 ti-u-boot-path)
+	;; (setq work_dir_5 ti-u-boot-path)	   ;;
 	))
      ((string= source ti)
       (progn
@@ -195,15 +212,21 @@
   (defun cmd-setup ()
     (interactive )
 
-    (setq hsse-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
-    (setq hs-fs-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3")
+    ;; (setq hsse-env "cd ./ ") ;;
+    (setq hsse-env "cd ./ ")
+    ;; (setq hsse-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3") ;;
+    ;; (setq hs-fs-env "export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin:$PATH && export PATH=$HOME/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin:$PATH && export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3") ;;
 
     (setq r5-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabihf- ")
     (setq a53-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
-    (setq atf-base-make-cmd " make -j32 ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ")
-
+    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;;
+    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
+        ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
+    
+    (cond
+     ((string= device am65x)    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-linux-gnu- PLAT=k3 TARGET_BOARD=generic SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-linux-gnu- PLAT=k3 TARGET_BOARD=generic SPD=opteed ")))
     (setq r5-out-dir (concat "out/" sign-type "/"  device "/" soc-type "/r5"))
     (setq a53-out-dir (concat "out/" sign-type "/" device "/" soc-type "/a53"))
     (setq r5-set-out-dir (concat " O=" r5-out-dir))
@@ -220,6 +243,12 @@
      ((string= device am62x)
       (progn
 	;; (message "Device is am62x") ;;
+	nil))
+     ((string= device am62x_lpsk)
+      (progn
+	(setq r5-mmc-defconfig (concat device "_r5_defconfig"))
+	(setq r5-usbdfu-defconfig (concat device "_r5_usbdfu_defconfig"))
+	(setq a53-gp-defconfig (concat device "_a53_defconfig"))
 	nil))
      ((string= device am62ax)
       (progn
@@ -243,15 +272,15 @@
     (setq sysfw-dir (concat " SYSFW_DIR=" work_dir_1 "/ti-linux-firmware/ti-sysfw/ "))
     (setq make-clean " && make -j16 clean")
 
-    (setq r5-mmc-defconfig-cmd (concat hsse-env  " &&"  r5-base-make-cmd r5-mmc-defconfig r5-set-out-dir ))
-    (setq r5-usbdfu-defconfig-cmd (concat hsse-env  " &&" r5-base-make-cmd r5-usbdfu-defconfig r5-set-out-dir))
-    (setq r5-ethboot-defconfig-cmd (concat hsse-env  " &&" r5-base-make-cmd r5-ethboot-defconfig r5-set-out-dir))
+    (setq r5-mmc-defconfig-cmd (concat r5-base-make-cmd r5-mmc-defconfig r5-set-out-dir ))
+    (setq r5-usbdfu-defconfig-cmd (concat  r5-base-make-cmd r5-usbdfu-defconfig r5-set-out-dir))
+    (setq r5-ethboot-defconfig-cmd (concat    r5-base-make-cmd r5-ethboot-defconfig r5-set-out-dir))
     
-    (setq a53-defconfig-cmd  (concat hsse-env " && " a53-base-make-cmd a53-gp-defconfig a53-set-out-dir))
+    (setq a53-defconfig-cmd  (concat  a53-base-make-cmd a53-gp-defconfig a53-set-out-dir))
     
-    (setq a53-gp-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
-    (setq a53-hs-make-cmd (concat hsse-env " && " a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
-    (setq r5-make-cmd-kig (concat hsse-env  " && " r5-base-make-cmd r5-set-out-dir))
+    (setq a53-gp-make-cmd (concat  a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
+    (setq a53-hs-make-cmd (concat  a53-base-make-cmd atf-signed optee-signed dm-signed a53-set-out-dir))
+    (setq r5-make-cmd-kig (concat   r5-base-make-cmd r5-set-out-dir))
     
     (setq a53-make-cmd-kig a53-hs-make-cmd)
     ;; (setq kig-hs-fs-make-cmd (concat " ; " r5-base-make-cmd soc soc-type-hs-fs sbl sysfw-dir)) ;;
@@ -261,6 +290,15 @@
     (setq r5-make-cmd r5-make-cmd-kig)
     (setq  a53-make-cmd a53-make-cmd-kig)
 
+    (setq atf-make-cmd (concat  atf-base-make-cmd))
+    (setq atf-copy-cmd (concat "cp " "build/k3/lite/release/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
+    (setq atf-debug-copy-cmd (concat "cp " "build/k3/lite/debug/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
+    (cond
+     ((string= device am65x) (progn
+			       (setq atf-copy-cmd (concat "cp " "build/k3/generic/release/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
+			       (setq atf-debug-copy-cmd (concat "cp " "build/k3/generic/debug/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
+			       )))
+    
     (cond
      (
       (string= soc-type "hs")
@@ -308,13 +346,29 @@
       (progn
     	(setq bl31-unsigned (concat " BL31=../../../../../" device "/bl31.bin.unsigned "))
 	(setq ti-linux-firmware-set " BINMAN_INDIRS=../../../../../../ti-linux-firmware/ ")
-	(setq r5-make-cmd-binman (concat hsse-env  " &&"  r5-base-make-cmd ti-linux-firmware-set r5-set-out-dir))
-	(setq a53-make-cmd-binman (concat hsse-env " && " a53-base-make-cmd bl31-unsigned optee-unsigned ti-linux-firmware-set a53-set-out-dir))
+	(setq r5-make-cmd-binman (concat r5-base-make-cmd ti-linux-firmware-set r5-set-out-dir))
+	(setq a53-make-cmd-binman (concat a53-base-make-cmd bl31-unsigned optee-unsigned ti-linux-firmware-set a53-set-out-dir))
 	(setq r5-make-cmd r5-make-cmd-binman)
 	(setq a53-make-cmd a53-make-cmd-binman)
 	)
       )
      )
+
+    (cond
+     (
+      (string= boot-type "mmc")
+      (progn
+	(setq r5-defconfig-cmd r5-mmc-defconfig-cmd)
+	)
+      )
+     (
+      (string= boot-type "dfu")
+      (progn
+	(setq r5-defconfig-cmd r5-usbdfu-defconfig-cmd)
+	)
+      )
+     )
+    
 
     (defun soc-type (soc-type-input)
       "Prompt user for soc-type"
@@ -366,7 +420,7 @@
 
     (defun device-type(device-type-input)
       "Prompt user for device-type"
-      (interactive "sEnter device-type-input, 1 for am62, 2 for am62a, 3 for am64:")
+      (interactive "sEnter device-type-input, 1 for am62, 2 for am62a, 3 for am64, 4 for am62-lp, 5 for am65x:")
       (cond
        (
 	(string= device-type-input "1")
@@ -384,6 +438,18 @@
 	(string= device-type-input "3")
 	(progn
 	  (setq device am64x)
+	  )
+	)
+       (
+	(string= device-type-input "4")
+	(progn
+	  (setq device am62x_lpsk)
+	  )
+	)
+       (
+	(string= device-type-input "5")
+	(progn
+	  (setq device am65x)
 	  )
 	)
        )
@@ -411,11 +477,33 @@
       (message "source type is %s" source)
       (ti-setup)
       )
+    
+    (defun boot-type(boot-type-input)
+      "Prompt user for boot-type"
+      (interactive "sEnter boot-type-input, d for dfu, m for mmc/uart:")
+      (cond
+       (
+	(string= boot-type-input "m")
+	(progn
+	  (setq boot-type "mmc")
+	  )
+	)
+       (
+	(string= boot-type-input "d")
+	(progn
+	  (setq boot-type "dfu")
+	  )
+	)
+       )
+      (message "boot type is %s" boot-type)
+      (ti-setup)
+      )
     )
+  
   
   (path-setup)
   (cmd-setup)
-  (message "%s %s %s %s" device soc-type source sign-type)
+  (message "%s %s %s %s %s" device soc-type source sign-type boot-type)
   (dir-locals-set-directory-class
    (expand-file-name work_dir_3)
    'linux-kernel)
@@ -433,9 +521,14 @@
     (setq all-builds-dev-gp-dir (concat all-builds-dev-dir "/" soc-type))
     (setq tiboot3 (concat "tiboot3-" device "-" soc-type "-" "evm.bin"))
     (cond ((and (string= device am64x)  (not (string= soc-type "gp")) ) (setq tiboot3 (concat "tiboot3-" device "_sr2" "-" soc-type "-" "evm.bin"))))
+    (cond ((and (string= device am65x) (setq tiboot3 (concat "tiboot3-" device "_sr2" "-" soc-type "-" "evm.bin")))))
+    (cond ((string= device am62x_lpsk)  (setq tiboot3 (concat "tiboot3-" am62x "-" soc-type "-" "evm.bin"))))
     (setq cp-binman-boot-to-all-builds-cmd-hs (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-hs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-dir "/u-boot.img"))
 
-    (setq cp-binman-boot-to-all-builds-cmd-hs-fs (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-hs-fs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hs-fs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-fs-dir "/u-boot.img"))
+    ;; (setq cp-binman-boot-to-all-builds-cmd-hs-fs (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-hs-fs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " all-builds-dev-hs-fs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-fs-dir "/u-boot.img"))
+
+        (setq cp-binman-boot-to-all-builds-cmd-hs-fs (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-hs-fs-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin " all-builds-dev-hs-fs-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img " all-builds-dev-hs-fs-dir "/u-boot.img"))
+
 
     (setq cp-binman-boot-to-all-builds-cmd-gp (concat "cp " work_dir_2 "/" r5-out-dir "/" tiboot3 " " all-builds-dev-gp-dir "/tiboot3.bin && cp " work_dir_2 "/" a53-out-dir "/tispl.bin_unsigned " all-builds-dev-gp-dir "/tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img_unsigned " all-builds-dev-gp-dir "/u-boot.img"))
 
@@ -472,12 +565,30 @@
       )
      )
 
-   
-    (setq pico-binman-cmd (concat "cd " all-builds-dev-dir-generic " && "  "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "u-boot.img\""))
+    (cond
+     (    
+      (string= boot-type "dfu")
+      (progn
+	(setq dfu-cmd (concat "cd " all-builds-dev-dir-generic " && "  " sudo dfu-util -R -a bootloader -D tiboot3.bin" " && sleep 1 && sudo dfu-util -R -a tispl.bin -D tispl.bin"   " && sleep 2 && sudo dfu-util -R  -a u-boot.img -D u-boot.img; cd -")))) 
+      (t (setq dfu-cmd (concat "cd " all-builds-dev-dir-generic "-dfu" " && "  " sudo dfu-util -R -a bootloader -D tiboot3.bin" " && sleep 1 && sudo dfu-util -R -a tispl.bin -D tispl.bin"   " && sleep 2 && sudo dfu-util -R  -a u-boot.img -D u-boot.img; cd -")))
+      )
     
+    (setq pico-binman-cmd (concat "cd " all-builds-dev-dir-generic " && "  "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV -s \"sx tiboot3.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "tispl.bin\" && sudo picocom -b 115200 $DEV -s \"sb --ymodem -vv " "u-boot.img\""))
+    (setq cp-all-builds-to-mmc-cmd (concat "cp " all-builds-dev-dir-generic "/* ."))
     (setq pico-cmd pico-binman-cmd)
     )
   (cp-cmd-setup)
+
+  (defun relay-cmd-setup()
+    (interactive)
+    (cond ((string= device am62x)  (setq relay-number relay-number-am62x)))
+    (if (string= device am64x)  (setq relay-number relay-number-am64x)
+	   (setq relay-number relay-number-am62x)
+	   )
+    (setq relay-toggle-cmd (concat "perl ~/relay/perl/perl_eth.pl " relay-number " && sleep 2"))
+    )
+  (relay-cmd-setup)
+  (skeleton-setup)
   )
 
 (defun set-u-boot-directory (path)
@@ -523,17 +634,17 @@ overrides the current directory, which would otherwise be used."
   (setq work_dir_6 "/ssh:csdcd6@43.4.2.246:~/kamlesh_ws/coordinate_issue")
   (setq work_dir_librpp "/ssh:ubuntu@43.88.80.124:/home/ubuntu/rpp/vp1-project/build/tmp/work/cortexa9hf-neon-poky-linux-gnueabi/librpp/0.21.5-r0/git/librpp/")
   (setq work_dir_t_librpp (concat "/ssh:csdcd4@43.4.2.120|ssh:root@10.0.52.12:/usr/local/vp1/lib/"))
-
+  i
   ;; (setq work_dir_2 "/home/ubuntu/rpp/vp1-project/build/tmp/work/vp1-poky-linux-gnueabi/kernel-module-rpp/0.21.5-r0/git/drvrpp/")
 
   (setq work_dir_rpp_make "/ssh:ubuntu@43.88.80.124:/home/ubuntu/rpp/vp1-project/vp1-sdk-airbg/")
   (setq cscope_dir work_dir_1)
   (setq cscope-initial-directory cscope_dir)
   (shortcuts-after-setup)
-  (fset 'cscope-init-dir
-	"\C-xrbcscope-build\C-m\C-csa\C-m")
+  ;; (fset 'cscope-init-dir
+  ;; 	"\C-xrbcscope-build\C-m\C-csa\C-m")
 
-  (execute-kbd-macro (symbol-function 'cscope-init-dir))
+  ;; (execute-kbd-macro (symbol-function 'cscope-init-dir))
   ;; (defun clean-ci () (interactive) ((let ((default-directory concat (work_dir_4 "/rawdata/")))(shell "ls"))))
   )
 
@@ -595,12 +706,12 @@ threads to the notmuch-extract-patch(1) command."
   (interactive
    "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \n")
   (let ( (message-id (notmuch-show-get-message-id t)) ;;
-        (default-directory (expand-file-name work_dir_2)) ;;
-	)
+         (default-directory (expand-file-name work_dir_2)) ;;
+	 )
     (call-process-shell-command (format "git checkout -b" message-id)) ;;
     (message "message-id %s" message-id) 
     (call-process-shell-command
-     (format (concat "rm -rf patches; mkdir -p patches && b4 am -Q " message-id " -o patches > ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict patches/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am patches/*.mbx > ~/b4-check-patch 2>&1;fi ")) nil t nil)	
+     (format (concat "rm -rf patches; mkdir -p patches && b4 am -Q " message-id " -o patches > ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict patches/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am patches/*.mbx >> ~/b4-check-patch 2>&1;fi ")) nil t nil)	
     )
   (pop-to-buffer (find-file "~/b4-check-patch")) 
   )
@@ -609,7 +720,7 @@ threads to the notmuch-extract-patch(1) command."
 (defun b4-check-patch ()
   (interactive)
   (funcall-interactively 'b4-check-patch-process work_dir_2 "b4-new")
-)
+  )
 
 (defun mbox-check-patch-notmuch-messages ()
   "When this function is executed in notmuch-show buffer all the \"open\"
@@ -1186,243 +1297,311 @@ kernel."
 ;;   "-----"
 ;;   )
 
+(defun skeleton-setup ()
+  (interactive )
 
-(define-skeleton cp-tib
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "cp " work_dir_4 "/tiboot3.bin tiboot3.bin")
-  )
+  (define-skeleton mmc-write
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat m-root-cmd " && " "sudo cp ~/am62/binman/ti-linux-kernel-cgit/arch/arm64/boot/Image  . && sudo cp ~/am62/binman//ti-linux-kernel-cgit/arch/arm64/boot/dts/ti/k3-am625-sk.dtb dtb/ti/ && cd - && sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install && cd -" " && " um-root-cmd)
+    )
 
-(define-skeleton launcher
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "cd ~/ && python3 -m http.server 8080 & python3 launcher-test/launcher-test.py launcher-test/template.yaml ; cd -")
-  )
+  (define-skeleton mmc-bwrite
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat m-boot-cmd " && " cp-all-builds-to-mmc-cmd  " && " um-boot-cmd)
+    )
 
-(define-skeleton cp-dts
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo cp " work_dir_2 "/ti-linux-kernel/arch/arm64/boot/dts/ti/k3-am625-sk.dtb ."
-  )
-
-(define-skeleton cp-image
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo cp " work_dir_2 "/ti-linux-kernel/arch/arm64/boot/Image ."
-  )
-
-(define-skeleton cp-tispl
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "cp " work_dir_2 "/" a53-out-dir "/tispl.bin tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img u-boot.img")
-  )
+  (define-skeleton cp-tib
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "./bin/check-warn.sh -d AM62x -o linux -a HEAD^ -b HEAD"
+    )
 
 
-(define-skeleton cp-kig-boot-to-all-builds
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format cp-kig-boot-to-all-builds-cmd)
-  )
+  (define-skeleton wd3
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat "cd " work_dir_3)
+    )
 
-(define-skeleton cp-binman-boot-to-all-builds-hs
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format cp-binman-boot-to-all-builds-cmd-hs)
-  )
+  (define-skeleton cp-tib
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat "cp " work_dir_4 "/tiboot3.bin tiboot3.bin")
+    )
 
-(define-skeleton cp-binman-boot-to-all-builds-fs
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format cp-binman-boot-to-all-builds-cmd-hs-fs)
-  )
+  (define-skeleton launcher
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat "cd ~/; python3 -m http.server 8080 & python3 launcher-test/launcher-test.py launcher-test/template.yaml ; cd -")
+    )
 
-(define-skeleton cp-binman-boot-to-all-builds-gp
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format cp-binman-boot-to-all-builds-cmd-gp)  
-  )
+  (define-skeleton cp-dts
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo cp " work_dir_3 "/arch/arm64/boot/dts/ti/k3-am625-sk.dtb ."
+    )
 
-(define-skeleton cp-all-builds-to-mmc
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "cp " all-builds-dev-dir-generic "/* .")
-  )	
+  (define-skeleton cp-image
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo cp " work_dir_3 "/arch/arm64/boot/Image ."
+    )
 
-(define-skeleton modules-install
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install")
-  )
-
-(define-skeleton ex-core-sec
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3 && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh"
-  )
-
-(define-skeleton make-image
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- Image"
-  )
-
-(define-skeleton make-defconfig
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- tisdk_am62xx-evm_defconfig"
-  )
-
-(define-skeleton mk-mod
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- modules"
-  )
-
-(define-skeleton mk-optee
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "rm -rf out/ ; make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y && cd ../ && make -j16 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ATF=../../08.04.00.005/bl31.bin TEE=../../optee_os/out/arm-plat-k3/core/tee-pager_v2.bin DM=../../08.04.00.005/ipc_echo_testb_mcu1_0_release_strip.xer5f O=gp-84/a53"
-  )
-
-(define-skeleton tcrypt
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo modprobe tcrypt mode=329 sec=1"
-  )
-
-(define-skeleton mcrc-reins
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo modprobe -r mcrc && sudo insmod mcrc.ko"
-  )
-
-(define-skeleton um-boot
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "cd - && umount " boot-dir " && lsblk")
-  )
-
-(define-skeleton m-boot
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "udisksctl mount -b " boot-node " && cd " boot-dir)
-  )
-
-(define-skeleton um-root
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "cd - && umount " root-dir " && lsblk")
-  )
-
-(define-skeleton m-root
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "udisksctl mount -b " root-node " && cd " root-dir "/boot/")
-  )
-
-(define-skeleton mcrc-cp
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo cp ~/am62/mcrc/ti-linux-kernel/drivers/crypto/ti/mcrc.ko lib/modules/5.10.158-dirty/kernel/drivers/crypto/ti/"
-  )
-
-(define-skeleton root-login
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "mkdir /etc/ssh/;echo 'PermitRootLogin Yes' >> /etc/ssh/sshd_config"
-  )
-
-(define-skeleton mcrc-scp
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo scp -oHostKeyAlgorithms=+ssh-rsa ~/am62/mcrc/ti-linux-kernel/drivers/crypto/ti/mcrc.ko root@172.24.145.166:~/"
-  )
-
-(define-skeleton mcrc-cp-native
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo cp mcrc.ko /lib/modules/5.10.158-00155-g90976f615b7e-dirty/kernel/drivers/crypto/ti/"
-  )
-
-(define-skeleton send-mcrc
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "udisksctl mount -b /dev/sdb2 && cd /media/kamlesh/root/ && sudo cp ~/am62/mcrc/ti-linux-kernel/drivers/crypto/ti/mcrc.ko lib/modules/5.10.158-dirty/kernel/drivers/crypto/ti/ && cd - && umount /media/kamlesh/root && lsblk"
-  )
-
-(define-skeleton mail-patch
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "git send-email --to=kamlesh@ti.com"
-  )
+  (define-skeleton cp-tispl
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat "cp " work_dir_2 "/" a53-out-dir "/tispl.bin tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img u-boot.img")
+    )
 
 
-(define-skeleton c-fit
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "sudo cp ~/am62/ti-linux-kernel/fit-crypto/fitImage ."
-  )
+  (define-skeleton cp-kig-boot-to-all-builds
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format cp-kig-boot-to-all-builds-cmd)
+    )
 
-(define-skeleton d-print
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "printf(\"%d\\n\",__LINE__);"
-  )
+  (define-skeleton cp-binman-boot-to-all-builds-hs
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format cp-binman-boot-to-all-builds-cmd-hs)
+    )
 
-(define-skeleton k-print
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "printk(\"mcrc %s %d\\n\",__func__,__LINE__);"
-  )
+  (define-skeleton cp-binman-boot-to-all-builds-fs
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format cp-binman-boot-to-all-builds-cmd-hs-fs)
+    )
 
-(define-skeleton pico-cmd-gp
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format pico-cmd-gp)
-  )
+  (define-skeleton cp-binman-boot-to-all-builds-gp
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format cp-binman-boot-to-all-builds-cmd-gp)  
+    )
 
-(define-skeleton pico-cmd-hs
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format pico-cmd-hs)
-  )
+  (define-skeleton cp-all-builds-to-mmc
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format cp-all-builds-to-mmc-cmd)
+    )	
 
-(define-skeleton pico-cmd
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (format pico-cmd)
-  )
+  (define-skeleton modules-install
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat "sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install")
+    )
 
-(define-skeleton dfu-cmd
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  (concat "cd " all-builds-dev-dir-generic " && "  " sudo dfu-util -R -a bootloader -D tiboot3.bin" " && sleep 1 && sudo dfu-util -R -a tispl.bin -D tispl.bin"   " && sleep 1 && sudo dfu-util -R  -a u-boot.img -D u-boot.img")
-  )
+  (define-skeleton ex-core-sec
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3 && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh"
+    )
 
-(define-skeleton devstat-cmd
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "python3 ~/repos/devstat/devstat.py am62e2 -m sdmmc"
-  )
+  (define-skeleton make-image
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- Image"
+    )
+
+  (define-skeleton make-defconfig
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- tisdk_am62xx-evm_defconfig"
+    )
+
+  (define-skeleton mk-mod
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- modules"
+    )
+
+  (define-skeleton mk-optee
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "rm -rf out/ ; make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y && cd ../ && make -j16 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ATF=../../08.04.00.005/bl31.bin TEE=../../optee_os/out/arm-plat-k3/core/tee-pager_v2.bin DM=../../08.04.00.005/ipc_echo_testb_mcu1_0_release_strip.xer5f O=gp-84/a53"
+    )
+
+  (define-skeleton tcrypt
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo modprobe tcrypt mode=329 sec=1"
+    )
+
+  (define-skeleton mcrc-reins
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo modprobe -r mcrc && sudo insmod mcrc.ko"
+    )
+
+  (setq um-boot-cmd (concat "cd - && umount " boot-dir " && lsblk"))
+  (define-skeleton um-boot
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format um-boot-cmd)
+    )
+
+  (setq m-boot-cmd (concat "udisksctl mount -b " boot-node " && cd " boot-dir))
+  (define-skeleton m-boot
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format m-boot-cmd)
+    )
+
+  (setq um-root-cmd (concat "cd - && umount " root-dir " && lsblk"))
+  (define-skeleton um-root
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format um-root-cmd)
+    )
+
+  (setq m-root-cmd (concat "udisksctl mount -b " root-node " && cd " root-dir "/boot/"))
+  (define-skeleton m-root
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format m-root-cmd)
+    )
+
+  (define-skeleton mcrc-cp
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo cp ~/am62/mcrc/ti-linux-kernel/drivers/crypto/ti/mcrc64.ko lib/modules/5.10.158-dirty/kernel/drivers/crypto/ti/"
+    )
+
+  (define-skeleton root-login
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "mkdir /etc/ssh/;echo 'PermitRootLogin Yes' >> /etc/ssh/sshd_config"
+    )
+
+  (define-skeleton mcrc-scp
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo scp -oHostKeyAlgorithms=+ssh-rsa ~/am62/binman/linux-next/drivers/crypto/ti/mcrc64.ko debian@10.24.68.148:~/"
+    )
+
+  (define-skeleton mcrc-cp-native
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo cp mcrc.ko /lib/modules/$(uname -r)/kernel/drivers/crypto/ti/"
+    )
+
+  (define-skeleton send-mcrc
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "udisksctl mount -b /dev/sdb2 && cd /media/kamlesh/root/ && sudo cp ~/am62/mcrc/ti-linux-kernel/drivers/crypto/ti/mcrc.ko lib/modules/5.10.158-dirty/kernel/drivers/crypto/ti/ && cd - && umount /media/kamlesh/root && lsblk"
+    )
+
+  (define-skeleton mail-patch
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "git send-email --to=kamlesh@ti.com"
+    )
 
 
-(define-skeleton notmuch-update
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "mbsync -Va;echo $? && notmuch new"
-  )
+  (define-skeleton c-fit
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo cp ~/am62/ti-linux-kernel/fit-crypto/fitImage ."
+    )
 
-(define-skeleton rby
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "Reviewed-by: Kamlesh Gurudasani <kamlesh@ti.com>"
-  )
+  (define-skeleton d-print
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "printf(\"%s %d\\n\",__func__,__LINE__);"
+    )
+  (define-skeleton d-atf
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "INFO(\"%s %d\\n\",__func__,__LINE__);"
+    )
 
-(define-skeleton sby
-  "In-buffer settings info for a emacs-org file."
-  "Title: "
-  "Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>"
-  )
+  (define-skeleton k-print
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "printk(\"%s %d\\n\",__func__,__LINE__);"
+    )
+
+  (define-skeleton k-info
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "pr_info(\"%s %d\\n\",__func__,__LINE__);"
+    )
+
+
+  (define-skeleton pico-cmd-gp
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format pico-cmd-gp)
+    )
+
+  (define-skeleton pico-cmd-hs
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format pico-cmd-hs)
+    )
+
+  (define-skeleton pico-cmd
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format pico-cmd)
+    )
+
+  (define-skeleton relay-toggle
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format relay-toggle-cmd)
+    )
+
+  (define-skeleton dfu-cmd
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format dfu-cmd)
+    )
+
+  (define-skeleton devstat-cmd
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "python3 ~/repos/devstat/devstat.py am62e2 -m sdmmc"
+    )
+
+
+  (define-skeleton notmuch-update
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "mbsync -Va;echo $? && notmuch new; sh ~/notmuch-tag.sh"
+    )
+
+  (define-skeleton rby
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "Reviewed-by: Kamlesh Gurudasani <kamlesh@ti.com>"
+    )
+
+  (define-skeleton sby
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>"
+    )
+
+  (define-skeleton aby
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "Acked-by: Kamlesh Gurudasani <kamlesh@ti.com>"
+    )
+
+  (define-skeleton soft-reset-mmc
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "mw.l 43000030 243 1;mw.l 43018170 00000006 1"
+    )
+
+  (define-skeleton rtcwake
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "rtcwake -s 5 -m mem"
+    )
+)
 
 ;; Custom legato
 
@@ -1614,27 +1793,28 @@ kernel."
 
 (defun shortcuts-before-setup()
   (interactive)
-  (global-set-key (kbd "M-1") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup)))
-  (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup))) ;;
+  ;; (global-set-key (kbd "M-1") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup))) ;;
+  ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup))) ;; ;;
   ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/crypto/") (ti-setup am62x ti))) ;; ;; ;;
-  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup )))
-  (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup )))
-  (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup )))
+  ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
+  ;; (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
+  ;; (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
   ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
   (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq sign-type "binman") (ti-setup )))
-  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq sign-type "binman")(ti-setup )))
+  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs")(ti-setup )))
+  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs-fs")(ti-setup )))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
 
 (shortcuts-before-setup)
-
+   
 (defun shortcuts-after-setup()
   (interactive)
 
 
   (setq cscope_dir work_dir_1)
-  (setq cscope-initial-directory cscope_dir)
+  (setq cscope-initial-directory cscope_dir) ;;
   (global-set-key (kbd "M-1") (lambda () (interactive) (switch-to-buffer (find-file  (concat work_dir_1 "/")))))
 
   ;; (global-set-key (kbd "M-2") (lambda () (interactive) (if (string-equal work_dir_2 "gaia4-login") (gaia-csdcd4-login)(switch-to-buffer (find-file (concat work_dir_2 "/"))))))
@@ -1650,12 +1830,14 @@ kernel."
   (global-set-key (kbd "M-5") (lambda () (interactive) (switch-to-buffer (find-file (concat work_dir_5 "")))))
   ;; (global-set-key (kbd "M-5") 'ubuntu-wd)
   (global-set-key (kbd "M-6") (lambda () (interactive) (switch-to-buffer (find-file (concat work_dir_6 "")))))
+  (global-set-key (kbd "M-7") (lambda () (interactive) (switch-to-buffer (find-file (concat work_dir_7 "")))))
   (global-set-key (kbd "C-c 6") (lambda () (interactive)(shell-pico)))
   (global-set-key (kbd "C-c 5") (lambda () (interactive)(shell-working-dir)))
   (global-set-key (kbd "C-c 7") (lambda () (interactive)(shell-extra)))
   
   (global-set-key (kbd "C-c 3") (lambda () (interactive) (switch-to-buffer (find-file (concat remote_work_dir_3 "")))))
-  (global-set-key (kbd "C-c 4") (lambda () (interactive) (mcrc)))
+  (global-set-key (kbd "C-c 4") (lambda () (interactive) (let ((default-directory remote_work_dir_3)) (shell "remote"))))
+  ;; (global-set-key (kbd "C-c 5") (lambda () (interactive) (mcrc))) ;;
 
   (global-set-key (kbd "M-9") (lambda () (interactive) (switch-to-buffer (find-file (concat work_dir_9 "")))))
 
@@ -1669,18 +1851,19 @@ kernel."
 
   (global-set-key (kbd "M-s") 'tags-search)
 
-  (global-unset-key (kbd "M-k")) ;;
+  
   ;; (global-unset-key "I")
   ;; (global-set-key (kbd "I") 'previous-line)
   ;; (global-unset-key "J")
-  ;; (global-set-key (kbd "J") 'left-char)
+  ;; (global-set-key (kbd "J")200~set_freq_handler 'left-char)
   ;; (global-unset-key "K")
   ;; (global-set-key (kbd "K") 'next-line)
   ;; (global-unset-key "L")
   ;; (global-set-key (kbd "L") 'right-char)
-  (global-set-key (kbd "M-k") 'previous-buffer)
-  (global-unset-key (kbd "M-l"))
-  (global-set-key (kbd "M-l") 'next-buffer) 
+  (global-unset-key (kbd "M-<left>")) ;;
+  (global-set-key (kbd "M-<left>") 'previous-buffer) ;
+  (global-unset-key (kbd "M-<right>"))
+  (global-set-key (kbd "M-<right>") 'next-buffer) ;
   
 
 
@@ -1802,10 +1985,34 @@ kernel."
   )
 
 ;; compilation
+
+(defun git-info ()
+  (interactive)
+  (let ((default-directory work_dir_1))	  
+    (compile (concat "echo u-boot >> 1.info && git -C u-boot/ log -1 --oneline >> 1.info"
+		     " && "
+		     "echo ti-linux-firmware >> 1.info && git -C ti-linux-firmware/ log -1 --oneline >> 1.info"
+		     " && "
+		     "echo optee_os >> 1.info && git -C optee_os/ log -1 --oneline >> 1.info"
+		     " && "
+		     "echo arm-trusted-firmware >> 1.info && git -C arm-trusted-firmware/ log -1 --oneline >> 1.info"
+		     ))))
+
+(defun dfu-boot ()
+  (interactive)
+  (let ((default-directory work_dir_2))	  
+    (compile dfu-cmd)))
+
 (defun r5-clean ()
   (interactive)
   (let ((default-directory work_dir_2))	  
-    (compile (concat hsse-env  " &&" r5-base-make-cmd "clean " r5-set-out-dir))))	
+    (compile (concat    r5-base-make-cmd "clean " r5-set-out-dir))))
+
+(defun r5-defconfig ()
+  (interactive)
+  (let ((default-directory work_dir_2))
+    (message "r5-defconfig")
+    (compile r5-defconfig-cmd)))
 
 (defun r5-mmc-defconfig ()
   (interactive)
@@ -1828,6 +2035,45 @@ kernel."
   (let ((default-directory work_dir_2))
     (message "r5-compile")
     (compile r5-make-cmd)))
+
+(defun atf-compile ()
+  (interactive)
+  (let ((default-directory work_dir_9))
+    (message "atf-compile")
+    (compile (concat atf-make-cmd " && " atf-copy-cmd))))
+
+(defun atf-info-compile ()
+  (interactive)
+  (let ((default-directory work_dir_9))
+    (message "atf-info-compile")
+    (compile (concat atf-make-cmd " LOG_LEVEL=40 " " && " atf-copy-cmd))))
+
+(defun atf-verbose-compile ()
+  (interactive)
+  (let ((default-directory work_dir_9))
+    (message "atf-info-compile")
+    (compile (concat atf-make-cmd " LOG_LEVEL=50 " " && " atf-copy-cmd))))
+
+
+(defun atf-debug-compile ()
+  (interactive)
+  (let ((default-directory work_dir_9))
+    (message "atf-debug-compile")
+    (compile (concat atf-make-cmd " DEBUG=1 LOG_LEVEL=40 " " && " atf-debug-copy-cmd))))
+
+(defun atf-debug-am64-compile ()
+  (interactive)
+  (let ((default-directory work_dir_9))
+    (message "atf-debug-compile")
+    (compile (concat atf-make-cmd " DEBUG=1 " " && " atf-debug-copy-cmd))))
+
+
+(defun atf-copy ()
+  (interactive)
+  (let ((default-directory work_dir_9))
+    (message "atf-copy")
+    (compile atf-copy-cmd)))
+
 
 (defun cp-boot-binman-compile ()
   (interactive)
@@ -1854,19 +2100,19 @@ kernel."
 (defun a53-clean ()
   (interactive)
   (let ((default-directory work_dir_2))	  
-    (compile (concat hsse-env  " &&" a53-base-make-cmd "clean"))))	
+    (compile (concat    a53-base-make-cmd "clean"))))	
 
 (defun a53-defconfig ()
   (interactive)
   (let ((default-directory work_dir_2))
     (message "a53-defconfig")
-    (compile (concat hsse-env a53-defconfig-cmd))))
+    (compile (concat  a53-defconfig-cmd))))
 
 (defun a53-compile ()
   (interactive)
   (let ((default-directory work_dir_2))
     (message "a53-compile")
-    (compile (concat hsse-env a53-make-cmd)))
+    (compile (concat  a53-make-cmd)))
   )
 
 (defun my-compilation-finish-function (process-name status)
@@ -1882,7 +2128,7 @@ kernel."
   (setq compilation-finish-functions 'my-compilation-finish-function)
 
   (setq wait-for-completion t)
-  (r5-mmc-defconfig)
+  (r5-defconfig)
   (while wait-for-completion (sleep-for sec msec))
 
   (setq wait-for-completion t)
@@ -1911,7 +2157,7 @@ kernel."
   (setq compilation-finish-functions 'my-compilation-finish-function)
 
   (setq wait-for-completion t)
-  (r5-mmc-defconfig)
+  (r5-defconfig)
   (while wait-for-completion (sleep-for sec msec))
 
   (setq wait-for-completion t)
@@ -1938,6 +2184,88 @@ kernel."
 
   )
 
+(defun am62l-info-compile ()
+  (interactive)
+  (setq compilation-finish-functions 'my-compilation-finish-function)
+
+  (setq wait-for-completion t)
+  (atf-info-compile)
+  (while wait-for-completion (sleep-for sec msec))
+  
+  (setq wait-for-completion t)
+  (r5-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (r5-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (a53-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (a53-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (cp-boot-binman-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (relay-toggle-run)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (relay-toggle-run)
+  (while wait-for-completion (sleep-for sec msec))
+  
+  (setq wait-for-synchronous-completion nil)
+
+  )
+
+(defun am62l-debug-compile ()
+  (interactive)
+  (make-thread (progn
+  (setq compilation-finish-functions 'my-compilation-finish-function)
+
+  (setq wait-for-completion t)
+  (atf-debug-compile)
+  (while wait-for-completion (sleep-for sec msec))
+  
+  (setq wait-for-completion t)
+  (r5-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (r5-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (a53-defconfig)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (a53-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (cp-boot-binman-compile)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (relay-toggle-run)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (relay-toggle-run)
+  (while wait-for-completion (sleep-for sec msec))
+  
+  (setq wait-for-synchronous-completion nil)
+
+  )))
+
+
 (defun all-device-compile ()
   (interactive)
 
@@ -1955,6 +2283,12 @@ kernel."
   (setq wait-for-synchronous-completion t)
   (synchronous-compile)
   (while wait-for-synchronous-completion (sleep-for sec msec))
+
+  (funcall-interactively 'device-type "4")
+  (setq wait-for-synchronous-completion t)
+  (synchronous-compile)
+  (while wait-for-synchronous-completion (sleep-for sec msec))
+  
   )
 
 (defun all-soc-compile ()
@@ -2042,23 +2376,36 @@ kernel."
 (defun kig-clean ()
   (interactive)
   (let ((default-directory work_dir_4))
-    (compile (concat hsse-env make-clean ))))
+    (compile (concat  make-clean ))))
 
 (defun kig-compile ()
   (interactive)
   (let ((default-directory work_dir_4))
-    (compile (concat hsse-env kig-make-cmd))))
+    (compile (concat  kig-make-cmd))))
 
 (defun kig-cc ()
   (interactive)
   (let ((default-directory work_dir_4))
-    (compile (concat hsse-env make-clean kig-make-cmd))))
+    (compile (concat  make-clean kig-make-cmd))))
+
+;; (defun optee-compile ()
+;;   (interactive)
+;;   (let ((default-directory work_dir_7))	  
+;;     (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y" " && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/bl32.bin.signed" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/bl32.bin"))))
 
 (defun optee-compile ()
   (interactive)
   (let ((default-directory work_dir_7))	  
-    (compile (concat hsse-env " &&" optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y" " && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/bl32.bin.signed" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/bl32.bin"))))
+    ;; (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=1 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned" ))))
+;;
+    ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=1 " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned")))) ;;
+     (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned"))))
 
+(defun optee-compile-swrng ()
+  (interactive)
+  (let ((default-directory work_dir_7))	  
+    (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y  CFG_WITH_SOFTWARE_PRNG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned" ))))
+;; CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y ;;
 (defun modules-compile ()
   (interactive)
   (let ((default-directory work_dir_3))
@@ -2074,10 +2421,29 @@ kernel."
   (let ((default-directory work_dir_3))
     (compile (concat kernel-base-make-cmd "tisdk_" device "-evm_defconfig"))))
 
-(defun atf-compile ()
+(defun relay-toggle-run ()
   (interactive)
   (let ((default-directory work_dir_2))	  
-    (compile (concat hsse-env atf-base-make-cmd))))
+    (compile relay-toggle-cmd)))
+
+(defun am62-relay ()
+  (interactive)
+  (setq compilation-finish-functions 'my-compilation-finish-function)
+
+  (setq wait-for-completion t)
+  (relay-toggle-run)
+  (while wait-for-completion (sleep-for sec msec))
+
+  (setq wait-for-completion t)
+  (relay-toggle-run)
+  (while wait-for-completion (sleep-for sec msec))
+  
+  (setq wait-for-synchronous-completion nil)
+
+  )
+
+
+
 
 
 (defun shell-working-dir()
@@ -2087,7 +2453,7 @@ kernel."
 
   (if (get-buffer buffer-name-1)
       (switch-to-buffer buffer-name-1)
-    (let ((default-directory work_dir_1)) (shell buffer-name-1) (format hsse-env)))
+    (let ((default-directory work_dir_1)) (shell buffer-name-1) (format "cd am62lite-presil-build\r")))
   )
 
 (defun shell-pico()
@@ -2129,11 +2495,16 @@ kernel."
       (switch-to-buffer buffer-name)
     
     (let ((default-directory work_dir_1))
-      (multi-term)
-      ;; (term)
-      (term-send-string
-       (get-buffer-process (rename-buffer buffer-name))
-       (format "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV")))))
+      ;; (multi-term)
+      ;; ;; (term)
+      ;; (term-send-string
+      ;;  (get-buffer-process (rename-buffer buffer-name))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
 
 (defun serial-usb4()
   (interactive)
@@ -2144,11 +2515,16 @@ kernel."
       (switch-to-buffer buffer-name)
     
     (let ((default-directory work_dir_1))
-      (multi-term)
-      ;; (term)
-      (term-send-string
-       (get-buffer-process (rename-buffer buffer-name))
-       (format "export DEV=/dev/ttyUSB4 && sudo picocom -b 115200 $DEV")))))
+      ;; (multi-term)
+      ;; ;; (term)
+      ;; (term-send-string
+      ;;  (get-buffer-process (rename-buffer buffer-name))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB4 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
 
 
 
@@ -2209,12 +2585,8 @@ kernel."
 (fset 'mcrc
       (kmacro-lambda-form [?\C-x ?\C-f ?\C-\[ ?O ?H ?\C-@ ?\C-e ?\C-? ?~ ?/ ?a ?m ?6 ?2 ?/ ?m ?c ?r ?c ?/ ?t ?i ?- ?l ?i ?n ?u ?x ?- ?k ?e ?r ?n ?e ?l ?/ ?d ?r ?i ?v ?e ?r ?\C-i ?c ?r ?y ?p ?\C-i ?t ?i ?\C-i ?m ?c ?r ?c ?. ?c ?\C-m] 0 "%d"))
 
-
 (fset 'jump-to-M-1
       (kmacro-lambda-form [?\C-s ?M ?- ?1] 0 "%d"))
-
-(fset 'mail-update
-      (kmacro-lambda-form [?\C-\[ ?& ?\C-\[ ?x ?n ?- ?u ?p ?d ?\C-m ?\C-m] 0 "%d"))
 
 (fset 'single-screen
       (kmacro-lambda-form [?\C-x ?1] 0 "%d"))
@@ -2225,8 +2597,8 @@ kernel."
 (fset 'add-to-to-mail
       (kmacro-lambda-form [?- ?- ?t ?o ?= ?\C-\[ ?O ?B ?\C-a] 0 "%d"))
 
-
-(mail-update)
 (jump-to-M-1)
 (single-screen)
 
+(fset 'edittable
+   (kmacro-lambda-form [?\C-s ?  ?\C-m ?\C-@ ?\C-s ?  ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-x ?o ?\C-s ?\( ?\C-m ?\C-@ ?\C-s ?, ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?% ?\C-y ?\C-m ?\C-y ?\C-\[ ?y ?\C-m ?! ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B ?\C-\[ ?O ?A ?\C-s ?\) ?\C-\[ ?O ?C ?\C-\[ ?O ?B ?\C-\[ ?\[ ?1 ?~ ?\C-x ?o ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B] 0 "%d"))
