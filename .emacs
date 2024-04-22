@@ -83,9 +83,6 @@
 (setq vc-follow-symlinks t)
 
 ;; working directory setup
-
-
-
 (defun ti-setup ()
   (interactive )
 
@@ -115,8 +112,8 @@
     (setq boot-dir-sdk "/media/kamlesh/boot")
     (setq root-dir-debian "/media/kamlesh/rootfs/")
     (setq root-dir-sdk "/media/kamlesh/root/")
-    (setq boot-node "/dev/sda1")
-    (setq root-node "/dev/sda2")
+    (setq boot-node "/dev/sdd1")
+    (setq root-node "/dev/sdd2")
     (setq relay-number-am62x "1")
     (setq relay-number-am64x "3")
     (setq all-builds-dir "~/all-builds")
@@ -159,7 +156,8 @@
     (setq work_dir_9 atf-path)
     
     ;; (setq remote_work_dir_3 "/ssh:debian@10.24.68.197:~/") ;;
-    (setq remote_work_dir_3 "/ssh:root@10.24.69.153:~/")
+    ;; (setq remote_work_dir_3 "/ssh:root@10.24.69.153:~/") ;;
+    (setq remote_work_dir_3 "/ssh:a0501066@sshgw.dal.design.ti.com:~/")
     
     (cond
      ((string= device am62x)
@@ -221,8 +219,8 @@
     (setq a53-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
-    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;;
-    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
+    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;; ;;
+    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
         ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
     
     (cond
@@ -589,6 +587,9 @@
     )
   (relay-cmd-setup)
   (skeleton-setup)
+  ;;mandotory fixes here
+
+  (setq comint-password-prompt-regexp eshell-password-prompt-regexp)
   )
 
 (defun set-u-boot-directory (path)
@@ -1793,7 +1794,7 @@ kernel."
 
 (defun shortcuts-before-setup()
   (interactive)
-  ;; (global-set-key (kbd "M-1") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup))) ;;
+  ;; (global-set-key (kbd "M-11") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup))) ;;
   ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup))) ;; ;;
   ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/crypto/") (ti-setup am62x ti))) ;; ;; ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
@@ -1801,8 +1802,8 @@ kernel."
   ;; (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
   ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
-  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq sign-type "binman") (ti-setup )))
-  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs")(ti-setup )))
+  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs") (ti-setup )))
+  (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62lite-presil-build/") (setq soc-type "hs-fs")(ti-setup )))
   (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs-fs")(ti-setup )))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
@@ -1834,7 +1835,7 @@ kernel."
   (global-set-key (kbd "C-c 6") (lambda () (interactive)(shell-pico)))
   (global-set-key (kbd "C-c 5") (lambda () (interactive)(shell-working-dir)))
   (global-set-key (kbd "C-c 7") (lambda () (interactive)(shell-extra)))
-  
+  (global-set-key (kbd "C-c 8") (lambda () (interactive)(shell-zebu-bash)))  
   (global-set-key (kbd "C-c 3") (lambda () (interactive) (switch-to-buffer (find-file (concat remote_work_dir_3 "")))))
   (global-set-key (kbd "C-c 4") (lambda () (interactive) (let ((default-directory remote_work_dir_3)) (shell "remote"))))
   ;; (global-set-key (kbd "C-c 5") (lambda () (interactive) (mcrc))) ;;
@@ -2388,18 +2389,14 @@ kernel."
   (let ((default-directory work_dir_4))
     (compile (concat  make-clean kig-make-cmd))))
 
-;; (defun optee-compile ()
-;;   (interactive)
-;;   (let ((default-directory work_dir_7))	  
-;;     (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y" " && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/bl32.bin.signed" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/bl32.bin"))))
 
 (defun optee-compile ()
   (interactive)
   (let ((default-directory work_dir_7))	  
-    ;; (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=1 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned" ))))
+    (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned" ))))
 ;;
     ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=1 " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned")))) ;;
-     (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned"))))
+     ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned"))))
 
 (defun optee-compile-swrng ()
   (interactive)
@@ -2486,6 +2483,21 @@ kernel."
     (let ((default-directory work_dir_1)) (shell buffer-name) (format "cd ~/pycrc/src/\r")))
   )
 
+(defun shell-zebu-bash()
+  (interactive)
+  (setq extra-cmd "python3 ~/pycrc/src/pycrc.py --width 64 --poly 0x000000000000001b --reflect-in False --xor-in 0x0000000000000000 --reflect-out False --xor-out 0x0000000000000000 --check-hexstring 44332211 -v")
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "zebu-bash")
+  (define-skeleton extra-cmd
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format extra-cmd)
+    )
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    (let ((default-directory work_dir_1)) (shell buffer-name) (format "cd ~/am62lite-presil-build/\r")))
+  )
+
 (defun serial-usb0()
   (interactive)
   (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
@@ -2562,6 +2574,7 @@ kernel."
 (global-set-key (kbd "C-c 1") (lambda () (interactive)(if (get-buffer "usb0") (switch-to-buffer "usb0")(serial-usb0))))
 (global-set-key (kbd "C-c 2") (lambda () (interactive)(if (get-buffer "usb4") (switch-to-buffer "usb4")(serial-usb4))))
 (global-set-key (kbd "C-c C-m") 'line-mode)
+
 
 
 (fset 'tty
