@@ -23,7 +23,7 @@
      (:name "direct" :query "tag:direct" :key "d" :sort-order newest-first)
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
  '(package-selected-packages
-   '(realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
  '(safe-local-variable-values
    '((c-offsets-alist
       (arglist-close . c-lineup-arglist-tabs-only)
@@ -156,8 +156,8 @@
     (setq work_dir_9 atf-path)
     
     ;; (setq remote_work_dir_3 "/ssh:debian@10.24.68.197:~/") ;;
-    ;; (setq remote_work_dir_3 "/ssh:root@10.24.69.153:~/") ;;
-    (setq remote_work_dir_3 "/ssh:a0501066@sshgw.dal.design.ti.com:~/")
+    (setq remote_work_dir_3 "/ssh:root@10.24.68.117:~/") ;;
+    ;; (setq remote_work_dir_3 "/ssh:a0501066@sshgw.dal.design.ti.com:~/") ;;
     
     (cond
      ((string= device am62x)
@@ -219,8 +219,8 @@
     (setq a53-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
-    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;; ;;
-    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
+    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;; ;;
+    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;; ;;
         ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
     
     (cond
@@ -230,9 +230,9 @@
     (setq r5-set-out-dir (concat " O=" r5-out-dir))
     (setq a53-set-out-dir (concat " O=" a53-out-dir))
 
-    (setq atf-unsigned (concat " ATF=../../../../../" device "/bl31.bin.unsigned "))
+    (setq atf-unsigned (concat " ATF=../../../../../" device "/bl31.bin "))
     (setq atf-signed (concat " ATF=../../../../../" device "/bl31.bin "))
-    (setq optee-unsigned (concat " TEE=../../../../../" device "/bl32.bin.unsigned "))
+    (setq optee-unsigned (concat " TEE=../../../../../" device "/bl32.bin "))
     (setq optee-signed (concat " TEE=../../../../../" device "/bl32.bin "))
     ;; (setq dm-unsigned (concat " DM=../../../../../" device "/ipc_echo_testb_mcu1_0_release_strip.xer5f.unsigned ")) ;;
     (setq dm-signed (concat " DM=../../../../../../ti-linux-firmware/ti-dm/" device "x/ipc_echo_testb_mcu1_0_release_strip.xer5f.signed "))
@@ -289,12 +289,12 @@
     (setq  a53-make-cmd a53-make-cmd-kig)
 
     (setq atf-make-cmd (concat  atf-base-make-cmd))
-    (setq atf-copy-cmd (concat "cp " "build/k3/lite/release/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
-    (setq atf-debug-copy-cmd (concat "cp " "build/k3/lite/debug/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
+    (setq atf-copy-cmd (concat "cp " "build/k3/lite/release/bl31.bin" " " work_dir_2 "/" device "/bl31.bin"))
+    (setq atf-debug-copy-cmd (concat "cp " "build/k3/lite/debug/bl31.bin" " " work_dir_2 "/" device "/bl31.bin"))
     (cond
      ((string= device am65x) (progn
-			       (setq atf-copy-cmd (concat "cp " "build/k3/generic/release/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
-			       (setq atf-debug-copy-cmd (concat "cp " "build/k3/generic/debug/bl31.bin" " " work_dir_2 "/" device "/bl31.bin.unsigned"))
+			       (setq atf-copy-cmd (concat "cp " "build/k3/generic/release/bl31.bin" " " work_dir_2 "/" device "/bl31.bin"))
+			       (setq atf-debug-copy-cmd (concat "cp " "build/k3/generic/debug/bl31.bin" " " work_dir_2 "/" device "/bl31.bin"))
 			       )))
     
     (cond
@@ -342,7 +342,7 @@
      (
       (string= sign-type "binman")
       (progn
-    	(setq bl31-unsigned (concat " BL31=../../../../../" device "/bl31.bin.unsigned "))
+    	(setq bl31-unsigned (concat " BL31=../../../../../" device "/bl31.bin "))
 	(setq ti-linux-firmware-set " BINMAN_INDIRS=../../../../../../ti-linux-firmware/ ")
 	(setq r5-make-cmd-binman (concat r5-base-make-cmd ti-linux-firmware-set r5-set-out-dir))
 	(setq a53-make-cmd-binman (concat a53-base-make-cmd bl31-unsigned optee-unsigned ti-linux-firmware-set a53-set-out-dir))
@@ -589,7 +589,7 @@
   (skeleton-setup)
   ;;mandotory fixes here
 
-  (setq comint-password-prompt-regexp eshell-password-prompt-regexp)
+  ;; (setq comint-password-prompt-regexp eshell-password-prompt-regexp)
   )
 
 (defun set-u-boot-directory (path)
@@ -728,7 +728,7 @@ threads to the notmuch-extract-patch(1) command."
 messages will be written to the file ~/tmp-check-patch (overwriting it)."
   (interactive)
   (let* ((search-terms-list (notmuch-show-get-message-ids-for-open-messages))
-	 (default-directory work_dir_3)
+	 (default-directory work_dir_2)
 	 (buffer (get-buffer-create "output-mbox")))
     (set-buffer buffer)
     (setq buffer-read-only nil)
@@ -1304,7 +1304,7 @@ kernel."
   (define-skeleton mmc-write
     "In-buffer settings info for a emacs-org file."
     "Title: "
-    (concat m-root-cmd " && " "sudo cp ~/am62/binman/ti-linux-kernel-cgit/arch/arm64/boot/Image  . && sudo cp ~/am62/binman//ti-linux-kernel-cgit/arch/arm64/boot/dts/ti/k3-am625-sk.dtb dtb/ti/ && cd - && sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install && cd -" " && " um-root-cmd)
+    (concat m-root-cmd " && " "sudo cp ~/am62/binman/ti-linux-kernel-cgit/arch/arm64/boot/Image . && sudo cp ~/am62/binman//ti-linux-kernel-cgit/arch/arm64/boot/dts/ti/k3-am625-sk.dtb dtb/ti/ && cd - && sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install && cd -" " && " um-root-cmd)
     )
 
   (define-skeleton mmc-bwrite
@@ -1804,7 +1804,7 @@ kernel."
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
   (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs") (ti-setup )))
   (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62lite-presil-build/") (setq soc-type "hs-fs")(ti-setup )))
-  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs-fs")(ti-setup )))
+  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs-fs")    (setq soc-type "hs-fs") (setq sign-type "binman") (setq device am64x) (setq source mainline) (setq boot-type "mmc")(ti-setup )))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
 
@@ -2393,15 +2393,20 @@ kernel."
 (defun optee-compile ()
   (interactive)
   (let ((default-directory work_dir_7))	  
-    (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned" ))))
+    (compile (concat optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin" ))))
+
+(defun optee-compile-64x ()
+  (interactive)
+  (let ((default-directory work_dir_7))	  
+    (compile (concat optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin" ))))
 ;;
-    ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=1 " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned")))) ;;
-     ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned"))))
+    ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=1 " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin")))) ;;
+     ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin"))))
 
 (defun optee-compile-swrng ()
   (interactive)
   (let ((default-directory work_dir_7))	  
-    (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y  CFG_WITH_SOFTWARE_PRNG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin.unsigned" ))))
+    (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y  CFG_WITH_SOFTWARE_PRNG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin" ))))
 ;; CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y ;;
 (defun modules-compile ()
   (interactive)
