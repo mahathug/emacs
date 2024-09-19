@@ -97,6 +97,7 @@
     (setq u-boot "u-boot")
     (setq linux "linux-next")
     (setq atf "trusted-firmware-a")
+    (setq crypto-upstream "cryptodev-2.6")
     ;; (setq working-project-path nil) ;;
     (setq am62x "am62x")
     (setq am62ax "am62ax")
@@ -106,6 +107,7 @@
     (setq am62l "am62l")
     (setq mainline "mainline")
     (setq ti "ti")
+    
 
 
     (setq boot-dir-debian "/media/kamlesh/BOOT")
@@ -146,6 +148,7 @@
     (setq u-boot-path (concat working-project-path u-boot))
     (setq linux-path (concat working-project-path linux))
     (setq atf-path (concat working-project-path atf))
+    (setq crypto-upstream-path (concat working-project-path crypto-upstream))
     
     (setq work_dir_1 working-project-path)
     (setq work_dir_4 ti-kig-path)
@@ -154,9 +157,9 @@
     (setq work_dir_5 u-boot-path)
     (setq work_dir_6 linux-path)
     (setq work_dir_9 atf-path)
-    
-    ;; (setq remote_work_dir_3 "/ssh:debian@10.24.68.197:~/") ;;
-    (setq remote_work_dir_3 "/ssh:root@10.24.68.117:~/") ;;
+    (setq work_dir_10 (concat working-project-path crypto-upstream))
+    ;; (setq remote_work_dir_3 "/ssh:debian@10.24.69.197:~/") ;;
+    (setq remote_work_dir_3 "/ssh:root@10.24.68.193:~/") ;;
     ;; (setq remote_work_dir_3 "/ssh:a0501066@sshgw.dal.design.ti.com:~/") ;;
     
     (cond
@@ -219,8 +222,8 @@
     (setq a53-base-make-cmd " make -j32 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
-    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;; ;;
-    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;; ;;
+    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;; ;; ;;
+    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;; ;;
         ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
     
     (cond
@@ -639,8 +642,8 @@ overrides the current directory, which would otherwise be used."
   ;; (setq work_dir_2 "/home/ubuntu/rpp/vp1-project/build/tmp/work/vp1-poky-linux-gnueabi/kernel-module-rpp/0.21.5-r0/git/drvrpp/")
 
   (setq work_dir_rpp_make "/ssh:ubuntu@43.88.80.124:/home/ubuntu/rpp/vp1-project/vp1-sdk-airbg/")
-  (setq cscope_dir work_dir_1)
-  (setq cscope-initial-directory cscope_dir)
+  (setq cscope_dir work_dir_1) ;;
+  (setq cscope-initial-directory cscope_dir) ;;
   (shortcuts-after-setup)
   ;; (fset 'cscope-init-dir
   ;; 	"\C-xrbcscope-build\C-m\C-csa\C-m")
@@ -707,14 +710,19 @@ threads to the notmuch-extract-patch(1) command."
   (interactive
    "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \n")
   (let ( (message-id (notmuch-show-get-message-id t)) ;;
-         (default-directory (expand-file-name work_dir_2)) ;;
+         (default-directory (expand-file-name work_dir_10)) ;;
 	 )
-    (call-process-shell-command (format "git checkout -b" message-id)) ;;
+
+    ;; (message (format "git checkout -b %s" message-id));; ;; ;;
+    (call-process-shell-command (format (concat "git checkout master" " > ~/b4-check-patch 2>&1" )))
+    (call-process-shell-command (format (concat "git branch |grep \"\\.\" | xargs git branch -D" " > ~/b4-check-patch 2>&1" )))
+    (call-process-shell-command (format (concat "git branch -D " message-id " >> ~/b4-check-patch 2>&1"))) ;; ;; ;;
+    (call-process-shell-command (format (concat "git checkout -b " message-id " >> ~/b4-check-patch 2>&1"))) ;; ;;
+    ;; (message (format "git checkout  %s" message-id));; ;; ;;
     (message "message-id %s" message-id) 
-    (call-process-shell-command
-     (format (concat "rm -rf patches; mkdir -p patches && b4 am -Q " message-id " -o patches > ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict patches/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am patches/*.mbx >> ~/b4-check-patch 2>&1;fi ")) nil t nil)	
-    )
-  (pop-to-buffer (find-file "~/b4-check-patch")) 
+    (call-process-shell-command ;; ;; ;;
+     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am b4-patch/*.mbx >> ~/b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;
+    )  (pop-to-buffer (find-file "~/b4-check-patch")) 
   )
 
 
@@ -728,7 +736,7 @@ threads to the notmuch-extract-patch(1) command."
 messages will be written to the file ~/tmp-check-patch (overwriting it)."
   (interactive)
   (let* ((search-terms-list (notmuch-show-get-message-ids-for-open-messages))
-	 (default-directory work_dir_2)
+	 (default-directory work_dir_1)
 	 (buffer (get-buffer-create "output-mbox")))
     (set-buffer buffer)
     (setq buffer-read-only nil)
@@ -1304,7 +1312,7 @@ kernel."
   (define-skeleton mmc-write
     "In-buffer settings info for a emacs-org file."
     "Title: "
-    (concat m-root-cmd " && " "sudo cp ~/am62/binman/ti-linux-kernel-cgit/arch/arm64/boot/Image . && sudo cp ~/am62/binman//ti-linux-kernel-cgit/arch/arm64/boot/dts/ti/k3-am625-sk.dtb dtb/ti/ && cd - && sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install && cd -" " && " um-root-cmd)
+    (concat m-root-cmd " && " "sudo cp " work_dir_3  "/arch/arm64/boot/Image . && sudo cp " work_dir_3 "/arch/arm64/boot/dts/ti/k3-am625-sk.dtb dtb/ti/ && cd - && sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install && cd -" " && " um-root-cmd)
     )
 
   (define-skeleton mmc-bwrite
@@ -1566,17 +1574,23 @@ kernel."
     "python3 ~/repos/devstat/devstat.py am62e2 -m sdmmc"
     )
 
-
-  (define-skeleton notmuch-update
+  (setq notmuch-update "mbsync -Va;echo $? && notmuch new; sh ~/notmuch-tag.sh")
+  (define-skeleton notmuch-update-cmd
     "In-buffer settings info for a emacs-org file."
     "Title: "
-    "mbsync -Va;echo $? && notmuch new; sh ~/notmuch-tag.sh"
+    (format notmuch-update)
     )
 
   (define-skeleton rby
     "In-buffer settings info for a emacs-org file."
     "Title: "
     "Reviewed-by: Kamlesh Gurudasani <kamlesh@ti.com>"
+    )
+
+    (define-skeleton aby
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "Acked-by: Kamlesh Gurudasani <kamlesh@ti.com>"
     )
 
   (define-skeleton sby
@@ -1804,7 +1818,7 @@ kernel."
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
   (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs") (ti-setup )))
   (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62lite-presil-build/") (setq soc-type "hs-fs")(ti-setup )))
-  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs-fs")    (setq soc-type "hs-fs") (setq sign-type "binman") (setq device am64x) (setq source mainline) (setq boot-type "mmc")(ti-setup )))
+  (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs")    (setq soc-type "hs-fs") (setq sign-type "binman") (setq device am64x) (setq source mainline) (setq boot-type "mmc")(ti-setup )))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
 
@@ -1814,8 +1828,8 @@ kernel."
   (interactive)
 
 
-  (setq cscope_dir work_dir_1)
-  (setq cscope-initial-directory cscope_dir) ;;
+  ;; (setq cscope_dir work_dir_1) ;;
+  ;; (setq cscope-initial-directory cscope_dir) ;; ;;
   (global-set-key (kbd "M-1") (lambda () (interactive) (switch-to-buffer (find-file  (concat work_dir_1 "/")))))
 
   ;; (global-set-key (kbd "M-2") (lambda () (interactive) (if (string-equal work_dir_2 "gaia4-login") (gaia-csdcd4-login)(switch-to-buffer (find-file (concat work_dir_2 "/"))))))
@@ -1998,6 +2012,12 @@ kernel."
 		     " && "
 		     "echo arm-trusted-firmware >> 1.info && git -C arm-trusted-firmware/ log -1 --oneline >> 1.info"
 		     ))))
+
+(defun fetch-mail ()
+  (interactive)
+  (let ((default-directory work_dir_1))
+    (message "fetch mails from server")
+    (compile notmuch-update)))
 
 (defun dfu-boot ()
   (interactive)
@@ -2425,7 +2445,7 @@ kernel."
 
 (defun relay-toggle-run ()
   (interactive)
-  (let ((default-directory work_dir_2))	  
+  (let ((default-directory work_dir_1))	  
     (compile relay-toggle-cmd)))
 
 (defun am62-relay ()
@@ -2563,7 +2583,6 @@ kernel."
 ;;add temp setups here
 
 
-
 (fset '0USB
       (kmacro-lambda-form [?\C-\[ ?x ?s ?e ?r ?i ?a ?l ?- ?t ?e ?r ?m ?\C-m ?t ?t ?y ?U ?S ?B ?0 ?\C-m ?1 ?1 ?5 ?2 ?0 ?0 ?\C-m ?\C-c ?\C-j] 0 "%d"))
 
@@ -2581,18 +2600,6 @@ kernel."
 (global-set-key (kbd "C-c C-m") 'line-mode)
 
 
-
-(fset 'tty
-      (kmacro-lambda-form [?\C-x ?3 ?\C-c ?1 ?\C-x ?o ?\C-c ?2] 0 "%d"))
-
-
-(fset 'ttyr
-      (kmacro-lambda-form [?\C-x ?k ?\C-m ?\C-x ?o ?\C-x ?k ?\C-m ?\C-x ?1 ?\C-\[ ?x ?t ?t ?y ?\C-m ?\C-x ?o] 0 "%d"))
-
-(fset 'set-hs
-      (kmacro-lambda-form [?\C-\[ ?x ?h ?s ?- ?o ?r ?- ?g ?p ?\C-m ?y] 0 "%d"))
-
-
 ;; (fset 'mcrc
 ;;    (kmacro-lambda-form [?\C-x ?b ?m ?c ?r ?c ?. ?c ?\C-m] 0 "%d"))
 
@@ -2600,8 +2607,6 @@ kernel."
       (kmacro-lambda-form [?\C-\[ ?x ?t ?e ?r ?m ?- ?l ?i ?\C-i ?\C-m] 0 "%d"))
 (put 'erase-buffer 'disabled nil)
 
-(fset 'mcrc
-      (kmacro-lambda-form [?\C-x ?\C-f ?\C-\[ ?O ?H ?\C-@ ?\C-e ?\C-? ?~ ?/ ?a ?m ?6 ?2 ?/ ?m ?c ?r ?c ?/ ?t ?i ?- ?l ?i ?n ?u ?x ?- ?k ?e ?r ?n ?e ?l ?/ ?d ?r ?i ?v ?e ?r ?\C-i ?c ?r ?y ?p ?\C-i ?t ?i ?\C-i ?m ?c ?r ?c ?. ?c ?\C-m] 0 "%d"))
 
 (fset 'jump-to-M-1
       (kmacro-lambda-form [?\C-s ?M ?- ?1] 0 "%d"))
@@ -2618,5 +2623,9 @@ kernel."
 (jump-to-M-1)
 (single-screen)
 
+
 (fset 'edittable
    (kmacro-lambda-form [?\C-s ?  ?\C-m ?\C-@ ?\C-s ?  ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-x ?o ?\C-s ?\( ?\C-m ?\C-@ ?\C-s ?, ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?% ?\C-y ?\C-m ?\C-y ?\C-\[ ?y ?\C-m ?! ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B ?\C-\[ ?O ?A ?\C-s ?\) ?\C-\[ ?O ?C ?\C-\[ ?O ?B ?\C-\[ ?\[ ?1 ?~ ?\C-x ?o ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B] 0 "%d"))
+
+(cancel-function-timers fetch-mail)
+(run-with-idle-timer (* 5 60) 0 'fetch-mail)
