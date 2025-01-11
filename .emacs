@@ -82,6 +82,12 @@
 ;; follow sym-link ;;
 (setq vc-follow-symlinks t)
 
+;;weird symbol
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (ansi-color-apply-on-region compilation-filter-start (point-max)))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
 ;; working directory setup
 (defun ti-setup ()
   (interactive )
@@ -114,10 +120,10 @@
     (setq boot-dir-sdk "/media/kamlesh/boot")
     (setq root-dir-debian "/media/kamlesh/rootfs/")
     (setq root-dir-sdk "/media/kamlesh/root/")
-    (setq boot-node "/dev/sdd1")
-    (setq root-node "/dev/sdd2")
-    (setq relay-number-am62x "1")
-    (setq relay-number-am64x "3")
+    (setq boot-node "/dev/sdb1")
+    (setq root-node "/dev/sdb2")
+    (setq relay-number-am62x "0")
+    (setq relay-number-am64x "1")
     (setq all-builds-dir "~/all-builds")
     
     (setq boot-dir boot-dir-sdk)
@@ -223,7 +229,8 @@
     (setq kernel-base-make-cmd " make -j32 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- ")
     (setq optee-base-make-cmd " make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- ")
     ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite  clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite ") ;; ;; ;;
-    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;; ;;
+    ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;; ;; ;;
+    (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=am62lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=am62lite SPD=opteed ") ;; ;; ;;
         ;; (setq atf-base-make-cmd " make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed clean && make ARCH=aarch64 CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3 TARGET_BOARD=lite SPD=opteed ") ;; ;;
     
     (cond
@@ -586,7 +593,8 @@
     (if (string= device am64x)  (setq relay-number relay-number-am64x)
 	   (setq relay-number relay-number-am62x)
 	   )
-    (setq relay-toggle-cmd (concat "perl ~/relay/perl/perl_eth.pl " relay-number " && sleep 2"))
+    ;; (setq relay-toggle-cmd (concat "perl ~/relay/perl/perl_eth.pl " relay-number " && sleep 2")) ;;
+    (setq relay-toggle-cmd (concat "ssh admin@relay-kamlesh -t \"if uom get relay/outlets/"relay-number"/state | grep -q \"true\"; then uom set relay/outlets/"relay-number"/state false  ;else uom set relay/outlets/"relay-number"/state true;fi\""))
     )
   (relay-cmd-setup)
   (skeleton-setup)
@@ -714,15 +722,20 @@ threads to the notmuch-extract-patch(1) command."
 	 )
 
     ;; (message (format "git checkout -b %s" message-id));; ;; ;;
-    (call-process-shell-command (format (concat "git checkout master" " > ~/b4-check-patch 2>&1" )))
-    (call-process-shell-command (format (concat "git branch |grep \"\\.\" | xargs git branch -D" " > ~/b4-check-patch 2>&1" )))
-    (call-process-shell-command (format (concat "git branch -D " message-id " >> ~/b4-check-patch 2>&1"))) ;; ;; ;;
-    (call-process-shell-command (format (concat "git checkout -b " message-id " >> ~/b4-check-patch 2>&1"))) ;; ;;
+    (call-process-shell-command (format (concat "git am --abort  > b4-check-patch 2>&1"))) ;; ;; ;; ;;
+    (call-process-shell-command (format (concat "git checkout master" " >> b4-check-patch 2>&1" )))
+    (call-process-shell-command (format (concat "git branch |grep \"\\.\" | xargs git branch -D" " > b4-check-patch 2>&1" )))
+    
+    (call-process-shell-command (format (concat "git checkout -b " message-id " >> b4-check-patch 2>&1"))) ;; ;;
     ;; (message (format "git checkout  %s" message-id));; ;; ;;
-    (message "message-id %s" message-id) 
-    (call-process-shell-command ;; ;; ;;
-     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> ~/b4-check-patch 2>&1" " && ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch"  " | tee -a ~/b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am b4-patch/*.mbx >> ~/b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;
-    )  (pop-to-buffer (find-file "~/b4-check-patch")) 
+    (message "message-id %s" message-id)
+    (call-process-shell-command  ;;
+     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/ti-linux-patch-review/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;   ;;
+    )
+  
+  (let ( (default-directory (expand-file-name work_dir_10)) ;;
+	 )
+    (pop-to-buffer (find-file "b4-check-patch"))) 
   )
 
 
@@ -1108,8 +1121,10 @@ kernel."
   (setq c-label-offset -8)
   (setq c-continued-statement-offset 8)
   (setq indent-tabs-mode nil)
-  (setq tab-width 8))
-(setq c-set-style "linux-tabs-only")
+  (setq tab-width 8)
+  (setq c-set-style "linux-tabs-only")
+  )
+
 
 ;; (defun c-lineup-arglist-tabs-only (ignored)
 ;;   "Line up argument lists by tabs, not spaces"
@@ -1141,48 +1156,84 @@ kernel."
 ;;                 (setq show-trailing-whitespace t)
 ;;                 (c-set-style "linux-tabs-only")))))
 
-(defun c-lineup-arglist-tabs-only (ignored)
+;; (defun c-lineup-arglist-tabs-only (ignored)
+;;   "Line up argument lists by tabs, not spaces"
+;;   (let* ((anchor (c-langelem-pos c-syntactic-element))
+;;          (column (c-langelem-2nd-pos c-syntactic-element))
+;;          (offset (- (1+ column) anchor))
+;;          (steps (floor offset c-basic-offset)))
+;;     (* (max steps 1)
+;;        c-basic-offset)))
+
+;; (setq c-default-style "linux")
+
+;; (dir-locals-set-class-variables
+;;  'linux-kernel
+;;  '((c-mode . (
+;; 	      (c-basic-offset . 8)
+;; 	      (c-label-minimum-indentation . 0)
+;; 	      (c-offsets-alist . (
+;; 				  (arglist-close         . c-lineup-arglist-tabs-only)
+;; 				  (arglist-cont-nonempty .
+;; 							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
+;; 				  (arglist-intro         . +)
+;; 				  (brace-list-intro      . +)
+;; 				  (c                     . c-lineup-C-comments)
+;; 				  (case-label            . 0)
+;; 				  (comment-intro         . c-lineup-comment)
+;; 				  (cpp-define-intro      . +)
+;; 				  (cpp-macro             . -1000)
+;; 				  (cpp-macro-cont        . +)
+;; 				  (defun-block-intro     . +)
+;; 				  (else-clause           . 0)
+;; 				  (func-decl-cont        . +)
+;; 				  (inclass               . +)
+;; 				  (inher-cont            . c-lineup-multi-inher)
+;; 				  (knr-argdecl-intro     . 0)
+;; 				  (label                 . -1000)
+;; 				  (statement             . 0)
+;; 				  (statement-block-intro . +)
+;; 				  (statement-case-intro  . +)
+;; 				  (statement-cont        . +)
+;; 				  (substatement          . +)
+;; 				  ))
+;; 	      (indent-tabs-mode . t)
+;; 	      (show-trailing-whitespace . t)
+;; 	      ))))
+
+(defun linux-kernel-coding-style/c-lineup-arglist-tabs-only (ignored)
   "Line up argument lists by tabs, not spaces"
   (let* ((anchor (c-langelem-pos c-syntactic-element))
-         (column (c-langelem-2nd-pos c-syntactic-element))
-         (offset (- (1+ column) anchor))
-         (steps (floor offset c-basic-offset)))
+	 (column (c-langelem-2nd-pos c-syntactic-element))
+	 (offset (- (1+ column) anchor))
+	 (steps (floor offset c-basic-offset)))
     (* (max steps 1)
        c-basic-offset)))
 
-(dir-locals-set-class-variables
- 'linux-kernel
- '((c-mode . (
-	      (c-basic-offset . 8)
-	      (c-label-minimum-indentation . 0)
-	      (c-offsets-alist . (
-				  (arglist-close         . c-lineup-arglist-tabs-only)
-				  (arglist-cont-nonempty .
-							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
-				  (arglist-intro         . +)
-				  (brace-list-intro      . +)
-				  (c                     . c-lineup-C-comments)
-				  (case-label            . 0)
-				  (comment-intro         . c-lineup-comment)
-				  (cpp-define-intro      . +)
-				  (cpp-macro             . -1000)
-				  (cpp-macro-cont        . +)
-				  (defun-block-intro     . +)
-				  (else-clause           . 0)
-				  (func-decl-cont        . +)
-				  (inclass               . +)
-				  (inher-cont            . c-lineup-multi-inher)
-				  (knr-argdecl-intro     . 0)
-				  (label                 . -1000)
-				  (statement             . 0)
-				  (statement-block-intro . +)
-				  (statement-case-intro  . +)
-				  (statement-cont        . +)
-				  (substatement          . +)
-				  ))
-	      (indent-tabs-mode . t)
-	      (show-trailing-whitespace . t)
-	      ))))
+;; Add Linux kernel style
+(add-hook 'c-mode-common-hook
+	  (lambda ()
+	    (c-add-style "linux-kernel"
+			 '("linux" (c-offsets-alist
+				    (arglist-cont-nonempty
+				     c-lineup-gcc-asm-reg
+				     linux-kernel-coding-style/c-lineup-arglist-tabs-only))))))
+
+(defun linux-kernel-coding-style/setup ()
+  (let ((filename (buffer-file-name)))
+    ;; Enable kernel mode for the appropriate files
+    (when (and filename
+	       (or (locate-dominating-file filename "Kbuild")
+		   (locate-dominating-file filename "Kconfig")
+		   (save-excursion (goto-char 0)
+				   (search-forward-regexp "^#include <linux/\\(module\\|kernel\\)\\.h>$" nil t))))
+      (setq indent-tabs-mode t)
+      (setq tab-width 8)
+      (setq c-basic-offset 8)
+      (c-set-style "linux-kernel")
+      (message "Setting up indentation for the linux kernel"))))
+
+(add-hook 'c-mode-hook 'linux-kernel-coding-style/setup)
 
 ;; indentaion style end
 
@@ -1816,8 +1867,9 @@ kernel."
   ;; (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
   ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
-  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs") (ti-setup )))
+  (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62l-wakeup/") (setq soc-type "hs-fs") (ti-setup )))
   (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62lite-presil-build/") (setq soc-type "hs-fs")(ti-setup )))
+  (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs")(ti-setup )))
   (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs")    (setq soc-type "hs-fs") (setq sign-type "binman") (setq device am64x) (setq source mainline) (setq boot-type "mmc")(ti-setup )))
   (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
   (global-set-key (kbd "M-o") 'dotemacs) )
@@ -2454,7 +2506,7 @@ kernel."
 
   (setq wait-for-completion t)
   (relay-toggle-run)
-  (while wait-for-completion (sleep-for sec msec))
+  (while wait-for-completion (sleep-for 3 msec))
 
   (setq wait-for-completion t)
   (relay-toggle-run)
