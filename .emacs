@@ -22,8 +22,9 @@
      (:name "Inbox" :query "tag:Inbox" :key "i" :sort-order newest-first)
      (:name "direct" :query "tag:direct" :key "d" :sort-order newest-first)
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
+ '(package-check-signature nil)
  '(package-selected-packages
-   '(which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
  '(safe-local-variable-values
    '((c-offsets-alist
       (arglist-close . c-lineup-arglist-tabs-only)
@@ -53,6 +54,9 @@
    '(sr-speedbar-visiting-file-hook
      (lambda nil
        (other-window 1))))
+ '(stock-tracker-list-of-stocks '("AMZN" "TXN" "GOOG" "NFLX" "QCOM" "STM" "NVDA") t)
+ '(stock-tracker-refresh-interval 5 t)
+ '(stock-tracker-up-red-down-green nil t)
  '(term-default-fg-color nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -667,6 +671,23 @@ overrides the current directory, which would otherwise be used."
 ;;(server-start)
 ;;(add-to-list 'auto-mode-alist '("/mutt" . mail-mode))
 
+;;stock-tracker
+;; Refresh stock price every 5*10 secs
+(customize-set-variable 'stock-tracker-refresh-interval 5)
+
+;; Set up as green, down as red
+(customize-set-variable 'stock-tracker-up-red-down-green nil)
+
+;; Customize stocks
+(customize-set-variable 'stock-tracker-list-of-stocks
+                        '("AMZN"
+			  "TXN"
+			  "GOOG"
+			  "NFLX"
+			  "QCOM"
+			  "STM"
+			  "NVDA"))
+
 ;;notmuch
 (require 'notmuch)
 (setq send-mail-function 'sendmail-send-it
@@ -862,15 +883,22 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
         ("http" . "webproxy.ext.ti.com:80")
         ("https" . "webproxy.ext.ti.com:80")
         ("ftp" . "webproxy.ext.ti.com:80")))
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")  ;;
-(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
-					;("gnu-mirror" . "http://mirrors.163.com/elpa/gnu/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")
-					;("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")))
-					;("melpa-m" . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
-					;("org-n"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
-					;("gnu-m"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")  ;; ;;
+;; (setq package-archives '( ;;
+			 ;; ("ELPA" . "http://tromey.com/elpa/")        ;;
+			 ;; ("gnu-mirror" . "http://mirrors.163.com/elpa/gnu/")	       ;;
+                         ;; ("gnu" . "http://elpa.gnu.org/packages/") ;;
+			 ;; ("marmalade" . "http://marmalade-repo.org/packages/")	 ;;
+                         ;; ("melpa" . "http://melpa.org/packages/") ;;
+			 ;; ("melpa-m" . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")	 ;;
+			 ;; ("org-n"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")	       ;;
+			 ;; ("gnu-m"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))	 ;;
+
+(setq package-archive-priorities '(("gnu" . 10)
+                                   ("melpa" . 5))
+      package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("melpa" . "https://stable.melpa.org/packages/")
+                         ("melpa-devel" . "https://melpa.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -1167,39 +1195,39 @@ kernel."
 
 ;; (setq c-default-style "linux")
 
-;; (dir-locals-set-class-variables
-;;  'linux-kernel
-;;  '((c-mode . (
-;; 	      (c-basic-offset . 8)
-;; 	      (c-label-minimum-indentation . 0)
-;; 	      (c-offsets-alist . (
-;; 				  (arglist-close         . c-lineup-arglist-tabs-only)
-;; 				  (arglist-cont-nonempty .
-;; 							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
-;; 				  (arglist-intro         . +)
-;; 				  (brace-list-intro      . +)
-;; 				  (c                     . c-lineup-C-comments)
-;; 				  (case-label            . 0)
-;; 				  (comment-intro         . c-lineup-comment)
-;; 				  (cpp-define-intro      . +)
-;; 				  (cpp-macro             . -1000)
-;; 				  (cpp-macro-cont        . +)
-;; 				  (defun-block-intro     . +)
-;; 				  (else-clause           . 0)
-;; 				  (func-decl-cont        . +)
-;; 				  (inclass               . +)
-;; 				  (inher-cont            . c-lineup-multi-inher)
-;; 				  (knr-argdecl-intro     . 0)
-;; 				  (label                 . -1000)
-;; 				  (statement             . 0)
-;; 				  (statement-block-intro . +)
-;; 				  (statement-case-intro  . +)
-;; 				  (statement-cont        . +)
-;; 				  (substatement          . +)
-;; 				  ))
-;; 	      (indent-tabs-mode . t)
-;; 	      (show-trailing-whitespace . t)
-;; 	      ))))
+(dir-locals-set-class-variables
+ 'linux-kernel
+ '((c-mode . (
+	      (c-basic-offset . 8)
+	      (c-label-minimum-indentation . 0)
+	      (c-offsets-alist . (
+				  (arglist-close         . c-lineup-arglist-tabs-only)
+				  (arglist-cont-nonempty .
+							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
+				  (arglist-intro         . +)
+				  (brace-list-intro      . +)
+				  (c                     . c-lineup-C-comments)
+				  (case-label            . 0)
+				  (comment-intro         . c-lineup-comment)
+				  (cpp-define-intro      . +)
+				  (cpp-macro             . -1000)
+				  (cpp-macro-cont        . +)
+				  (defun-block-intro     . +)
+				  (else-clause           . 0)
+				  (func-decl-cont        . +)
+				  (inclass               . +)
+				  (inher-cont            . c-lineup-multi-inher)
+				  (knr-argdecl-intro     . 0)
+				  (label                 . -1000)
+				  (statement             . 0)
+				  (statement-block-intro . +)
+				  (statement-case-intro  . +)
+				  (statement-cont        . +)
+				  (substatement          . +)
+				  ))
+	      (indent-tabs-mode . t)
+	      (show-trailing-whitespace . t)
+	      ))))
 
 (defun linux-kernel-coding-style/c-lineup-arglist-tabs-only (ignored)
   "Line up argument lists by tabs, not spaces"
@@ -1346,6 +1374,9 @@ kernel."
 ;; multiterm end
 
 ;; org-mode
+
+(setq org-agenda-files '("~/tasks.org"))
+
 ;; (define-skeleton org-skeleton
 ;;   "In-buffer settings info for a emacs-org file."
 ;;   "Title: "
@@ -1356,6 +1387,7 @@ kernel."
 ;;   "#+BABEL: :session *R* :cache yes :results output graphics :exports both :tangle yes \n"
 ;;   "-----"
 ;;   )
+
 
 (defun skeleton-setup ()
   (interactive )
@@ -2679,5 +2711,5 @@ kernel."
 (fset 'edittable
    (kmacro-lambda-form [?\C-s ?  ?\C-m ?\C-@ ?\C-s ?  ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-x ?o ?\C-s ?\( ?\C-m ?\C-@ ?\C-s ?, ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?% ?\C-y ?\C-m ?\C-y ?\C-\[ ?y ?\C-m ?! ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B ?\C-\[ ?O ?A ?\C-s ?\) ?\C-\[ ?O ?C ?\C-\[ ?O ?B ?\C-\[ ?\[ ?1 ?~ ?\C-x ?o ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B] 0 "%d"))
 
-(cancel-function-timers fetch-mail)
+(cancel-function-timers 'fetch-mail)
 (run-with-idle-timer (* 5 60) 0 'fetch-mail)
