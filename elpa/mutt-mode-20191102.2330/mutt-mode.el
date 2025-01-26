@@ -4,10 +4,9 @@
 
 ;; Author: Felix Weilbach <felix.weilbach@t-online.de>
 ;; URL: https://gitlab.com/flexw/mutt-mode
-;; Package-Version: 20191102.2330
-;; Package-Commit: 1d495de49e6f536459b00d5396a2f5ce5ad4757b
 ;; Keywords: languages
-;; Version: 0.1
+;; Package-Version: 20191102.2330
+;; Package-Revision: 1d495de49e6f
 ;; Package-Requires: ((emacs "24"))
 
 ;; This file is not part of GNU Emacs.

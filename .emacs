@@ -24,7 +24,7 @@
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(notmuch compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
  '(safe-local-variable-values
    '((c-offsets-alist
       (arglist-close . c-lineup-arglist-tabs-only)
@@ -689,13 +689,13 @@ overrides the current directory, which would otherwise be used."
 			  "NVDA"))
 
 ;;notmuch
-(require 'notmuch)
-(setq send-mail-function 'sendmail-send-it
-      sendmail-program "/usr/bin/msmtp"
-      mail-specify-envelope-from t
-      message-sendmail-envelope-from 'header
-      mail-envelope-from 'header)
-(global-set-key (kbd "M-m") 'notmuch)
+(require 'notmuch)			        ;;
+(setq send-mail-function 'sendmail-send-it   ;;
+      sendmail-program "/usr/bin/msmtp"      ;;
+      mail-specify-envelope-from t	        ;;
+      message-sendmail-envelope-from 'header ;;
+      mail-envelope-from 'header)	        ;;
+(global-set-key (kbd "M-m") 'notmuch)        ;;
 
 (defun notmuch-check-patch (repo branch &optional reroll-count)
   "Extract patch series in current thread to branch BRANCH in repo REPO.

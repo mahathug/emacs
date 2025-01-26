@@ -6,9 +6,8 @@
 ;; Modifier:   Kentaro NAKAZAWA <kentaro.nakazawa@nifty.com>
 ;; Created:    2008 May the 4th
 ;; Modified:   April 2011
-;; Version:    0.1
 ;; Package-Version: 20201218.2109
-;; Package-Commit: d696a8177e94c81ea557ad364a3b3dcc3abbc50f
+;; Package-Revision: d696a8177e94
 ;; Keywords:   vala languages oop
 
 ;; This program is free software; you can redistribute it and/or modify

@@ -10,11 +10,10 @@
 ;;         Daniel Hackney <dan@haxney.org>
 ;; Maintainer: John SJ Anderson <john@genehack.org>
 ;; Keywords: extensions
-;; Package-Version: 20210530.1743
-;; Package-Commit: 2f1b4073904805c8454ebc9bc967b23836a2d577
 ;; Created: 2009-05-24
 ;; URL: https://git.genehack.net/genehack/smart-tab
-;; Version: 0.7
+;; Package-Version: 20210530.1743
+;; Package-Revision: 2f1b40739048
 ;; Package-Requires: ((emacs "24.3"))
 ;;
 ;; This program is free software; you can redistribute it and/or modify it under
