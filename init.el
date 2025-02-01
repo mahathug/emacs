@@ -1837,14 +1837,14 @@ kernel."
 
 
 ;; first file
-(pop-to-buffer (find-file "~/.emacs"))
+(pop-to-buffer (find-file "~/.emacs.d/init.el"))
 (defun dotemacs()
   (interactive )
-  (let* ((buffer-name (format ".emacs"))
+  (let* ((buffer-name (format "init.el"))
          (buffer (get-buffer buffer-name)))
     (if buffer
         (switch-to-buffer buffer)
-      (pop-to-buffer (find-file "~/.emacs"))
+      (pop-to-buffer (find-file "~/.emacs.d/init.el"))
       )))
 ;; first file end
 
@@ -2035,7 +2035,7 @@ kernel."
   (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62lite-presil-build/") (setq soc-type "hs-fs")(ti-setup )))
   (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs")(ti-setup )))
   (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/upstream-test/") (setq soc-type "hs")    (setq soc-type "hs-fs") (setq sign-type "binman") (setq device am64x) (setq source mainline) (setq boot-type "mmc")(ti-setup )))
-  (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.emacs")))
+  (global-set-key (kbd "M-i")(lambda() (interactive) (load-file "~/.init.el")))
   (global-set-key (kbd "M-o") 'dotemacs) )
 
 (shortcuts-before-setup)
