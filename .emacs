@@ -7,7 +7,6 @@
  '(comment-multi-line t)
  '(comment-style 'aligned)
  '(custom-enabled-themes '(misterioso))
- '(enable-recursive-minibuffers t)
  '(inhibit-startup-screen t)
  '(initial-frame-alist '((fullscreen . maximized)))
  '(ispell-dictionary nil)
@@ -24,7 +23,7 @@
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(consult marginalia orderless notmuch compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(embark-consult embark projectile consult marginalia orderless notmuch compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
  '(safe-local-variable-values
    '((c-offsets-alist
       (arglist-close . c-lineup-arglist-tabs-only)
@@ -66,6 +65,7 @@
  '(ediff-current-diff-A ((t (:foreground "black" :background "brown"))))
  '(ediff-current-diff-B ((t (:foreground "black" :background "green"))))
  '(ediff-current-diff-C ((t (:foreground "White" :background "orange"))))
+ '(highlight ((t (:background "green" :foreground "black"))))
  '(magit-diff-added ((((type tty)) (:foreground "green"))))
  '(magit-diff-added-highlight ((((type tty)) (:foreground "LimeGreen"))))
  '(magit-diff-context-highlight ((((type tty)) (:foreground "default"))))
@@ -73,6 +73,7 @@
  '(magit-diff-removed ((((type tty)) (:foreground "red"))))
  '(magit-diff-removed-highlight ((((type tty)) (:foreground "IndianRed"))))
  '(magit-section-highlight ((((type tty)) nil)))
+ '(shadow ((t (:foreground "blue"))))
  '(speedbar-tag-face ((t (:foreground "brown"))))
  '(term ((t (:inherit nil))))
  '(term-color-black ((t (:background "light gray" :foreground "light gray"))))
@@ -604,8 +605,9 @@
   (skeleton-setup)
   ;;mandotory fixes here
 
-  ;; (setq comint-password-prompt-regexp eshell-password-prompt-regexp)
+  ;; 
   )
+
 
 (defun set-u-boot-directory (path)
   "Set ti-u-boot directory This
@@ -745,13 +747,14 @@ threads to the notmuch-extract-patch(1) command."
     ;; (message (format "git checkout -b %s" message-id));; ;; ;;
     (call-process-shell-command (format (concat "git am --abort  > b4-check-patch 2>&1"))) ;; ;; ;; ;;
     (call-process-shell-command (format (concat "git checkout master" " >> b4-check-patch 2>&1" )))
+    (call-process-shell-command (format (concat "git pull origin master" " >> b4-check-patch 2>&1" )))
     (call-process-shell-command (format (concat "git branch |grep \"\\.\" | xargs git branch -D" " > b4-check-patch 2>&1" )))
     
     (call-process-shell-command (format (concat "git checkout -b " message-id " >> b4-check-patch 2>&1"))) ;; ;;
     ;; (message (format "git checkout  %s" message-id));; ;; ;;
     (message "message-id %s" message-id)
     (call-process-shell-command  ;;
-     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/ti-linux-patch-review/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \"has style problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;   ;;
+     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/ti-linux-patch-review/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \" stdyle problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;   ;;
     )
   
   (let ( (default-directory (expand-file-name work_dir_10)) ;;
@@ -918,6 +921,18 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 (setq split-width-threshold 0)
 (setq split-height-threshold nil)
 
+;;password mask
+;; (setq comint-password-prompt-regexp eshell-password-prompt-regexp) ;;
+
+;;projectile
+(require 'projectile)
+;; Recommended keymap prefix on Windows/Linux
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(projectile-mode +1)
+
+(setq projectile-project-search-path '("~/am62/binman/am62l-wakeup/arm-trusted-firmware" "" ("~/am62/binman/am62l-wakeup/arm-trusted-firmware" . 1)))
+
+
 ;;vertico
 ;; Enable vertico
 (use-package vertico
@@ -974,7 +989,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 ;; Enable rich annotations using the Marginalia package
 (use-package marginalia
   ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
-  ;; available in the *Completions* buffer, add it to the
+  ;; available in the *Completions* buffer, add it to te
   ;; `completion-list-mode-map'.
   :bind (:map minibuffer-local-map
          ("M-A" . marginalia-cycle))
@@ -986,6 +1001,48 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   ;; the mode gets enabled right away. Note that this forces loading the
   ;; package.
   (marginalia-mode))
+
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+
+;;embark
+(use-package embark
+  :ensure t
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc. You may adjust the
+  ;; Eldoc strategy, if you want to see the documentation from
+  ;; multiple providers. Beware that using this can be a little
+  ;; jarring since the message shown in the minibuffer can be more
+  ;; than one line, causing the modeline to move up and down:
+
+  ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 (package-initialize)
 (require 'consult)
@@ -1971,7 +2028,7 @@ kernel."
   ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/crypto/") (ti-setup am62x ti))) ;; ;; ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
   ;; (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
-  ;; (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
+  ;; (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-projec-path "~/am62/cr_valid/") (ti-setup ))) ;;
   ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
   ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
   (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62l-wakeup/") (setq soc-type "hs-fs") (ti-setup )))
@@ -2786,5 +2843,5 @@ kernel."
 (fset 'edittable
    (kmacro-lambda-form [?\C-s ?  ?\C-m ?\C-@ ?\C-s ?  ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-x ?o ?\C-s ?\( ?\C-m ?\C-@ ?\C-s ?, ?\C-m ?\C-\[ ?O ?D ?\C-\[ ?w ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?% ?\C-y ?\C-m ?\C-y ?\C-\[ ?y ?\C-m ?! ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B ?\C-\[ ?O ?A ?\C-s ?\) ?\C-\[ ?O ?C ?\C-\[ ?O ?B ?\C-\[ ?\[ ?1 ?~ ?\C-x ?o ?\C-\[ ?\[ ?1 ?~ ?\C-\[ ?O ?B] 0 "%d"))
 
-(cancel-function-timers 'fetch-mail)
-(run-with-idle-timer (* 5 60) 0 'fetch-mail)
+(cancel-function-timers 'fetch-mail) ;;
+;; (run-with-idle-timer (* 5 60) 0 'fetch-mail) ;;
