@@ -24,6 +24,8 @@
  '(package-check-signature nil)
  '(package-selected-packages
    '(embark-consult embark projectile consult marginalia orderless notmuch compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+ '(projectile-enable-cmake-presets nil)
+ '(projectile-track-known-projects-automatically nil)
  '(safe-local-variable-values
    '((c-offsets-alist
       (arglist-close . c-lineup-arglist-tabs-only)
@@ -65,6 +67,7 @@
  '(ediff-current-diff-A ((t (:foreground "black" :background "brown"))))
  '(ediff-current-diff-B ((t (:foreground "black" :background "green"))))
  '(ediff-current-diff-C ((t (:foreground "White" :background "orange"))))
+ '(help-key-binding ((t (:background "green" :inherit fixed-pitch))))
  '(highlight ((t (:background "green" :foreground "black"))))
  '(magit-diff-added ((((type tty)) (:foreground "green"))))
  '(magit-diff-added-highlight ((((type tty)) (:foreground "LimeGreen"))))
@@ -414,11 +417,10 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 ;;projectile
 (require 'projectile)
 ;; Recommended keymap prefix on Windows/Linux
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(setq projectile-ignored-projects '("~/")) ;;
+(setq projectile-project-search-path '("~/.emacs.d/" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
+(define-key projectile-mode-map (kbd "M-l") 'projectile-command-map) 
 (projectile-mode +1)
-
-(setq projectile-project-search-path '("~/am62/binman/am62l-wakeup/arm-trusted-firmware" "" ("~/am62/binman/am62l-wakeup/arm-trusted-firmware" . 1)))
-
 
 ;;vertico
 ;; Enable vertico
@@ -521,7 +523,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+               '("\\`\\*embark Collect \\(Live\\|Completions\\)\\*"
                  nil
                  (window-parameters (mode-line-format . none)))))
 
@@ -2140,4 +2142,6 @@ kernel."
   )
 
 (load "keyboard-macros.el")
+(load "projectile-config.el")
 (load "final.el")
+

@@ -2,14 +2,7 @@
 
 (defun shortcuts-before-setup()
   (interactive)
-  ;; (global-set-key (kbd "M-11") (lambda () (interactive)(setq working-project-path "~/am62/mcrc/") (ti-setup))) ;;
-  ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/mainline/") (ti-setup))) ;; ;;
-  ;; (global-set-key (kbd "M-8") (lambda () (interactive)(setq working-project-path "~/am62/crypto/") (ti-setup am62x ti))) ;; ;; ;;
-  ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
-  ;; (global-set-key (kbd "M-6") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup ))) ;;
-  ;; (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-projec-path "~/am62/cr_valid/") (ti-setup ))) ;;
-  ;; (global-set-key (kbd "M-7") 'gaia-csdcd4-setup) ;;
-  ;; (global-set-key (kbd "M-4") (lambda () (interactive)(setq working-project-path "~/am62/cr_valid/") (ti-setup am62ax mainline))) ;;
+
   (global-set-key (kbd "M-3") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62l-wakeup/") (setq soc-type "hs-fs") (ti-setup )))
   (global-set-key (kbd "M-2") (lambda () (interactive)(setq working-project-path "~/am62/binman/am62lite-presil-build/") (setq soc-type "hs-fs")(ti-setup )))
   (global-set-key (kbd "M-5") (lambda () (interactive)(setq working-project-path "~/am62/binman/") (setq soc-type "hs-fs")(ti-setup )))
@@ -21,8 +14,7 @@
    
 (defun shortcuts-after-setup()
   (interactive)
-
-
+ 
   ;; (setq cscope_dir work_dir_1) ;;
   ;; (setq cscope-initial-directory cscope_dir) ;; ;;
   (global-set-key (kbd "M-1") (lambda () (interactive) (switch-to-buffer (find-file  (concat work_dir_1 "/")))))
@@ -31,8 +23,6 @@
 
   (global-set-key (kbd "M-2") (lambda () (interactive) (if (string-match-p "gaia" work_dir_2) (gaia-csdcd34-login)(switch-to-buffer (find-file (concat work_dir_2 "/"))))))
 
-
-  ;; (global-set-key (kbd "M-2") '      gaia-csdcd4-login)
 
   (global-set-key (kbd "M-3") (lambda () (interactive) (switch-to-buffer (find-file (concat work_dir_3 "")))))
   (global-set-key (kbd "M-4") (lambda () (interactive) (switch-to-buffer (find-file (concat work_dir_4 "")))))
@@ -75,7 +65,6 @@
   (global-unset-key (kbd "M-<right>"))
   (global-set-key (kbd "M-<right>") 'next-buffer) ;
   
-
 
   ;; ctrl
 
