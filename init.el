@@ -97,7 +97,7 @@
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 (add-to-list 'load-path "~/.emacs.d/.config")
-(load "ti-setup.el")
+;;(load "ti-setup.el") 
 
 (defun set-u-boot-directory (path)
   "Set ti-u-boot directory This
@@ -127,36 +127,6 @@ overrides the current directory, which would otherwise be used."
   (setq working-project-path path)
   (ti-setup)
   )
-
-
-(defun bdkcamp-setup()
-  (interactive)
-  (setq remote_login "/ssh:csdcd4@43.4.2.120")
-  (setq remote_dir "/ssh:csdcd4@43.4.2.120:~/")
-  (setq work_dir_1 remote_dir)
-  (setq work_dir_2 (concat remote_dir "kamlesh"))
-  (setq work_dir_3 (concat remote_login "|docker:camp_2.6.4-0:/workspace/kamlesh_ws"))
-  (setq work_dir_4 (concat remote_login "|ssh:root@10.0.52.12:~/coordinate_issue"))
-  (setq work_dir_5 "/ssh:visos@43.4.0.177:~/kamlesh")
-  (setq work_dir_9 (concat work_dir_5 "/host-stream_tester/SD_VP_Integ/vp/src/stream_tester"))
-  (setq work_dir_6 "/ssh:csdcd6@43.4.2.246:~/kamlesh_ws/coordinate_issue")
-  (setq work_dir_librpp "/ssh:ubuntu@43.88.80.124:/home/ubuntu/rpp/vp1-project/build/tmp/work/cortexa9hf-neon-poky-linux-gnueabi/librpp/0.21.5-r0/git/librpp/")
-  (setq work_dir_t_librpp (concat "/ssh:csdcd4@43.4.2.120|ssh:root@10.0.52.12:/usr/local/vp1/lib/"))
-  i
-  ;; (setq work_dir_2 "/home/ubuntu/rpp/vp1-project/build/tmp/work/vp1-poky-linux-gnueabi/kernel-module-rpp/0.21.5-r0/git/drvrpp/")
-
-  (setq work_dir_rpp_make "/ssh:ubuntu@43.88.80.124:/home/ubuntu/rpp/vp1-project/vp1-sdk-airbg/")
-  (setq cscope_dir work_dir_1) ;;
-  (setq cscope-initial-directory cscope_dir) ;;
-  (shortcuts-after-setup)
-  ;; (fset 'cscope-init-dir
-  ;; 	"\C-xrbcscope-build\C-m\C-csa\C-m")
-
-  ;; (execute-kbd-macro (symbol-function 'cscope-init-dir))
-  ;; (defun clean-ci () (interactive) ((let ((default-directory concat (work_dir_4 "/rawdata/")))(shell "ls"))))
-  )
-
-
 
 ;; mutt
 
@@ -346,6 +316,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 
 (setq notmuch-show-tag-macro-alist
       (list
+
        '("m" "+notmuch::patch" "+notmuch::moreinfo" "-notmuch::needs-review")
        '("n" "+notmuch::patch" "+notmuch::needs-review" "-notmuch::pushed")
        '("o" "+notmuch::patch" "+notmuch::obsolete"
@@ -377,15 +348,6 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
         ("https" . "webproxy.ext.ti.com:80")
         ("ftp" . "webproxy.ext.ti.com:80")))
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")  ;; ;;
-;; (setq package-archives '( ;;
-			 ;; ("ELPA" . "http://tromey.com/elpa/")        ;;
-			 ;; ("gnu-mirror" . "http://mirrors.163.com/elpa/gnu/")	       ;;
-                         ;; ("gnu" . "http://elpa.gnu.org/packages/") ;;
-			 ;; ("marmalade" . "http://marmalade-repo.org/packages/")	 ;;
-                         ;; ("melpa" . "http://melpa.org/packages/") ;;
-			 ;; ("melpa-m" . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")	 ;;
-			 ;; ("org-n"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")	       ;;
-			 ;; ("gnu-m"   . "http://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))	 ;;
 
 (setq package-archive-priorities '(("gnu" . 10)
                                    ("melpa" . 5))
@@ -419,8 +381,11 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 ;; Recommended keymap prefix on Windows/Linux
 (setq projectile-ignored-projects '("~/")) ;;
 (setq projectile-project-search-path '("~/.emacs.d/" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
-(define-key projectile-mode-map (kbd "M-l") 'projectile-command-map) 
+(define-key projectile-mode-map (kbd "M-z") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "M-a") 'projectile-commander) 
 (projectile-mode +1)
+
+(keyboard-translate ?\C-q ?\C-h)
 
 ;;vertico
 ;; Enable vertico
@@ -539,70 +504,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 (vertico-mode)
 (setq completion-styles '(substring basic))
 
-;;ediff
-;; turn off whitespace checking:
-(setq ediff-diff-options "-w")
-;; side by side diff
-(setq ediff-split-window-function 'split-window-horizontally)
-;; ne pas ouvrir de fenêtre séparée pour les contrôles :
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-;; refinement:
-(setq-default ediff-forward-word-function 'forward-char)
-(setq-default ediff-ignore-similar-regions t)
-(setq-default ediff-highlight-all-diffs nil)
-(defvar mkm/dired-file-1)
 
-(defun mkm/ediff-push ()
-  (interactive)
-  (setq mkm/dired-file-1 (dired-get-filename)))
-(defun mkm/ediff-pop ()
-  (interactive)
-  (ediff-files mkm/dired-file-1 (dired-get-filename)))
-(add-hook 'dired-mode-hook
-	  (lambda()
-            (define-key dired-mode-map (kbd "C-c u") 'mkm/ediff-push)
-            (define-key dired-mode-map (kbd "C-c o") 'mkm/ediff-pop)))
-(defvar ediff-do-hexl-diff nil
-  "variable used to store trigger for doing diff in hexl-mode")
-(defadvice ediff-files-internal (around ediff-files-internal-for-binary-files activate)
-  "catch the condition when the binary files differ
-
-the reason for catching the error out here (when re-thrown from the inner advice)
-is to let the stack continue to unwind before we start the new diff
-otherwise some code in the middle of the stack expects some output that
-isn't there and triggers an error"
-  (let ((file-A (ad-get-arg 0))
-        (file-B (ad-get-arg 1))
-        ediff-do-hexl-diff)
-    (condition-case err
-        (progn
-          ad-do-it)
-      (error
-       (if ediff-do-hexl-diff 
-           (let ((buf-A (find-file-noselect file-A))
-                 (buf-B (find-file-noselect file-B)))
-             (with-current-buffer buf-A
-	       (hexl-mode 1))
-             (with-current-buffer buf-B
-	       (hexl-mode 1))
-             (ediff-buffers buf-A buf-B))
-         (error (error-message-string err)))))))
-
-(defadvice ediff-setup-diff-regions (around ediff-setup-diff-regions-for-binary-files activate)
-  "when binary files differ, set the variable "
-  (condition-case err
-      (progn
-        ad-do-it)
-    (error
-     (setq ediff-do-hexl-diff
-           (and (string-match-p "^Errors in diff output.  Diff output is in.*"
-                                (error-message-string err))
-                (string-match-p "^\\(Binary \\)?[fF]iles .* and .* differ"
-                                (buffer-substring-no-properties
-                                 (line-beginning-position)
-                                 (line-end-position)))
-                (y-or-n-p "The binary files differ, look at the differences in hexl-mode? ")))
-     (error (error-message-string err)))))
 ;; docker
 ;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
 
@@ -613,27 +515,6 @@ isn't there and triggers an error"
   :ensure t
   :config
   (docker-global-mode)) ;; manage docker containers
-
-;; (push
-;; (cons
-;; "docker"
-;; '((tramp-login-program "docker")
-;; (tramp-login-args (("exec" "-w" "/workspace" "-it") ("%h") ("/bin/bash")))
-;; (tramp-remote-shell "/bin/sh")
-;; (tramp-remote-shell-args ("-i") ("-c"))))
-;; tramp-methods)
-
-;; (defadvice tramp-completion-handle-file-name-all-completions
-;;     (around dotemacs-completion-docker activate)
-;;     "(tramp-completion-handle-file-name-all-completions \"\" \"/docker:\" returns
-;;     a list of active Docker container names, followed by colons."
-;;     (if (equal (ad-get-arg 1) "/docker:")
-;; 	(let* ((dockernames-raw (shell-command-to-string "docker ps | perl -we 'use strict; $_ = <>; m/^(.*)NAMES/ or die; my $offset = length($1); while(<>) {substr($_, 0, $offset, q()); chomp; for(split m/\\W+/) {print qq($_:\n)} }'"))
-;; 	       (dockernames (cl-remove-if-not
-;; 			     #'(lambda (dockerline) (string-match ":$" dockerline))
-;; 			     (split-string dockernames-raw "\n"))))
-;; 	  (setq ad-return-value dockernames))
-;;       ad-do-it))
 
 (defadvice tramp-completion-handle-file-name-all-completions
     (around dotemacs-completion-docker activate)
@@ -653,30 +534,6 @@ isn't there and triggers an error"
 (require 'bash-completion)
 (bash-completion-setup)
 
-;;outline-code
-					; Outline-minor-mode key map
-;; (define-prefix-command 'cm-map nil "Outline-")
-;; ; HIDE
-;; (define-key cm-map "q" 'outline-hide-sublevels)    ; Hide everything but the top-level headings
-;; (define-key cm-map "t" 'outline-hide-body)         ; Hide everything but headings (all body lines)
-;; (define-key cm-map "o" 'outline-hide-other)        ; Hide other branches
-;; (define-key cm-map "c" 'outline-hide-entry)        ; Hide this entry's body
-;; (define-key cm-map "l" 'outline-hide-leaves)       ; Hide body lines in this entry and sub-entries
-;; (define-key cm-map "d" 'outline-hide-subtree)      ; Hide everything in this entry and sub-entries
-;; ; SHOW
-;; (define-key cm-map "a" 'outline-show-all)          ; Show (expand) everything
-;; (define-key cm-map "e" 'outline-show-entry)        ; Show this heading's body
-;; (define-key cm-map "i" 'outline-show-children)     ; Show this heading's immediate child sub-headings
-;; (define-key cm-map "k" 'outline-show-branches)     ; Show all sub-headings under this heading
-;; (define-key cm-map "s" 'outline-show-subtree)      ; Show (expand) everything in this heading & below
-;; ; MOVE
-;; (define-key cm-map "u" 'outline-up-heading)                ; Up
-;; (define-key cm-map "n" 'outline-next-visible-heading)      ; Next
-;; (define-key cm-map "p" 'outline-previous-visible-heading)  ; Previous
-;; (define-key cm-map "f" 'outline-forward-same-level)        ; Forward - same level
-;; (define-key cm-map "b" 'outline-backward-same-level)       ; Backward - same level
-;; (global-set-key "\M-p" cm-map)
-
 ;; cscope start
 
 (setq cscope-do-not-update-database t)
@@ -686,18 +543,9 @@ isn't there and triggers an error"
 
 ;; cscope end
 
-
-
-
 ;;cursor
 
 (set-cursor-color "Orange")
-
-
-;; indentation style
-;; (setq c-default-style "linux"
-;; c-basic-offset 4)
-;; (c-set-offset 'case-label '+)
 
 ;; whitespaces 80 cloumn rule
 (require 'whitespace)
@@ -705,57 +553,6 @@ isn't there and triggers an error"
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 ;; (global-whitespace-mode t) ;;
 
-;; .. code-block:: none
-
-;; .. code-block:: none
-
-;; (defun c-lineup-arglist-tabs-only (ignored)
-;;   "Line up argument lists by tabs, not spaces"
-;;   (let* ((anchor (c-langelem-pos c-syntactic-element))
-;;          (column (c-langelem-2nd-pos c-syntactic-element))
-;;          (offset (- (1+ column) anchor))
-;;          (steps (floor offset c-basic-offset)))
-;;     (* (max steps 1)
-;;        c-basic-offset)))
-
-;; (dir-locals-set-class-variables
-;;  'linux-kernel
-;;  '((c-mode . (
-;;               (c-basic-offset . 8)
-;;               (c-label-minimum-indentation . 0)
-;;               (c-offsets-alist . (
-;;                                   (arglist-close         . c-lineup-arglist-tabs-only)
-;;                                   (arglist-cont-nonempty .
-;;                                                          (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
-;;                                   (arglist-intro         . +)
-;;                                   (brace-list-intro      . +)
-;;                                   (c                     . c-lineup-C-comments)
-;;                                   (case-label            . 0)
-;;                                   (comment-intro         . c-lineup-comment)
-;;                                   (cpp-define-intro      . +)
-;;                                   (cpp-macro             . -1000)
-;;                                   (cpp-macro-cont        . +)
-;;                                   (defun-block-intro     . +)
-;;                                   (else-clause           . 0)
-;;                                   (func-decl-cont        . +)
-;;                                   (inclass               . +)
-;;                                   (inher-cont            . c-lineup-multi-inher)
-;;                                   (knr-argdecl-intro     . 0)
-;;                                   (label                 . -1000)
-;;                                   (statement             . 0)
-;;                                   (statement-block-intro . +)
-;;                                   (statement-case-intro  . +)
-;;                                   (statement-cont        . +)
-;;                                   (substatement          . +)
-;;                                   ))
-;;               (indent-tabs-mode . t)
-;;               (show-trailing-whitespace . t)
-;;               ))))
-
-;; (dir-locals-set-directory-class
-;;  (expand-file-name work_dir)
-;;  'linux-kernel)
-(add-to-list 'auto-mode-alist '("\.cu$" . c-mode))
 
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux
@@ -775,46 +572,6 @@ kernel."
   )
 
 
-;; (defun c-lineup-arglist-tabs-only (ignored)
-;;   "Line up argument lists by tabs, not spaces"
-;;   (let* ((anchor (c-langelem-pos c-syntactic-element))
-;;          (column (c-langelem-2nd-pos c-syntactic-element))
-;;          (offset (- (1+ column) anchor))
-;;          (steps (floor offset c-basic-offset)))
-;;     (* (max steps 1)
-;;        c-basic-offset)))
-
-;; (add-hook 'c-mode-common-hook
-;;           (lambda ()
-;;             ;; Add kernel style
-;;             (c-add-style
-;;              "linux-tabs-only"
-;;              '("linux" (c-offsets-alist
-;;                         (arglist-cont-nonempty
-;;                          c-lineup-gcc-asm-reg
-;;                          c-lineup-arglist-tabs-only))))))
-
-;; (add-hook 'c-mode-hook
-;;           (lambda ()
-;;             (let ((filename (buffer-file-name)))
-;;               ;; Enable kernel mode for the appropriate files
-;;               (when (and filename
-;;                          (string-match (expand-file-name work_dir_3)
-;;                                        filename))
-;;                 (setq indent-tabs-mode t)
-;;                 (setq show-trailing-whitespace t)
-;;                 (c-set-style "linux-tabs-only")))))
-
-;; (defun c-lineup-arglist-tabs-only (ignored)
-;;   "Line up argument lists by tabs, not spaces"
-;;   (let* ((anchor (c-langelem-pos c-syntactic-element))
-;;          (column (c-langelem-2nd-pos c-syntactic-element))
-;;          (offset (- (1+ column) anchor))
-;;          (steps (floor offset c-basic-offset)))
-;;     (* (max steps 1)
-;;        c-basic-offset)))
-
-;; (setq c-default-style "linux")
 
 (dir-locals-set-class-variables
  'linux-kernel
@@ -912,10 +669,6 @@ kernel."
 ;; emacs client end
 
 
-
-
-
-
 ;; comment style
 (defun comment-or-uncomment-region-or-line ()
   "Comments or uncomments the region or the current line if there's no active region."
@@ -930,18 +683,6 @@ kernel."
 
 
 
-
-
-
-;; git
-;; (require 'git)
-;; (require 'git-blame)
-;; git end
-
-
-
-
-
 ;; region casing
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -953,8 +694,6 @@ kernel."
 (require 'auto-complete)
 (global-auto-complete-mode t)
 ;; normal autocomplet end
-
-
 
 
 ;; parenthesis
@@ -1010,317 +749,6 @@ kernel."
 ;;   )
 
 
-(defun skeleton-setup ()
-  (interactive )
-
-  (define-skeleton mmc-write
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (concat m-root-cmd " && " "sudo cp " work_dir_3  "/arch/arm64/boot/Image . && sudo cp " work_dir_3 "/arch/arm64/boot/dts/ti/k3-am625-sk.dtb dtb/ti/ && cd - && sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install && cd -" " && " um-root-cmd)
-    )
-
-  (define-skeleton mmc-bwrite
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (concat m-boot-cmd " && " cp-all-builds-to-mmc-cmd  " && " um-boot-cmd)
-    )
-
-  (define-skeleton cp-tib
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "./bin/check-warn.sh -d AM62x -o linux -a HEAD^ -b HEAD"
-    )
-
-
-  (define-skeleton wd3
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (concat "cd " work_dir_3)
-    )
-
-  (define-skeleton cp-tib
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (concat "cp " work_dir_4 "/tiboot3.bin tiboot3.bin")
-    )
-
-  (define-skeleton launcher
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (concat "cd ~/; python3 -m http.server 8080 & python3 launcher-test/launcher-test.py launcher-test/template.yaml ; cd -")
-    )
-
-  (define-skeleton cp-dts
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo cp " work_dir_3 "/arch/arm64/boot/dts/ti/k3-am625-sk.dtb ."
-    )
-
-  (define-skeleton cp-image
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo cp " work_dir_3 "/arch/arm64/boot/Image ."
-    )
-
-  (define-skeleton cp-tispl
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (concat "cp " work_dir_2 "/" a53-out-dir "/tispl.bin tispl.bin && cp " work_dir_2 "/" a53-out-dir "/u-boot.img u-boot.img")
-    )
-
-
-  (define-skeleton cp-kig-boot-to-all-builds
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format cp-kig-boot-to-all-builds-cmd)
-    )
-
-  (define-skeleton cp-binman-boot-to-all-builds-hs
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format cp-binman-boot-to-all-builds-cmd-hs)
-    )
-
-  (define-skeleton cp-binman-boot-to-all-builds-fs
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format cp-binman-boot-to-all-builds-cmd-hs-fs)
-    )
-
-  (define-skeleton cp-binman-boot-to-all-builds-gp
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format cp-binman-boot-to-all-builds-cmd-gp)  
-    )
-
-  (define-skeleton cp-all-builds-to-mmc
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format cp-all-builds-to-mmc-cmd)
-    )	
-
-  (define-skeleton modules-install
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (concat "sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install")
-    )
-
-  (define-skeleton ex-core-sec
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3 && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh"
-    )
-
-  (define-skeleton make-image
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- Image"
-    )
-
-  (define-skeleton make-defconfig
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- tisdk_am62xx-evm_defconfig"
-    )
-
-  (define-skeleton mk-mod
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- modules"
-    )
-
-  (define-skeleton mk-optee
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "rm -rf out/ ; make -j32 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y && cd ../ && make -j16 ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- ATF=../../08.04.00.005/bl31.bin TEE=../../optee_os/out/arm-plat-k3/core/tee-pager_v2.bin DM=../../08.04.00.005/ipc_echo_testb_mcu1_0_release_strip.xer5f O=gp-84/a53"
-    )
-
-  (define-skeleton tcrypt
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo modprobe tcrypt mode=329 sec=1"
-    )
-
-  (define-skeleton mcrc-reins
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo modprobe -r mcrc && sudo insmod mcrc.ko"
-    )
-
-  (setq um-boot-cmd (concat "cd - && umount " boot-dir " && lsblk"))
-  (define-skeleton um-boot
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format um-boot-cmd)
-    )
-
-  (setq m-boot-cmd (concat "udisksctl mount -b " boot-node " && cd " boot-dir))
-  (define-skeleton m-boot
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format m-boot-cmd)
-    )
-
-  (setq um-root-cmd (concat "cd - && umount " root-dir " && lsblk"))
-  (define-skeleton um-root
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format um-root-cmd)
-    )
-
-  (setq m-root-cmd (concat "udisksctl mount -b " root-node " && cd " root-dir "/boot/"))
-  (define-skeleton m-root
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format m-root-cmd)
-    )
-
-  (define-skeleton mcrc-cp
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo cp ~/am62/mcrc/ti-linux-kernel/drivers/crypto/ti/mcrc64.ko lib/modules/5.10.158-dirty/kernel/drivers/crypto/ti/"
-    )
-
-  (define-skeleton root-login
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "mkdir /etc/ssh/;echo 'PermitRootLogin Yes' >> /etc/ssh/sshd_config"
-    )
-
-  (define-skeleton mcrc-scp
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo scp -oHostKeyAlgorithms=+ssh-rsa ~/am62/binman/linux-next/drivers/crypto/ti/mcrc64.ko debian@10.24.68.148:~/"
-    )
-
-  (define-skeleton mcrc-cp-native
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo cp mcrc.ko /lib/modules/$(uname -r)/kernel/drivers/crypto/ti/"
-    )
-
-  (define-skeleton send-mcrc
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "udisksctl mount -b /dev/sdb2 && cd /media/kamlesh/root/ && sudo cp ~/am62/mcrc/ti-linux-kernel/drivers/crypto/ti/mcrc.ko lib/modules/5.10.158-dirty/kernel/drivers/crypto/ti/ && cd - && umount /media/kamlesh/root && lsblk"
-    )
-
-  (define-skeleton mail-patch
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "git send-email --to=kamlesh@ti.com"
-    )
-
-
-  (define-skeleton c-fit
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "sudo cp ~/am62/ti-linux-kernel/fit-crypto/fitImage ."
-    )
-
-  (define-skeleton d-print
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "printf(\"%s %d\\n\",__func__,__LINE__);"
-    )
-  (define-skeleton d-atf
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "INFO(\"%s %d\\n\",__func__,__LINE__);"
-    )
-
-  (define-skeleton k-print
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "printk(\"%s %d\\n\",__func__,__LINE__);"
-    )
-
-  (define-skeleton k-info
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "pr_info(\"%s %d\\n\",__func__,__LINE__);"
-    )
-
-
-  (define-skeleton pico-cmd-gp
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format pico-cmd-gp)
-    )
-
-  (define-skeleton pico-cmd-hs
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format pico-cmd-hs)
-    )
-
-  (define-skeleton pico-cmd
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format pico-cmd)
-    )
-
-  (define-skeleton relay-toggle
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format relay-toggle-cmd)
-    )
-
-  (define-skeleton dfu-cmd
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format dfu-cmd)
-    )
-
-  (define-skeleton devstat-cmd
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "python3 ~/repos/devstat/devstat.py am62e2 -m sdmmc"
-    )
-
-  (setq notmuch-update "mbsync -Va;echo $? && notmuch new; sh ~/notmuch-tag.sh")
-  (define-skeleton notmuch-update-cmd
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format notmuch-update)
-    )
-
-  (define-skeleton rby
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "Reviewed-by: Kamlesh Gurudasani <kamlesh@ti.com>"
-    )
-
-    (define-skeleton aby
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "Acked-by: Kamlesh Gurudasani <kamlesh@ti.com>"
-    )
-
-  (define-skeleton sby
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>"
-    )
-
-  (define-skeleton aby
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "Acked-by: Kamlesh Gurudasani <kamlesh@ti.com>"
-    )
-
-  (define-skeleton soft-reset-mmc
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "mw.l 43000030 243 1;mw.l 43018170 00000006 1"
-    )
-
-  (define-skeleton rtcwake
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    "rtcwake -s 5 -m mem"
-    )
-)
 
 ;; Custom legato
 
@@ -1362,7 +790,7 @@ kernel."
 
 ;;Serial term
 
-(defun serial-usb0()
+(defun dserial-usb0()
   (interactive )
   (setq buffer-name-1 "/dev/ttyUSB0")
   (if (get-buffer buffer-name-1)
@@ -1373,7 +801,8 @@ kernel."
     (serial-process-configure :process "/dev/ttyUSB0" :speed 115200)
     (switch-to-buffer buffer-name-1)
     ))
-(defun serial-usb1()
+
+(defun dserial-usb1()
   (interactive )
   (setq buffer-name-1 "/dev/ttyUSB1")
   (if (get-buffer buffer-name-1)
@@ -1417,47 +846,9 @@ kernel."
 
 
 
-;; dired single
-;; todo
-;; (require 'dired-single)
-;; (setq dired-single-use-magic-buffer t)
-;; (setq dired-single-magic-buffer-name '"repo")
-(setq dired-auto-revert-buffer t)
-;; (setq term-buffer-maximum-size 0)
-;; dired single end
 
-
-;; speedbar
-(use-package sr-speedbar
-  :ensure t
-  :defer t
-  :init
-  ;; '(speedbar-visiting-file-hook (lambda () (other-window 1)))
-  (setq sr-speedbar-right-side nil)
-  (setq speedbar-show-unknown-files t)
-  (setq sr-speedbar-width 35)
-  (setq sr-speedbar-max-width 35)
-  (setq speedbar-use-images nil)
-  (setq speedbar-initial-expansion-list-name "files")
-  (setq sr-speedbar-auto-refresh t)
-  (setq sr-speedbar-skip-other-window-p t)
-  ;; (sr-speedbar-open)
-  ;; (speedbar)
-  :config
-  (with-current-buffer sr-speedbar-buffer-name
-    (setq window-size-fixed 'width))
-  )
-
-;; centered cursor mode, definitely move to a new file
-;; (if (display-graphic-p) (and
-;;      (require 'centered-cursor-mode)
-;;      (global-centered-cursor-mode +1)))
-;; Compilation
 
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-
-
-;; (setq compile-rpp-cmd "scp /home/ubuntu/rpp/vp1-project/build/tmp/work/vp1-poky-linux-gnueabi/kernel-module-rpp/0.21.5-r0/git/drvrpp/rpp.ko  visos@43.4.0.177:~/kamlesh/")
 
 
 ;; (setq compilation-read-command nil)
@@ -1511,523 +902,7 @@ kernel."
 (load "shortcuts.el")
 
 
-;; SISC
-
-(defun exp3-configure()
-  (interactive )
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (when (get-buffer "ssh")
-    (kill-buffer "ssh"))
-  (when (get-buffer "dmesg")
-    (kill-buffer "dmesg"))
-  (when (get-buffer "senscord")
-    (kill-buffer "senscord"))
-  (when (get-buffer "visos")
-    (kill-buffer "visos"))
-  (let* ((buffer-name (format "dmesg"))
-         (buffer (get-buffer buffer-name)))
-    (if buffer
-        (switch-to-buffer buffer)
-      ;; (term "/bin/bash")
-      (shell buffer-name-1)
-      (process-send-string
-       (get-buffer-process buffer-name-1)
-       (format "sshpass -p visos ssh visos@43.4.0.177\r cd kamlesh\r vp1-exp3\r dmesg -w\r"))))
-  (let* ((buffer-name (format "senscord"))
-         (buffer (get-buffer buffer-name)))
-    (if buffer
-        (switch-to-buffer buffer)
-      (shell buffer-name-1)
-      (process-send-string
-       (get-buffer-process buffer-name-1)
-       (format "sshpass -p visos ssh visos@43.4.0.177\r cd kamlesh\r vp1-exp3\r"))))
-  (let* ((buffer-name (format "ssh"))
-	 (buffer (get-buffer buffer-name)))
-    (if buffer
-	(switch-to-buffer buffer)
-      ;; (term "/bin/bash")
-      (shell buffer-name-1)
-      (process-send-string
-       (get-buffer-process buffer-name-1)
-       (format "sshpass -p visos ssh visos@43.4.0.177\r cd kamlesh\r vp1-exp3\r modprobe rpp && ./stream_tester stereo_slam"))))
-  (let* ((buffer-name (format "visos"))
-	 (buffer (get-buffer buffer-name)))
-    (if buffer
-	(switch-to-buffer buffer)
-      ;; (term "/bin/bash")
-      (shell buffer-name-1)
-      (process-send-string
-       (get-buffer-process buffer-name-1)
-       (format "sshpass -p visos ssh visos@43.4.0.177\r cd kamlesh\r cd exp3\r"))))
-  )
-
-;; compilation
-
-(defun git-info ()
-  (interactive)
-  (let ((default-directory work_dir_1))	  
-    (compile (concat "echo u-boot >> 1.info && git -C u-boot/ log -1 --oneline >> 1.info"
-		     " && "
-		     "echo ti-linux-firmware >> 1.info && git -C ti-linux-firmware/ log -1 --oneline >> 1.info"
-		     " && "
-		     "echo optee_os >> 1.info && git -C optee_os/ log -1 --oneline >> 1.info"
-		     " && "
-		     "echo arm-trusted-firmware >> 1.info && git -C arm-trusted-firmware/ log -1 --oneline >> 1.info"
-		     ))))
-
-(defun fetch-mail ()
-  (interactive)
-  (let ((default-directory work_dir_1))
-    (message "fetch mails from server")
-    (compile notmuch-update)))
-
-(defun dfu-boot ()
-  (interactive)
-  (let ((default-directory work_dir_2))	  
-    (compile dfu-cmd)))
-
-(defun r5-clean ()
-  (interactive)
-  (let ((default-directory work_dir_2))	  
-    (compile (concat    r5-base-make-cmd "clean " r5-set-out-dir))))
-
-(defun r5-defconfig ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (message "r5-defconfig")
-    (compile r5-defconfig-cmd)))
-
-(defun r5-mmc-defconfig ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (message "r5-mmc-defconfig")
-    (compile r5-mmc-defconfig-cmd)))
-
-(defun r5-usbdfu-defconfig ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (compile r5-usbdfu-defconfig-cmd)))
-
-(defun r5-ethboot-defconfig ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (compile r5-ethboot-defconfig-cmd)))
-
-(defun r5-compile ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (message "r5-compile")
-    (compile r5-make-cmd)))
-
-(defun atf-compile ()
-  (interactive)
-  (let ((default-directory work_dir_9))
-    (message "atf-compile")
-    (compile (concat atf-make-cmd " && " atf-copy-cmd))))
-
-(defun atf-info-compile ()
-  (interactive)
-  (let ((default-directory work_dir_9))
-    (message "atf-info-compile")
-    (compile (concat atf-make-cmd " LOG_LEVEL=40 " " && " atf-copy-cmd))))
-
-(defun atf-verbose-compile ()
-  (interactive)
-  (let ((default-directory work_dir_9))
-    (message "atf-info-compile")
-    (compile (concat atf-make-cmd " LOG_LEVEL=50 " " && " atf-copy-cmd))))
-
-
-(defun atf-debug-compile ()
-  (interactive)
-  (let ((default-directory work_dir_9))
-    (message "atf-debug-compile")
-    (compile (concat atf-make-cmd " DEBUG=1 LOG_LEVEL=40 " " && " atf-debug-copy-cmd))))
-
-(defun atf-debug-am64-compile ()
-  (interactive)
-  (let ((default-directory work_dir_9))
-    (message "atf-debug-compile")
-    (compile (concat atf-make-cmd " DEBUG=1 " " && " atf-debug-copy-cmd))))
-
-
-(defun atf-copy ()
-  (interactive)
-  (let ((default-directory work_dir_9))
-    (message "atf-copy")
-    (compile atf-copy-cmd)))
-
-
-(defun cp-boot-binman-compile ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (message "cp-boot-binman-compile")
-    (compile cp-binman-boot-to-all-builds-cmd)))
-
-(defun cp-boot-kig-compile ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (message "cp-boot-kig-compile")
-    (compile cp-kig-boot-to-all-builds-cmd)))
-
-(defun r5-binman-compile ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (compile r5-binman-compile)))
-
-(defun a53-binman-compile ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (compile a53-binman-make-cmd)))
-
-(defun a53-clean ()
-  (interactive)
-  (let ((default-directory work_dir_2))	  
-    (compile (concat    a53-base-make-cmd "clean"))))	
-
-(defun a53-defconfig ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (message "a53-defconfig")
-    (compile (concat  a53-defconfig-cmd))))
-
-(defun a53-compile ()
-  (interactive)
-  (let ((default-directory work_dir_2))
-    (message "a53-compile")
-    (compile (concat  a53-make-cmd)))
-  )
-
-(defun my-compilation-finish-function (process-name status)
-  (interactive)
-  (setq wait-for-completion nil)
-  (message "compilation finished with %s %s" process-name status))
-
-(setq sec 0)
-(setq msec 1)
-
-(defun synchronous-compile ()
-  (interactive)
-  (setq compilation-finish-functions 'my-compilation-finish-function)
-
-  (setq wait-for-completion t)
-  (r5-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (r5-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (cp-boot-binman-compile)
-  (while wait-for-completion (sleep-for sec msec))
-  
-  (setq wait-for-synchronous-completion nil)
-
-  )
-
-
-(defun synchronous-compile-kig ()
-  (interactive)
-  (setq compilation-finish-functions 'my-compilation-finish-function)
-
-  (setq wait-for-completion t)
-  (r5-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (r5-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (kig-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (cp-boot-kig-compile)
-  (while wait-for-completion (sleep-for sec msec))
-  
-  (setq wait-for-synchronous-completion nil)
-
-  )
-
-(defun am62l-info-compile ()
-  (interactive)
-  (setq compilation-finish-functions 'my-compilation-finish-function)
-
-  (setq wait-for-completion t)
-  (atf-info-compile)
-  (while wait-for-completion (sleep-for sec msec))
-  
-  (setq wait-for-completion t)
-  (r5-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (r5-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (cp-boot-binman-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (relay-toggle-run)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (relay-toggle-run)
-  (while wait-for-completion (sleep-for sec msec))
-  
-  (setq wait-for-synchronous-completion nil)
-
-  )
-
-(defun am62l-debug-compile ()
-  (interactive)
-  (make-thread (progn
-  (setq compilation-finish-functions 'my-compilation-finish-function)
-
-  (setq wait-for-completion t)
-  (atf-debug-compile)
-  (while wait-for-completion (sleep-for sec msec))
-  
-  (setq wait-for-completion t)
-  (r5-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (r5-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-defconfig)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (a53-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (cp-boot-binman-compile)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (relay-toggle-run)
-  (while wait-for-completion (sleep-for sec msec))
-
-  (setq wait-for-completion t)
-  (relay-toggle-run)
-  (while wait-for-completion (sleep-for sec msec))
-  
-  (setq wait-for-synchronous-completion nil)
-
-  )))
-
-
-(defun all-device-compile ()
-  (interactive)
-
-  (funcall-interactively 'device-type "1")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-  
-  (funcall-interactively 'device-type "2")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-
-  (funcall-interactively 'device-type "3")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-
-  (funcall-interactively 'device-type "4")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-  
-  )
-
-(defun all-soc-compile ()
-  (interactive)
-
-  (funcall-interactively 'soc-type "1")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-
-  (funcall-interactively 'soc-type "2")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-
-  (funcall-interactively 'soc-type "3")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-  (setq wait-for-all-soc-compile nil)
-  )
-
-(defun all-device-compile-kig ()
-  (interactive)
-
-  (funcall-interactively 'device-type "1")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile-kig)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-  
-  (funcall-interactively 'device-type "2")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile-kig)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-
-  (funcall-interactively 'device-type "3")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile-kig)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-  )
-
-(defun all-soc-compile-kig ()
-  (interactive)
-
-  (funcall-interactively 'soc-type "1")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile-kig)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-
-  (funcall-interactively 'soc-type "2")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile-kig)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-
-  (funcall-interactively 'soc-type "3")
-  (setq wait-for-synchronous-completion t)
-  (synchronous-compile-kig)
-  (while wait-for-synchronous-completion (sleep-for sec msec))
-  (setq wait-for-all-soc-compile nil)
-  )
-
-
-(defun all-compile-no-thread ()
-  (interactive)
-  (funcall-interactively 'device-type "1")
-  (setq wait-for-all-soc-compile t)
-  (all-soc-compile)
-  (while wait-for-all-soc-compile (sleep-for sec msec))
-
-  (funcall-interactively 'device-type "2")
-  (setq wait-for-all-soc-compile t)
-  (all-soc-compile)
-  (while wait-for-all-soc-compile (sleep-for sec msec))
-  
-  (funcall-interactively 'device-type "3")
-  (setq wait-for-all-soc-compile t)
-  (all-soc-compile)
-  (while wait-for-all-soc-compile (sleep-for sec msec))
-  )
-
-(defun all-compile()
-  (interactive)
-  (make-thread 'all-compile-no-thread))
-
-(defun kig-clean ()
-  (interactive)
-  (let ((default-directory work_dir_4))
-    (compile (concat  make-clean ))))
-
-(defun kig-compile ()
-  (interactive)
-  (let ((default-directory work_dir_4))
-    (compile (concat  kig-make-cmd))))
-
-(defun kig-cc ()
-  (interactive)
-  (let ((default-directory work_dir_4))
-    (compile (concat  make-clean kig-make-cmd))))
-
-
-(defun optee-compile ()
-  (interactive)
-  (let ((default-directory work_dir_7))	  
-    (compile (concat optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin" ))))
-
-(defun optee-compile-64x ()
-  (interactive)
-  (let ((default-directory work_dir_7))	  
-    (compile (concat optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin" ))))
-;;
-    ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y CFG_TEE_CORE_LOG_LEVEL=1 " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin")))) ;;
-     ;; (compile (concat "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am64x CFG_ARM64_core=y " " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin"))))
-
-(defun optee-compile-swrng ()
-  (interactive)
-  (let ((default-directory work_dir_7))	  
-    (compile (concat   optee-base-make-cmd "CROSS_COMPILE64=aarch64-none-linux-gnu- PLATFORM=k3-am62x CFG_ARM64_core=y  CFG_WITH_SOFTWARE_PRNG=y" " && cp out/arm-plat-k3/core/tee-pager_v2.bin " work_dir_2 "/" device "/bl32.bin" ))))
-;; CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y ;;
-(defun modules-compile ()
-  (interactive)
-  (let ((default-directory work_dir_3))
-    (compile (concat kernel-base-make-cmd "modules"))))
-
-(defun kernel-compile ()
-  (interactive)
-  (let ((default-directory work_dir_3))
-    (compile (concat kernel-base-make-cmd "Image"))))
-
-(defun kernel-defconfig ()
-  (interactive)
-  (let ((default-directory work_dir_3))
-    (compile (concat kernel-base-make-cmd "tisdk_" device "-evm_defconfig"))))
-
-(defun relay-toggle-run ()
-  (interactive)
-  (let ((default-directory work_dir_1))	  
-    (compile relay-toggle-cmd)))
-
-(defun am62-relay ()
-  (interactive)
-  (setq compilation-finish-functions 'my-compilation-finish-function)
-
-  (setq wait-for-completion t)
-  (relay-toggle-run)
-  (while wait-for-completion (sleep-for 3 msec))
-
-  (setq wait-for-completion t)
-  (relay-toggle-run)
-  (while wait-for-completion (sleep-for sec msec))
-  
-  (setq wait-for-synchronous-completion nil)
-
-  )
-
-
-
+(load "compile-config.el")
 
 
 (defun shell-working-dir()
@@ -2037,7 +912,7 @@ kernel."
 
   (if (get-buffer buffer-name-1)
       (switch-to-buffer buffer-name-1)
-    (let ((default-directory work_dir_1)) (shell buffer-name-1) (format "cd am62lite-presil-build\r")))
+    (let ((default-directory "~/")) (shell buffer-name-1) (format "cd am62lite-presil-build\r")))
   )
 
 (defun shell-pico()
@@ -2067,7 +942,7 @@ kernel."
     )
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
-    (let ((default-directory work_dir_1)) (shell buffer-name) (format "cd ~/pycrc/src/\r")))
+    (let ((default-directory "~/")) (shell buffer-name) (format "cd ~/pycrc/src/\r")))
   )
 
 (defun shell-zebu-bash()
@@ -2092,12 +967,7 @@ kernel."
   
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
-    
-    (let ((default-directory work_dir_1))
-      ;; (multi-term)
-      ;; ;; (term)
-      ;; (term-send-string
-      ;;  (get-buffer-process (rename-buffer buffer-name))
+    (let ((default-directory projectile-root))
       (shell buffer-name)
       (process-send-string
        (get-buffer-process buffer-name)
@@ -2113,11 +983,7 @@ kernel."
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
     
-    (let ((default-directory work_dir_1))
-      ;; (multi-term)
-      ;; ;; (term)
-      ;; (term-send-string
-      ;;  (get-buffer-process (rename-buffer buffer-name))
+    (let ((default-directory projectile-root))
       (shell buffer-name)
       (process-send-string
        (get-buffer-process buffer-name)
@@ -2125,23 +991,10 @@ kernel."
        )))
   )
 
-
-
-(defun shell-deepc-catkin()
-  (interactive )
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name-1 "docker-catkin")
-  ;; (when (get-buffer buffer-name-1)
-  ;; (kill-buffer buffer-name-1))
-  (let ((default-directory work_dir_5))
-    (shell buffer-name-1)
-    (process-send-string
-     (get-buffer-process buffer-name-1)
-     (format "ls\r")))
-  ;; (rst)
-  )
-
+(load "ediff-config.el")
 (load "keyboard-macros.el")
 (load "projectile-config.el")
+(load "project-specific-config.el")
+(load "skeleton-config.el")
 (load "final.el")
 
