@@ -23,7 +23,7 @@
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(embark-consult embark projectile consult marginalia orderless notmuch compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(doom-themes embark-consult embark projectile consult marginalia orderless notmuch compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
  '(projectile-enable-cmake-presets nil)
  '(projectile-track-known-projects-automatically nil)
  '(safe-local-variable-values
