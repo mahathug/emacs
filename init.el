@@ -6,6 +6,7 @@
  '(column-number-mode t)
  '(comment-multi-line t)
  '(comment-style 'aligned)
+ '(copilot-chat-curl-proxy "http://webproxy.ext.ti.com:80")
  '(custom-enabled-themes '(misterioso))
  '(inhibit-startup-screen t)
  '(initial-frame-alist '((fullscreen . maximized)))
@@ -33,17 +34,20 @@
  '(package-check-signature nil)
  '(package-selected-packages
    '(auto-complete bash-completion codeium company compat consult copilot
-		   corfu counsel dired-single docker docker-tramp
-		   doom-themes editorconfig embark embark-consult
-		   expand-region highlight highlight-80+ magit
-		   mailscripts marginalia multi-term mutt-mode notmuch
-		   orderless paredit projectile realgud smart-tab
-		   smart-tabs-mode solarized-theme sr-speedbar
-		   stock-tracker sudo-edit use-package vala-mode
-		   vertico visual-regexp visual-regexp-steroids
-		   which-key xcscope zlc zone-tmux-clock zones))
+		   copilot-chat corfu counsel dired-single docker
+		   docker-tramp doom-themes editorconfig embark
+		   embark-consult expand-region highlight
+		   highlight-80+ magit mailscripts marginalia
+		   multi-term mutt-mode notmuch orderless paredit
+		   projectile realgud smart-tab smart-tabs-mode
+		   solarized-theme sr-speedbar stock-tracker sudo-edit
+		   use-package vala-mode vertico visual-regexp
+		   visual-regexp-steroids which-key xcscope zlc
+		   zone-tmux-clock zones))
  '(package-vc-selected-packages
-   '((copilot :vc-backend Git :url
+   '((copilot-chat :vc-backend Git :url
+		   "https://github.com/chep/copilot-chat.el")
+     (copilot :vc-backend Git :url
 	      "https://github.com/copilot-emacs/copilot.el")
      (codeium :vc-backend Git :url
 	      "https://github.com/Exafunction/codeium.el")))
