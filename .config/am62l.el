@@ -14,3 +14,5 @@
 
 (setq kernel-modules-install-cmd "sudo make -j16 ARCH=arm64 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- INSTALL_MOD_PATH=/home/kamlesh/root modules_install")      
 
+(setq relay-number "0")
+(setq relay-toggle-cmd (concat "ssh admin@relay-kamlesh -t \"if uom get relay/outlets/"relay-number"/state | grep -q \"true\"; then uom set relay/outlets/"relay-number"/state false  ;else uom set relay/outlets/"relay-number"/state true;fi\""))

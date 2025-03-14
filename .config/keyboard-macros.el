@@ -13,7 +13,10 @@
       (kmacro-lambda-form [?\C-\[ ?x ?s ?e ?r ?i ?a ?l ?- ?t ?e ?r ?m ?\C-m ?t ?t ?y ?U ?S ?B ?1 ?\C-m ?1 ?1 ?5 ?2 ?0 ?0 ?\C-m ?\C-c ?\C-j] 0 "%d"))
 
 (global-set-key (kbd "C-c 1") (lambda () (interactive)(if (get-buffer "usb0") (switch-to-buffer "usb0")(serial-usb0))))
-(global-set-key (kbd "C-c 2") (lambda () (interactive)(if (get-buffer "usb4") (switch-to-buffer "usb4")(serial-usb4))))
+(global-set-key (kbd "C-c 2") (lambda () (interactive)(if (get-buffer "usb1") (switch-to-buffer "usb1")(serial-usb1))))
+(global-set-key (kbd "C-c 3") (lambda () (interactive)(if (get-buffer "usb2") (switch-to-buffer "usb2")(serial-usb2))))
+(global-set-key (kbd "C-c 4") (lambda () (interactive)(if (get-buffer "usb3") (switch-to-buffer "usb3")(serial-usb3))))
+
 (global-set-key (kbd "C-c C-m") 'line-mode)
 
 

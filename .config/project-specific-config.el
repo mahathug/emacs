@@ -19,11 +19,11 @@
 	(setq-local projectile-project-configure-cmd uboot-configure-cmd)
 	(setq-local projectile-project-compilation-cmd uboot-make-cmd)
 	(setq-local projectile-project-run-cmd uboot-run-cmd))
-       ((string-match "kernel" proj-root)
-	(message "kernel")
+       ((string-match "linux" proj-root)
+	(message "linux")
 	(setq-local projectile-project-configure-cmd kernel-configure-cmd)
 	(setq-local projectile-project-compilation-cmd kernel-make-cmd)
-       	(setq-local projectile-project-install-cmd kernel-modules-intsall-cmd))
+       	(setq-local projectile-project-install-cmd kernel-modules-install-cmd))
        (t
 	(message "all")
 	(setq-local projectile-project-compilation-cmd "make")))))) ;; Default fallback

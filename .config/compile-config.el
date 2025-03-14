@@ -133,7 +133,7 @@
 
 (defun relay-toggle-run ()
   (interactive)
-  (let ((default-directory work_dir_1))	  
+  (let ((default-directory projectile-root))	  
     (compile relay-toggle-cmd)))
 
 (defun am62-relay ()

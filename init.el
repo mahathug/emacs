@@ -11,50 +11,63 @@
  '(initial-frame-alist '((fullscreen . maximized)))
  '(ispell-dictionary nil)
  '(notmuch-saved-searches
-   '((:name "lpr" :query "tag:ti-linux-patch-review" :key "l" :sort-order newest-first)
-     (:name "uboot" :query "tag:uboot" :key "u" :sort-order newest-first)
-     (:name "tbr" :query "tag:tiL-tbr" :key "t" :sort-order newest-first)
-     (:name "reviewed" :query "tag:tiL-reviewed" :key "r" :sort-order newest-first)
-     (:name "meta-ti" :query "tag:meta-ti" :key "m" :sort-order newest-first)
-     (:name "tiL-5.10" :query "tag:tiL-5.10" :key "5" :sort-order newest-first)
-     (:name "tiU21" :query "tag:tiU21" :key "2" :sort-order newest-first)
-     (:name "Inbox" :query "tag:Inbox" :key "i" :sort-order newest-first)
-     (:name "direct" :query "tag:direct" :key "d" :sort-order newest-first)
+   '((:name "lpr" :query "tag:ti-linux-patch-review" :key "l" :sort-order
+	    newest-first)
+     (:name "uboot" :query "tag:uboot" :key "u" :sort-order
+	    newest-first)
+     (:name "tbr" :query "tag:tiL-tbr" :key "t" :sort-order
+	    newest-first)
+     (:name "reviewed" :query "tag:tiL-reviewed" :key "r" :sort-order
+	    newest-first)
+     (:name "meta-ti" :query "tag:meta-ti" :key "m" :sort-order
+	    newest-first)
+     (:name "tiL-5.10" :query "tag:tiL-5.10" :key "5" :sort-order
+	    newest-first)
+     (:name "tiU21" :query "tag:tiU21" :key "2" :sort-order
+	    newest-first)
+     (:name "Inbox" :query "tag:Inbox" :key "i" :sort-order
+	    newest-first)
+     (:name "direct" :query "tag:direct" :key "d" :sort-order
+	    newest-first)
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(doom-themes embark-consult embark projectile consult marginalia orderless notmuch compat vertico sudo-edit stock-tracker which-key realgud mailscripts smart-tab smart-tabs-mode highlight highlight-80+ counsel mutt-mode visual-regexp visual-regexp-steroids bash-completion docker-tramp docker sr-speedbar xcscope vala-mode use-package solarized-theme paredit multi-term magit expand-region dired-single auto-complete))
+   '(auto-complete bash-completion codeium company compat consult copilot
+		   corfu counsel dired-single docker docker-tramp
+		   doom-themes editorconfig embark embark-consult
+		   expand-region highlight highlight-80+ magit
+		   mailscripts marginalia multi-term mutt-mode notmuch
+		   orderless paredit projectile realgud smart-tab
+		   smart-tabs-mode solarized-theme sr-speedbar
+		   stock-tracker sudo-edit use-package vala-mode
+		   vertico visual-regexp visual-regexp-steroids
+		   which-key xcscope zlc zone-tmux-clock zones))
+ '(package-vc-selected-packages
+   '((copilot :vc-backend Git :url
+	      "https://github.com/copilot-emacs/copilot.el")
+     (codeium :vc-backend Git :url
+	      "https://github.com/Exafunction/codeium.el")))
  '(projectile-enable-cmake-presets nil)
  '(projectile-track-known-projects-automatically nil)
  '(safe-local-variable-values
-   '((c-offsets-alist
-      (arglist-close . c-lineup-arglist-tabs-only)
-      (arglist-cont-nonempty c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only)
-      (arglist-intro . +)
-      (brace-list-intro . +)
-      (c . c-lineup-C-comments)
-      (case-label . 0)
-      (comment-intro . c-lineup-comment)
-      (cpp-define-intro . +)
-      (cpp-macro . -1000)
-      (cpp-macro-cont . +)
-      (defun-block-intro . +)
-      (else-clause . 0)
-      (func-decl-cont . +)
-      (inclass . +)
-      (inher-cont . c-lineup-multi-inher)
-      (knr-argdecl-intro . 0)
-      (label . -1000)
-      (statement . 0)
-      (statement-block-intro . +)
-      (statement-case-intro . +)
-      (statement-cont . +)
-      (substatement . +))
+   '((c-offsets-alist (arglist-close . c-lineup-arglist-tabs-only)
+		      (arglist-cont-nonempty c-lineup-gcc-asm-reg
+					     c-lineup-arglist-tabs-only)
+		      (arglist-intro . +) (brace-list-intro . +)
+		      (c . c-lineup-C-comments) (case-label . 0)
+		      (comment-intro . c-lineup-comment)
+		      (cpp-define-intro . +) (cpp-macro . -1000)
+		      (cpp-macro-cont . +) (defun-block-intro . +)
+		      (else-clause . 0) (func-decl-cont . +)
+		      (inclass . +)
+		      (inher-cont . c-lineup-multi-inher)
+		      (knr-argdecl-intro . 0) (label . -1000)
+		      (statement . 0) (statement-block-intro . +)
+		      (statement-case-intro . +) (statement-cont . +)
+		      (substatement . +))
      (c-label-minimum-indentation . 0)))
  '(speedbar-visiting-file-hook
-   '(sr-speedbar-visiting-file-hook
-     (lambda nil
-       (other-window 1))))
+   '(sr-speedbar-visiting-file-hook (lambda nil (other-window 1))))
  '(stock-tracker-list-of-stocks '("AMZN" "TXN" "GOOG" "NFLX" "QCOM" "STM" "NVDA") t)
  '(stock-tracker-refresh-interval 5 t)
  '(stock-tracker-up-red-down-green nil t)
@@ -97,7 +110,7 @@
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 (add-to-list 'load-path "~/.emacs.d/.config")
-;;(load "ti-setup.el") 
+;;(load "ti-setup.el")
 
 (defun set-u-boot-directory (path)
   "Set ti-u-boot directory This
@@ -201,7 +214,7 @@ threads to the notmuch-extract-patch(1) command."
   (interactive
    "Dgit repo: \nsnew branch name (or leave blank to apply to current HEAD): \n")
   (let ( (message-id (notmuch-show-get-message-id t)) ;;
-         (default-directory (expand-file-name work_dir_10)) ;;
+         (default-directory (expand-file-name projectile-root)) ;;
 	 )
 
     ;; (message (format "git checkout -b %s" message-id));; ;; ;;
@@ -217,7 +230,7 @@ threads to the notmuch-extract-patch(1) command."
      (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/ti-linux-patch-review/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \" stdyle problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;   ;;
     )
   
-  (let ( (default-directory (expand-file-name work_dir_10)) ;;
+  (let ( (default-directory (expand-file-name projectile-root)) ;;
 	 )
     (pop-to-buffer (find-file "b4-check-patch"))) 
   )
@@ -225,7 +238,7 @@ threads to the notmuch-extract-patch(1) command."
 
 (defun b4-check-patch ()
   (interactive)
-  (funcall-interactively 'b4-check-patch-process work_dir_2 "b4-new")
+  (funcall-interactively 'b4-check-patch-process projectile-root "b4-new")
   )
 
 (defun mbox-check-patch-notmuch-messages ()
@@ -380,8 +393,8 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 (require 'projectile)
 ;; Recommended keymap prefix on Windows/Linux
 (setq projectile-ignored-projects '("~/")) ;;
-(setq projectile-project-search-path '("~/.emacs.d/" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
-(define-key projectile-mode-map (kbd "M-z") 'projectile-command-map)
+(setq projectile-project-search-path '("~/.emacs.d/" "~/am62/binman/cryptodev-2.6" "~/am62/binman/linux-next-upstream" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
+(define-key projectile-mode-map (kbd "M-e") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "M-a") 'projectile-commander) 
 (projectile-mode +1)
 
@@ -398,7 +411,15 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   :init
   (vertico-mode))
 
-;; Persist history over Emacs restarts. Vertico sorts by history position.
+;;codeium
+;; (load "codeium-config.el") ;; ;;
+
+;; copilot
+(load "copilot-config.el") ;; ;;
+
+
+
+;;savehist
 (use-package savehist
   :init
   (savehist-mode))
@@ -475,7 +496,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
 
-  ;; Show the Embark target at point via Eldoc. You may adjust the
+1  ;; Show the Embark target at point via Eldoc. You may adjust the
   ;; Eldoc strategy, if you want to see the documentation from
   ;; multiple providers. Beware that using this can be a little
   ;; jarring since the message shown in the minibuffer can be more
@@ -679,7 +700,7 @@ kernel."
       (setq beg (line-beginning-position) end (line-end-position) comment-style 'aligned))
     (comment-or-uncomment-region beg end)))
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region-or-line)
-;; comment style end
+;; comment style end 
 
 
 
@@ -717,6 +738,7 @@ kernel."
 ;; magit
 (add-to-list 'load-path "~/.emacs.d/site-lisp/magitlisp")
 (require 'magit)
+(global-unset-key (kbd "M-q")) ;;
 (global-set-key (kbd "M-q") 'magit)
 
 
@@ -724,8 +746,14 @@ kernel."
   (info-initialize)
   (add-to-list 'Info-directory-list
 	       "~/.emacs.d/site-lisp/magit/Documentation/"))
-;; magit end
+;; magits end
 
+;; consult-history
+(global-set-key (kbd "C-c r") 'consult-history)
+
+;;zsh
+;; (require 'zlc) ;;
+;; (zlc-mode t) ;;
 
 
 ;; mutiiterm
@@ -767,6 +795,8 @@ kernel."
 
 
 
+(setq url-proxy-services
+      '(("no_proxy" . "127.0.0.1")))
 ;; (require 'dired+)
 ;; (diredp-toggle-find-file-reuse-dir 1)
 
@@ -975,10 +1005,10 @@ kernel."
        )))
   )
 
-(defun serial-usb4()
+(defun serial-usb1()
   (interactive)
   (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb4")
+  (setq buffer-name "usb1")
   
   (if (get-buffer buffer-name)
       (switch-to-buffer buffer-name)
@@ -987,8 +1017,47 @@ kernel."
       (shell buffer-name)
       (process-send-string
        (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB4 && sudo picocom -b 115200 $DEV\n")
+       (format "export DEV=/dev/ttyUSB1 && sudo picocom -b 115200 $DEV\n")
        )))
+  )
+
+(defun serial-usb2()
+  (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "usb2")
+  
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    (let ((default-directory projectile-root))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB2 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
+
+(defun serial-usb3()
+  (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "usb3")
+  
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    
+    (let ((default-directory projectile-root))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB3 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
+
+
+
+(defun send-invisible-in-other-window()
+  (interactive)
+  (other-window 0)
+  (comint-send-invisible)
   )
 
 (load "ediff-config.el")
