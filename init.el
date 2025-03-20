@@ -31,6 +31,7 @@
      (:name "direct" :query "tag:direct" :key "d" :sort-order
 	    newest-first)
      (:name "all mail" :query "*" :key "a" :sort-order newest-first)))
+ '(org-hide-emphasis-markers t)
  '(package-check-signature nil)
  '(package-selected-packages
    '(auto-complete bash-completion codeium company compat consult copilot
@@ -416,10 +417,10 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   (vertico-mode))
 
 ;;codeium
-;; (load "codeium-config.el") ;; ;;
+;; (load "codeium-config.el") 
 
 ;; copilot
-(load "copilot-config.el") ;; ;;
+(load "copilot-config.el") 
 
 
 
