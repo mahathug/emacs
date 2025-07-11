@@ -1,3 +1,4 @@
+
 ;; Alt shortcuts
 
 (defun shortcuts-before-setup()

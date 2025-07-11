@@ -232,13 +232,15 @@ threads to the notmuch-extract-patch(1) command."
     ;; (message (format "git checkout  %s" message-id));; ;; ;;
     (message "message-id %s" message-id)
     (call-process-shell-command  ;;
-     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/ti-linux-patch-review/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \" stdyle problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;   ;;
+     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/direct/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \" stdyle problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;   ;;
     )
   
   (let ( (default-directory (expand-file-name projectile-root)) ;;
 	 )
     (pop-to-buffer (find-file "b4-check-patch"))) 
   )
+
+
 
 
 (defun b4-check-patch ()
@@ -398,7 +400,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 (require 'projectile)
 ;; Recommended keymap prefix on Windows/Linux
 (setq projectile-ignored-projects '("~/")) ;;
-(setq projectile-project-search-path '("~/.emacs.d/" "~/am62/binman/cryptodev-2.6" "~/am62/binman/linux-next-upstream" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
+(setq projectile-project-search-path '("~/.emacs.d/" "~/am62/binman/cryptodev-2.6" "~/am62/binman/linux-next-upstream" "~/ti-processor-sdk-linux-am62lxx-evm-11.00.15.05" "~/ti-processor-sdk-linux-am62xx-evm-11.00.09.04" "~/am62/binman/processor-sdk-doc" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
 (define-key projectile-mode-map (kbd "M-e") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "M-a") 'projectile-commander) 
 (projectile-mode +1)
@@ -417,10 +419,10 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   (vertico-mode))
 
 ;;codeium
-;; (load "codeium-config.el") 
+;; (load "codeium-config.el")  ;; ;;
 
 ;; copilot
-(load "copilot-config.el") 
+;; (load "copilot-config.el")  ;;
 
 
 
@@ -821,6 +823,8 @@ kernel."
 ;; (require 'dired+)
 ;; (diredp-toggle-find-file-reuse-dir 1)
 
+;; Auto-refresh dired on file change
+(add-hook 'dired-mode-hook 'auto-revert-mode)
 
 
 ;;Serial term
@@ -1057,6 +1061,83 @@ kernel."
        )))
   )
 
+(defun serial-usb0()
+  (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "usb0")
+  
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    (let ((default-directory projectile-root))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
+
+(defun serial-usb4()
+  (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "usb4")
+  
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    
+    (let ((default-directory projectile-root))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB4 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
+
+(defun serial-usb5()
+  (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "usb5")
+  
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    (let ((default-directory projectile-root))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB5 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
+
+(defun serial-usb6()
+  (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "usb6")
+  
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    
+    (let ((default-directory projectile-root))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB6 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
+
+(defun serial-usb7()
+  (interactive)
+  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq buffer-name "usb7")
+  
+  (if (get-buffer buffer-name)
+      (switch-to-buffer buffer-name)
+    
+    (let ((default-directory projectile-root))
+      (shell buffer-name)
+      (process-send-string
+       (get-buffer-process buffer-name)
+       (format "export DEV=/dev/ttyUSB7 && sudo picocom -b 115200 $DEV\n")
+       )))
+  )
 
 
 (defun send-invisible-in-other-window()
@@ -1065,10 +1146,11 @@ kernel."
   (comint-send-invisible)
   )
 
+
+
 (load "ediff-config.el")
 (load "keyboard-macros.el")
-(load "projectile-config.el")
-(load "project-specific-config.el")
-(load "skeleton-config.el")
+
 (load "final.el")
 
+(put 'list-timers 'disabled nil)

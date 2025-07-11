@@ -1,4 +1,4 @@
-(load "am62l.el")
+;; (load "am62l.el") ;;
 
 (defun my-projectile-compile-commands ()
   "Set project-specific compile command using Projectile."
@@ -10,22 +10,24 @@
       (cond
        ((string-match "trusted" proj-root)
 	(message "trusted")
-	(setq-local projectile-project-compilation-cmd atf-make-cmd))
+	(setq projectile-project-compilation-cmd atf-make-cmd))
        ((string-match "tee" proj-root)
 	(message "tee")
-	(setq-local projectile-project-compilation-cmd optee-make-cmd))
+	(setq projectile-project-compilation-cmd optee-make-cmd))
        ((string-match "boot" proj-root)
 	(message "uboot")
-	(setq-local projectile-project-configure-cmd uboot-configure-cmd)
-	(setq-local projectile-project-compilation-cmd uboot-make-cmd)
-	(setq-local projectile-project-run-cmd uboot-run-cmd))
+	;; (setq projectile-project-package-cmd uboot-r5-configure-cmd)	       ;;
+	;; (setq projectile-project-install-cmd uboot-r5-make-cmd)	  ;;
+	(setq projectile-project-configure-cmd uboot-configure-cmd)
+	(setq projectile-project-compilation-cmd uboot-make-cmd))
+	;; (setq projectile-project-run-cmd uboot-run-cmd))	 ;;
        ((string-match "linux" proj-root)
 	(message "linux")
-	(setq-local projectile-project-configure-cmd kernel-configure-cmd)
-	(setq-local projectile-project-compilation-cmd kernel-make-cmd)
-       	(setq-local projectile-project-install-cmd kernel-modules-install-cmd))
+	(setq projectile-project-configure-cmd kernel-configure-cmd)
+	(setq projectile-project-compilation-cmd kernel-make-cmd)
+       	(setq projectile-project-install-cmd kernel-modules-install-cmd))
        (t
 	(message "all")
-	(setq-local projectile-project-compilation-cmd "make")))))) ;; Default fallback
+	(setq projectile-project-compilation-cmd "make")))))) ;; Default fallback
 
 (add-hook 'projectile-after-switch-project-hook #'my-projectile-compile-commands)

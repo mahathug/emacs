@@ -32,11 +32,11 @@
   ;;   (concat "cp " work_dir_4 "/tiboot3.bin tiboot3.bin")
   ;;   )
 
-  ;; (define-skeleton launcher
-  ;;   "In-buffer settings info for a emacs-org file."
-  ;;   "Title: "
-  ;;   (concat "cd ~/; python3 -m http.server 8080 & python3 launcher-test/launcher-test.py launcher-test/template.yaml ; cd -")
-  ;;   )
+  (define-skeleton launcher
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat "cd ~/; python3 -m http.server 8080 & python3 launcher-test/launcher-test.py launcher-test/template.yaml ; cd -")
+    )
 
   ;; (define-skeleton cp-dts
   ;;   "In-buffer settings info for a emacs-org file."
@@ -44,11 +44,11 @@
   ;;   "sudo cp " work_dir_3 "/arch/arm64/boot/dts/ti/k3-am625-sk.dtb ."
   ;;   )
 
-  ;; (define-skeleton cp-image
-  ;;   "In-buffer settings info for a emacs-org file."
-  ;;   "Title: "
-  ;;   "sudo cp " work_dir_3 "/arch/arm64/boot/Image ."
-  ;;   )
+  (define-skeleton cp-image
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "sudo cp " projectile-root "/arch/arm64/boot/Image ."
+    )
 
   ;; (define-skeleton cp-tispl
   ;;   "In-buffer settings info for a emacs-org file."
@@ -87,11 +87,11 @@
   ;;   (format cp-all-builds-to-mmc-cmd)
   ;;   )	
 
-  ;; (define-skeleton modules-install
-  ;;   "In-buffer settings info for a emacs-org file."
-  ;;   "Title: "
-  ;;   (concat "sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install")
-  ;;   )
+  (define-skeleton modules-install
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (concat "sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir " modules_install")
+    )
 
   ;; (define-skeleton ex-core-sec
   ;;   "In-buffer settings info for a emacs-org file."
@@ -99,11 +99,11 @@
   ;;   "export TI_SECURE_DEV_PKG=/home/kamlesh/core-secdev-k3 && ${TI_SECURE_DEV_PKG}/scripts/secure-binary-image.sh"
   ;;   )
 
-  ;; (define-skeleton make-image
-  ;;   "In-buffer settings info for a emacs-org file."
-  ;;   "Title: "
-  ;;   "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- Image"
-  ;;   )
+  (define-skeleton make-image
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "make -j16 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- Image"
+    )
 
   ;; (define-skeleton make-defconfig
   ;;   "In-buffer settings info for a emacs-org file."
@@ -149,19 +149,22 @@
   ;;   (format m-boot-cmd)
   ;;   )
 
-  ;; (setq um-root-cmd (concat "cd - && umount " root-dir " && lsblk"))
-  ;; (define-skeleton um-root
-  ;;   "In-buffer settings info for a emacs-org file."
-  ;;   "Title: "
-  ;;   (format um-root-cmd)
-  ;;   )
+  (setq root-node "/dev/sda2")
+  (setq root-dir "/media/kamlesh/root")
 
-  ;; (setq m-root-cmd (concat "udisksctl mount -b " root-node " && cd " root-dir "/boot/"))
-  ;; (define-skeleton m-root
-  ;;   "In-buffer settings info for a emacs-org file."
-  ;;   "Title: "
-  ;;   (format m-root-cmd)
-  ;;   )
+  (setq um-root-cmd (concat "cd - && umount " root-dir " && lsblk"))
+  (define-skeleton um-root
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format um-root-cmd)
+    )
+
+  (setq m-root-cmd (concat "udisksctl mount -b " root-node " && cd " root-dir "/boot/"))
+  (define-skeleton m-root
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    (format m-root-cmd)
+    )
 
   ;; (define-skeleton mcrc-cp
   ;;   "In-buffer settings info for a emacs-org file."
@@ -301,7 +304,7 @@
   (define-skeleton soft-reset-mmc
     "In-buffer settings info for a emacs-org file."
     "Title: "
-    "mw.l 43000030 243 1;mw.l 43018170 00000006 1"
+    (format soft-reset)
     )
 
   (define-skeleton rtcwake
@@ -309,5 +312,8 @@
     "Title: "
     "rtcwake -s 5 -m mem"
     )
-)
+  )
+
+(setq soft-reset-am62 "mw.l 43000030 243 1;mw.l 43018170 00000006 1")
+
 (skeleton-setup)

@@ -1,7 +1,7 @@
 ;; compilation
 (defun fetch-mail ()
   (interactive)
-  (let ((default-directory work_dir_1))
+  (let ((default-directory projectile-root))
     (message "fetch mails from server")
     (compile notmuch-update)))
 
@@ -9,6 +9,11 @@
   (interactive)
   (let ((default-directory projectile-root))	  
     (compile dfu-cmd)))
+
+(defun sleep-for-1 ()
+  (interactive)
+  (let ((default-directory projectile-root))	  
+    (compile "sleep 1")))
 
 (defun my-compilation-finish-function (process-name status)
   (interactive)
