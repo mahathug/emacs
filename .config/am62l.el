@@ -15,7 +15,6 @@
 (setq kernel-modules-install-cmd "sudo make -j16 ARCH=arm64 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- INSTALL_MOD_PATH=/media/kamlesh/root modules_install")      
 
 (setq relay-number "0")
-(setq relay-toggle-cmd (concat "ssh admin@relay-kamlesh -t \"if uom get relay/outlets/"relay-number"/state | grep -q \"true\"; then uom set relay/outlets/"relay-number"/state false  ;else uom set relay/outlets/"relay-number"/state true;fi\""))
 
 (setq soft-reset "mw.l 43010030 243 1;mw.l 43054000 00000006 1")
 (load "after-project.el")

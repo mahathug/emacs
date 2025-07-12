@@ -884,9 +884,6 @@ kernel."
 
 
 
-
-
-
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 

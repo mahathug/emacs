@@ -1,11 +1,3 @@
-;; (defun execute-functions-synchronously (func-args)
-;;   "Execute a list of functions synchronously.
-;; FUNC-ARGS is a list of function names and arguments to be executed.
-;; Example usage:
-;;   M-x execute-functions-synchronously RET projectile-switch-project ~/my-proj"
-;;   (interactive "sEnter function names and arguments (space-separated): ")
-;;   (let ((func-args-list (split-string func-args)))
-;;     (execute-functions-synchronously-internal func-args-list)))
 
 (defun execute-functions-synchronously (func-args)
   "Execute a list of functions synchronously.
@@ -66,16 +58,6 @@ Example usage:
 
 (defvar autoboot-sent nil)
 
-;; (defun monitor-buffer-for-autoboot ()
-;;   "Monitor a buffer for the string 'autoboot' and send a string when found."
-;;   (interactive)
-;;   (setq autoboot-sent nil) ; Reset autoboot-sent to nil
-;;   (let ((buffer-name "usb0")
-;;         (send-string (read-string "Enter string to send: ")))
-;;     (if (get-buffer buffer-name)
-;;         (run-at-time 1 nil 'monitor-buffer-for-autoboot-loop buffer-name send-string)
-;;       (message "Buffer '%s' not found." buffer-name))))
-
 (defun monitor-buffer-for-autoboot ()
   "Monitor a buffer for the string 'autoboot' and send a string when found."
   (interactive)
@@ -108,4 +90,3 @@ This function runs in a loop every 1 second."
       (message "Buffer '%s' not found." buffer-name))
     (unless autoboot-sent
       (run-at-time 1 nil 'monitor-buffer-for-autoboot-loop buffer-name send-string))))
-

@@ -52,7 +52,6 @@
     )
 
   (setq cp-image-cmd (concat "sudo cp " projectile-root "/arch/arm64/boot/Image " root-dir "/boot/"))
-  (setq cp-image-compile-cmd (concat "sudo cp " projectile-root "/arch/arm64/boot/Image " root-dir-compile "/boot/"))
   (define-skeleton cp-image-cmd
     "In-buffer settings info for a emacs-org file."
     "Title: "
@@ -82,7 +81,7 @@
     "pr_info(\"%s %d\\n\",__func__,__LINE__);"
     )
 
-(setq dfu-cmd uboot-run-cmd)  
+  (setq dfu-cmd uboot-run-cmd)  
   (define-skeleton dfu-cmd
     "In-buffer settings info for a emacs-org file."
     "Title: "
@@ -144,11 +143,17 @@
     "ums 0 mmc 1\\r\\n"
     )
 
-  (define-skeleton umsp
+    (define-skeleton ex-cmd-uboot
   "In-buffer settings info for a emacs-org file."
   "Title: "
   (process-send-string (get-buffer-process (current-buffer)) "\r"))
   )
+
+  (define-skeleton ex-cp-Image
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit dfu-boot nil serial-usb0 nil monitor-buffer-for-autoboot nil switch-project ti-linux-kernel-cgit sleep-for-n 5 m-root nil cp-image nil um-root nil serial-usb0 nil comint-interrupt-subjob nil send-to-uboot boot ex-cmd-uboot nil"
+    )
 
 
   

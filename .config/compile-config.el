@@ -22,7 +22,8 @@
 
 (defun cp-image()
   (interactive)
-  (let ((default-directory (concat "/sudo::" projectile-root)))	  
+  (let ((default-directory (concat "/sudo::" projectile-root)))
+    (setq cp-image-compile-cmd (concat "sudo cp " projectile-root "/arch/arm64/boot/Image " root-dir-compile "/boot/"))
     (compile cp-image-compile-cmd)))
 
 
@@ -157,18 +158,29 @@
   (let ((default-directory projectile-root))	  
     (compile relay-toggle-cmd)))
 
-(defun am62-relay ()
+(defun relay-off ()
+  (interactive)
+  (let ((default-directory projectile-root))	  
+    (compile relay-off-cmd)))
+
+(defun relay-on ()
+  (interactive)
+  (let ((default-directory projectile-root))	  
+    (compile relay-on-cmd)))
+
+(defun relay-reset()
   (interactive)
   (setq compilation-finish-functions 'my-compilation-finish-function)
 
   (setq wait-for-completion t)
-  (relay-toggle-run)
+  (relay-off)
   (while wait-for-completion (sleep-for 3 msec))
 
   (setq wait-for-completion t)
-  (relay-toggle-run)
+  (relay-on)
   (while wait-for-completion (sleep-for sec msec))
   
   (setq wait-for-synchronous-completion nil)
 
   )
+
