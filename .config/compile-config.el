@@ -10,10 +10,26 @@
   (let ((default-directory projectile-root))	  
     (compile dfu-cmd)))
 
-(defun sleep-for-1 ()
+(defun m-root()
+  (interactive)
+  (let ((default-directory (concat "/sudo::" projectile-root)))
+    (compile m-root-compile-cmd)))
+
+(defun um-root()
+  (interactive)
+  (let ((default-directory (concat "/sudo::" projectile-root)))	  
+    (compile um-root-compile-cmd)))
+
+(defun cp-image()
+  (interactive)
+  (let ((default-directory (concat "/sudo::" projectile-root)))	  
+    (compile cp-image-compile-cmd)))
+
+
+(defun sleep-for-n (num-of-sec)
   (interactive)
   (let ((default-directory projectile-root))	  
-    (compile "sleep 1")))
+    (compile (concat "sleep " num-of-sec))))
 
 (defun my-compilation-finish-function (process-name status)
   (interactive)

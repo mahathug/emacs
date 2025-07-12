@@ -6,7 +6,7 @@
   (message "project-detected %s" (projectile-project-root))
   (when (projectile-project-root) ;; Ensure we are in a Projectile project
     (let ((proj-root (projectile-project-root)))
-      (setq projectile-root proj-root)
+      (setq projectile-root (file-truename proj-root))
       (cond
        ((string-match "trusted" proj-root)
 	(message "trusted")
