@@ -6,7 +6,7 @@
 
 (setq uboot-make-cmd "make -j8 -s CROSS_COMPILE=aarch64-none-linux-gnu- BL1=../bin/bl1.bin BL31=../bin/bl31.bin BINMAN_INDIRS=../ti-linux-firmware TEE=../bin/bl32.bin")
 
-(setq uboot-run-cmd "export DFUPATH=1-7.3 && sudo dfu-util -p $DFUPATH -R -a bootloader -D tiboot3.bin && sleep 2 && sudo dfu-util -p $DFUPATH -R -a bootloader -D tispl.bin && sleep 2 && sudo dfu-util -p $DFUPATH -R -a u-boot.img -D u-boot.img")
+(setq uboot-run-cmd "export DFUPATH=1-13.3 && sudo dfu-util -p $DFUPATH -R -a bootloader -D tiboot3.bin && sleep 2 && sudo dfu-util -p $DFUPATH -R -a bootloader -D tispl.bin && sleep 2 && sudo dfu-util -p $DFUPATH -R -a u-boot.img -D u-boot.img")
 
 (setq kernel-configure-cmd "make -j8 ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- defconfig")
 

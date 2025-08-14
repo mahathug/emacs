@@ -103,7 +103,8 @@
  '(term-color-magenta ((t (:background "dark magenta" :foreground "dark magenta"))))
  '(term-color-red ((t (:background "indian red" :foreground "indian red"))))
  '(term-color-white ((t (:background "white smoke" :foreground "white smoke"))))
- '(term-color-yellow ((t (:background "goldenrod" :foreground "goldenrod")))))
+ '(term-color-yellow ((t (:background "goldenrod" :foreground "goldenrod"))))
+ '(whitespace-line ((t (:background "gray20" :foreground "red")))))
 
 ;; follow sym-link ;;
 (setq vc-follow-symlinks t)
@@ -400,7 +401,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 (require 'projectile)
 ;; Recommended keymap prefix on Windows/Linux
 (setq projectile-ignored-projects '("~/")) ;;
-(setq projectile-project-search-path '("~/.emacs.d/" "~/am62/binman/cryptodev-2.6" "~/am62/binman/linux-next-upstream" "~/ti-processor-sdk-linux-am62lxx-evm-11.00.15.05" "~/ti-processor-sdk-linux-am62xx-evm-11.00.09.04" "~/am62/binman/processor-sdk-doc" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
+(setq projectile-project-search-path '("~/.emacs.d/" "~/am62/binman/cryptodev-2.6" "~/am62/binman/linux-next-upstream" "~/am62/binman/u-boot" "~/ti-processor-sdk-linux-am62lxx-evm-11.00.15.05" "~/ti-processor-sdk-linux-am62xx-evm-11.00.09.04" "~/am62/binman/processor-sdk-doc" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
 (define-key projectile-mode-map (kbd "M-e") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "M-a") 'projectile-commander) 
 (projectile-mode +1)
@@ -579,14 +580,12 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 (require 'whitespace)
 (setq whitespace-line-column 80) ;; limit line length
 (setq whitespace-style '(face empty tabs lines-tail trailing))
-;; (global-whitespace-mode t) ;;
-
+(global-whitespace-mode t) ;;
 
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux
 kernel."
   (interactive)
-  (c-mode)
   (setq c-basic-offset 8)
   (setq c-indent-level 8)
   (setq c-brace-imaginary-offset 0)
@@ -599,75 +598,75 @@ kernel."
   (setq c-set-style "linux-tabs-only")
   )
 
+(add-hook 'c-mode-hook 'linux-c-mode) ;; ;;
 
+;; (dir-locals-set-class-variables
+;;  'linux-kernel
+;;  '((c-mode . (
+;; 	      (c-basic-offset . 8)
+;; 	      (c-label-minimum-indentation . 0)
+;; 	      (c-offsets-alist . (
+;; 				  (arglist-close         . c-lineup-arglist-tabs-only)
+;; 				  (arglist-cont-nonempty .
+;; 							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
+;; 				  (arglist-intro         . +)
+;; 				  (brace-list-intro      . +)
+;; 				  (c                     . c-lineup-C-comments)
+;; 				  (case-label            . 0)
+;; 				  (comment-intro         . c-lineup-comment)
+;; 				  (cpp-define-intro      . +)
+;; 				  (cpp-macro             . -1000)
+;; 				  (cpp-macro-cont        . +)
+;; 				  (defun-block-intro     . +)
+;; 				  (else-clause           . 0)
+;; 				  (func-decl-cont        . +)
+;; 				  (inclass               . +)
+;; 				  (inher-cont            . c-lineup-multi-inher)
+;; 				  (knr-argdecl-intro     . 0)
+;; 				  (label                 . -1000)
+;; 				  (statement             . 0)
+;; 				  (statement-block-intro . +)
+;; 				  (statement-case-intro  . +)
+;; 				  (statement-cont        . +)
+;; 				  (substatement          . +)
+;; 				  ))
+;; 	      (indent-tabs-mode . t)
+;; 	      (show-trailing-whitespace . t)
+;; 	      ))))
 
-(dir-locals-set-class-variables
- 'linux-kernel
- '((c-mode . (
-	      (c-basic-offset . 8)
-	      (c-label-minimum-indentation . 0)
-	      (c-offsets-alist . (
-				  (arglist-close         . c-lineup-arglist-tabs-only)
-				  (arglist-cont-nonempty .
-							 (c-lineup-gcc-asm-reg c-lineup-arglist-tabs-only))
-				  (arglist-intro         . +)
-				  (brace-list-intro      . +)
-				  (c                     . c-lineup-C-comments)
-				  (case-label            . 0)
-				  (comment-intro         . c-lineup-comment)
-				  (cpp-define-intro      . +)
-				  (cpp-macro             . -1000)
-				  (cpp-macro-cont        . +)
-				  (defun-block-intro     . +)
-				  (else-clause           . 0)
-				  (func-decl-cont        . +)
-				  (inclass               . +)
-				  (inher-cont            . c-lineup-multi-inher)
-				  (knr-argdecl-intro     . 0)
-				  (label                 . -1000)
-				  (statement             . 0)
-				  (statement-block-intro . +)
-				  (statement-case-intro  . +)
-				  (statement-cont        . +)
-				  (substatement          . +)
-				  ))
-	      (indent-tabs-mode . t)
-	      (show-trailing-whitespace . t)
-	      ))))
+;; (defun linux-kernel-coding-style/c-lineup-arglist-tabs-only (ignored)
+;;   "Line up argument lists by tabs, not spaces"
+;;   (let* ((anchor (c-langelem-pos c-syntactic-element))
+;; 	 (column (c-langelem-2nd-pos c-syntactic-element))
+;; 	 (offset (- (1+ column) anchor))
+;; 	 (steps (floor offset c-basic-offset)))
+;;     (* (max steps 1)
+;;        c-basic-offset)))
 
-(defun linux-kernel-coding-style/c-lineup-arglist-tabs-only (ignored)
-  "Line up argument lists by tabs, not spaces"
-  (let* ((anchor (c-langelem-pos c-syntactic-element))
-	 (column (c-langelem-2nd-pos c-syntactic-element))
-	 (offset (- (1+ column) anchor))
-	 (steps (floor offset c-basic-offset)))
-    (* (max steps 1)
-       c-basic-offset)))
+;; ;; Add Linux kernel style
+;; (add-hook 'c-mode-common-hook
+;; 	  (lambda ()
+;; 	    (c-add-style "linux-kernel"
+;; 			 '("linux" (c-offsets-alist
+;; 				    (arglist-cont-nonempty
+;; 				     c-lineup-gcc-asm-reg
+;; 				     linux-kernel-coding-style/c-lineup-arglist-tabs-only))))))
 
-;; Add Linux kernel style
-(add-hook 'c-mode-common-hook
-	  (lambda ()
-	    (c-add-style "linux-kernel"
-			 '("linux" (c-offsets-alist
-				    (arglist-cont-nonempty
-				     c-lineup-gcc-asm-reg
-				     linux-kernel-coding-style/c-lineup-arglist-tabs-only))))))
+;; (defun linux-kernel-coding-style/setup ()
+;;   (let ((filename (buffer-file-name)))
+;;     ;; Enable kernel mode for the appropriate files
+;;     (when (and filename
+;; 	       (or (locate-dominating-file filename "Kbuild")
+;; 		   (locate-dominating-file filename "Kconfig")
+;; 		   (save-excursion (goto-char 0)
+;; 				   (search-forward-regexp "^#include <linux/\\(module\\|kernel\\)\\.h>$" nil t))))
+;;       (setq indent-tabs-mode t)
+;;       (setq tab-width 8)
+;;       (setq c-basic-offset 8)
+;;       (c-set-style "linux-kernel")
+;;       (message "Setting up indentation for the linux kernel"))))
 
-(defun linux-kernel-coding-style/setup ()
-  (let ((filename (buffer-file-name)))
-    ;; Enable kernel mode for the appropriate files
-    (when (and filename
-	       (or (locate-dominating-file filename "Kbuild")
-		   (locate-dominating-file filename "Kconfig")
-		   (save-excursion (goto-char 0)
-				   (search-forward-regexp "^#include <linux/\\(module\\|kernel\\)\\.h>$" nil t))))
-      (setq indent-tabs-mode t)
-      (setq tab-width 8)
-      (setq c-basic-offset 8)
-      (c-set-style "linux-kernel")
-      (message "Setting up indentation for the linux kernel"))))
-
-(add-hook 'c-mode-hook 'linux-kernel-coding-style/setup)
+;; (add-hook 'c-mode-hook 'linux-kernel-coding-style/setup)
 
 ;; indentaion style end
 
@@ -1142,8 +1141,6 @@ kernel."
   (other-window 0)
   (comint-send-invisible)
   )
-
-
 
 (load "ediff-config.el")
 (load "keyboard-macros.el")

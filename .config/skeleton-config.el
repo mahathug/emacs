@@ -51,11 +51,13 @@
     (format m-root-cmd)
     )
 
-  (setq cp-image-cmd (concat "sudo cp " projectile-root "/arch/arm64/boot/Image " root-dir "/boot/"))
+
   (define-skeleton cp-image-cmd
     "In-buffer settings info for a emacs-org file."
     "Title: "
-    (format cp-image-cmd)
+    (progn
+      (setq cp-image-cmd (concat "sudo cp " projectile-root "/arch/arm64/boot/Image " root-dir "/boot/"))
+      (format cp-image-cmd))
     )
 
   (define-skeleton d-print

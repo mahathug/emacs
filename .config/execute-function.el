@@ -1,4 +1,3 @@
-
 (defun execute-functions-synchronously (func-args)
   "Execute a list of functions synchronously.
 FUNC-ARGS is a list of function names and arguments to be executed.
@@ -20,13 +19,20 @@ Example usage:
         (let ((func (symbol-function (intern func-name))))
           (if func
               (progn
-		(message "exec next")
+		(message "exec %s" func-name)
                 (condition-case nil
-                    (if (equal arg "nil")
-                        (funcall func)
-                      (funcall func arg))
+		    (cond
+                     ((equal arg "n")
+		      (message "interactive")
+                      (call-interactively func))
+                     ((equal arg "nil")
+		      (message "funcall")
+                      (funcall func))
+                     (t
+		      (message "arg funcall")
+                      (funcall func arg)))
                   (error (message "Error executing %s: %s" func-name (error-message-string))))
-                (while compilation-in-progress
+		(while compilation-in-progress
                   (sit-for 0.1)))
             (error "Function %s not found" func-name)))
         (setq i (+ i 2))))))
