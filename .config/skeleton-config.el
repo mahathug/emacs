@@ -157,6 +157,12 @@
     "relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit dfu-boot nil serial-usb0 nil monitor-buffer-for-autoboot nil switch-project ti-linux-kernel-cgit sleep-for-n 5 m-root nil cp-image nil um-root nil serial-usb0 nil comint-interrupt-subjob nil send-to-uboot boot ex-cmd-uboot nil"
     )
 
+  (define-skeleton ex-clean-save
+    "In-buffer settings info for a emacs-org file."
+    "Title: "
+    "untabify n tabify n whitespace-cleanup n single-lines n"
+    )
+
 
   
 (setq soft-reset-am62 "mw.l 43000030 243 1;mw.l 43018170 00000006 1")

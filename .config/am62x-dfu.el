@@ -5,11 +5,11 @@
 
 (setq uboot-r5-configure-cmd "make -j32 ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabihf- am62x_evm_r5_defconfig am62x_r5_usbdfu.config O=./out/am62x-dfu/r5")
 
-(setq uboot-r5-make-cmd "make -j8 -s CROSS_COMPILE=arm-none-linux-gnueabihf- BINMAN_INDIRS=../../../../ti-linux-firmware  O=./out/am62x-dfu/r5")
+(setq uboot-r5-make-cmd "make -j8 CROSS_COMPILE=arm-none-linux-gnueabihf- BINMAN_INDIRS=../../../../ti-linux-firmware  O=./out/am62x-dfu/r5")
 
 (setq uboot-configure-cmd "make CROSS_COMPILE=aarch64-none-linux-gnu- am62x_evm_a53_defconfig O=./out/am62x-dfu/a53")
 
-(setq uboot-make-cmd "make -j8 -s CROSS_COMPILE=aarch64-none-linux-gnu- BL31=../../../../bin/am62x/bl31.bin BINMAN_INDIRS=../../../../ti-linux-firmware TEE=../../../../bin/am62x/bl32.bin O=./out/am62x-dfu/a53")
+(setq uboot-make-cmd "make -j8 CROSS_COMPILE=aarch64-none-linux-gnu- BL31=../../../../bin/am62x/bl31.bin BINMAN_INDIRS=../../../../ti-linux-firmware TEE=../../../../bin/am62x/bl32.bin O=./out/am62x-dfu/a53")
 
 (setq uboot-run-cmd "export DFUPATH=1-7.3 && sudo dfu-util -p $DFUPATH -R -a bootloader -D out/am62x-dfu/r5/tiboot3.bin && sleep 2 && sudo dfu-util -p $DFUPATH -R -a tispl.bin -D out/am62x-dfu/a53/tispl.bin && sleep 2 && sudo dfu-util -p $DFUPATH -R -a u-boot.img -D out/am62x-dfu/a53/u-boot.img")
 

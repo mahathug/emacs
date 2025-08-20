@@ -420,7 +420,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   (vertico-mode))
 
 ;;codeium
-;; (load "codeium-config.el")  ;; ;;
+(load "codeium-config.el")  ;; ;;
 
 ;; copilot
 ;; (load "copilot-config.el")  ;;
