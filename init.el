@@ -503,7 +503,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
 
-1  ;; Show the Embark target at point via Eldoc. You may adjust the
+  ;; Show the Embark target at point via Eldoc. You may adjust the
   ;; Eldoc strategy, if you want to see the documentation from
   ;; multiple providers. Beware that using this can be a little
   ;; jarring since the message shown in the minibuffer can be more
@@ -994,145 +994,37 @@ kernel."
     (let ((default-directory work_dir_1)) (shell buffer-name) (format "cd ~/am62lite-presil-build/\r")))
   )
 
-(defun serial-usb0()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb0")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
+(defun serial-usb (device-number &optional baud-rate buffer-suffix)
+  "Connect to a USB serial device via picocom.
+DEVICE-NUMBER: USB device number (0-7)
+BAUD-RATE: Serial baud rate (default: 115200)
+BUFFER-SUFFIX: Optional suffix for buffer name (default: device number)"
+  (interactive "nUSB Device Number (0-7): ")
+  (let* ((baud (or baud-rate 115200))
+	 (suffix (or buffer-suffix (number-to-string device-number)))
+	 (buffer-name (format "usb%s" suffix))
+	 (device-path (format "/dev/ttyUSB%d" device-number)))
 
-(defun serial-usb1()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb1")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB1 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
+    (setq kill-buffer-query-functions
+	  (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
 
-(defun serial-usb2()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb2")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB2 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
+    (if (get-buffer buffer-name)
+        (switch-to-buffer buffer-name)
+      (let ((default-directory (or projectile-root default-directory)))
+        (shell buffer-name)
+        (process-send-string
+         (get-buffer-process buffer-name)
+         (format "export DEV=%s && sudo picocom -b %d $DEV\n" device-path baud))))))
 
-(defun serial-usb3()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb3")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB3 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
-
-(defun serial-usb0()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb0")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB0 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
-
-(defun serial-usb4()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb4")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB4 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
-
-(defun serial-usb5()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb5")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB5 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
-
-(defun serial-usb6()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb6")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB6 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
-
-(defun serial-usb7()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "usb7")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    
-    (let ((default-directory projectile-root))
-      (shell buffer-name)
-      (process-send-string
-       (get-buffer-process buffer-name)
-       (format "export DEV=/dev/ttyUSB7 && sudo picocom -b 115200 $DEV\n")
-       )))
-  )
+;; Convenience functions for quick access
+(defun serial-usb0 () (interactive) (serial-usb 0))
+(defun serial-usb1 () (interactive) (serial-usb 1))
+(defun serial-usb2 () (interactive) (serial-usb 2))
+(defun serial-usb3 () (interactive) (serial-usb 3))
+(defun serial-usb4 () (interactive) (serial-usb 4))
+(defun serial-usb5 () (interactive) (serial-usb 5))
+(defun serial-usb6 () (interactive) (serial-usb 6))
+(defun serial-usb7 () (interactive) (serial-usb 7))
 
 
 (defun send-invisible-in-other-window()
