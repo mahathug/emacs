@@ -1000,6 +1000,7 @@ DEVICE-NUMBER: USB device number (0-7)
 BAUD-RATE: Serial baud rate (default: 115200)
 BUFFER-SUFFIX: Optional suffix for buffer name (default: device number)"
   (interactive "nUSB Device Number (0-7): ")
+  (message "here")
   (message "Debug: device-number=%s baud-rate=%s buffer-suffix=%s" device-number baud-rate buffer-suffix)
   (let* ((baud (or baud-rate 115200))
 	 (suffix (or buffer-suffix (number-to-string device-number)))
