@@ -994,20 +994,14 @@ kernel."
     (let ((default-directory work_dir_1)) (shell buffer-name) (format "cd ~/am62lite-presil-build/\r")))
   )
 
-(defun serial-usb (device-number &optional baud-rate buffer-suffix)
+(defun serial-usb (device-number)
   "Connect to a USB serial device via picocom.
-DEVICE-NUMBER: USB device number (0-7)
-BAUD-RATE: Serial baud rate (default: 115200)
-BUFFER-SUFFIX: Optional suffix for buffer name (default: device number)"
+DEVICE-NUMBER: USB device number (0-7)"
   (interactive "nUSB Device Number (0-7): ")
-  (message "here")
-  (message "Debug: device-number=%s baud-rate=%s buffer-suffix=%s" device-number baud-rate buffer-suffix)
-  (let* ((baud (or baud-rate 115200))
-	 (suffix (or buffer-suffix (number-to-string device-number)))
+  (let* ((baud 115200)
+	 (suffix (number-to-string device-number))
 	 (buffer-name (format "usb%s" suffix))
 	 (device-path (format "/dev/ttyUSB%d" device-number)))
-    
-    (message "Debug: baud=%s suffix=%s buffer-name=%s device-path=%s" baud suffix buffer-name device-path)
     
     (setq kill-buffer-query-functions
 	  (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
@@ -1015,9 +1009,7 @@ BUFFER-SUFFIX: Optional suffix for buffer name (default: device number)"
     (if (get-buffer buffer-name)
         (switch-to-buffer buffer-name)
       (let ((default-directory (or projectile-root default-directory)))
-        (message "Debug: default-directory=%s" default-directory)
         (shell buffer-name)
-        (message "Debug: about to send process string")
         (process-send-string
          (get-buffer-process buffer-name)
          (format "export DEV=%s && sudo picocom -b %d $DEV\n" device-path baud))))))
