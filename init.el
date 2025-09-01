@@ -396,15 +396,6 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 ;;password mask
 ;; (setq comint-password-prompt-regexp eshell-password-prompt-regexp) ;;
 
-;;projectile
-(require 'projectile)
-;; Recommended keymap prefix on Windows/Linux
-(setq projectile-ignored-projects '("~/")) ;;
-(setq projectile-project-search-path '("~/.emacs.d/" "~/am62/binman/cryptodev-2.6" "~/am62/binman/linux-next-upstream" "~/am62/binman/u-boot" "~/ti-processor-sdk-linux-am62lxx-evm-11.00.15.05" "~/ti-processor-sdk-linux-am62xx-evm-11.00.09.04" "~/am62/binman/processor-sdk-doc" ("~/am62/binman/am62l-wakeup/" . 1))) ;;
-(define-key projectile-mode-map (kbd "M-e") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "M-a") 'projectile-commander) 
-(projectile-mode +1)
-
 (keyboard-translate ?\C-q ?\C-h)
 
 ;;vertico
