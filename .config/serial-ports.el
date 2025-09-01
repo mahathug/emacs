@@ -27,3 +27,40 @@ DEVICE-NUMBER: USB device number (0-7)"
 (defun serial-usb5 () (interactive) (serial-usb 5))
 (defun serial-usb6 () (interactive) (serial-usb 6))
 (defun serial-usb7 () (interactive) (serial-usb 7))
+
+(defun qemu-term ()
+  "Create QEMU terminal windows for optee_os project.
+Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only."
+  (interactive)
+  (when (and projectile-root 
+             (string-match-p "optee_os" projectile-root))
+    (let ((default-directory projectile-root))
+      (setq kill-buffer-query-functions
+            (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+      
+      ;; Terminal 1: soc_term.py 54320
+      (let ((buffer-name-1 "qemu-soc-54320"))
+        (if (get-buffer buffer-name-1)
+            (switch-to-buffer buffer-name-1)
+          (shell buffer-name-1)
+          (process-send-string
+           (get-buffer-process buffer-name-1)
+           "./build/soc_term.py 54320\n")))
+      
+      ;; Terminal 2: soc_term.py 54321
+      (let ((buffer-name-2 "qemu-soc-54321"))
+        (if (get-buffer buffer-name-2)
+            (switch-to-buffer buffer-name-2)
+          (shell buffer-name-2)
+          (process-send-string
+           (get-buffer-process buffer-name-2)
+           "./build/soc_term.py 54321\n")))
+      
+      ;; Terminal 3: make run-only
+      (let ((buffer-name-3 "qemu-make-run"))
+        (if (get-buffer buffer-name-3)
+            (switch-to-buffer buffer-name-3)
+          (shell buffer-name-3)
+          (process-send-string
+           (get-buffer-process buffer-name-3)
+           "cd build && make run-only\n"))))))
