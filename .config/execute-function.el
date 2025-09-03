@@ -18,22 +18,23 @@ Example usage:
             (arg (nth (1+ i) func-args-list)))
         (let ((func (symbol-function (intern func-name))))
           (if func
-              (progn
-		(message "exec %s" func-name)
-                (condition-case nil
-		    (cond
-                     ((equal arg "n")
-		      (message "interactive")
-                      (call-interactively func))
-                     ((equal arg "nil")
-		      (message "funcall")
-                      (funcall func))
-                     (t
-		      (message "%s %s " func-name arg)
-                      (funcall func arg)))
-                  (error (message "Error executing %s: %s" func-name (error-message-string))))
-		(while compilation-in-progress
-                  (sit-for 0.1)))
+              (let ((default-directory projectile-root))
+                (progn
+                  (message "exec %s %s %s %s" func-name projectile-project-root projectile-root default-directory)
+                  (condition-case nil
+                      (cond
+                       ((equal arg "n")
+                        (message "interactive")
+                        (call-interactively func))
+                       ((equal arg "nil")
+                        (message "funcall")
+                        (funcall func))
+                       (t
+                        (message "%s %s " func-name arg)
+                        (funcall func arg)))
+                    (error (message "Error executing %s: %s" func-name (error-message-string))))
+                  (while compilation-in-progress
+                    (sit-for 0.1))))
             (error "Function %s not found" func-name)))
         (setq i (+ i 2))))))
 
