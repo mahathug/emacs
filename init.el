@@ -92,6 +92,7 @@
  '(magit-diff-file-heading ((((type tty)) nil)))
  '(magit-diff-removed ((((type tty)) (:foreground "red"))))
  '(magit-diff-removed-highlight ((((type tty)) (:foreground "IndianRed"))))
+ '(magit-hash ((t (:foreground "blue"))))
  '(magit-section-highlight ((((type tty)) nil)))
  '(shadow ((t (:foreground "blue"))))
  '(speedbar-tag-face ((t (:foreground "brown"))))

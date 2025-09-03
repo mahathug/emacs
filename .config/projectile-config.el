@@ -1,5 +1,7 @@
 (require 'projectile)
 
+(setq compilation-read-command nil)
+
 (setq projectile-sort-order 'recently-active)
 
 (setq projectile-enable-caching nil)

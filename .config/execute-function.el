@@ -29,7 +29,7 @@ Example usage:
 		      (message "funcall")
                       (funcall func))
                      (t
-		      (message "arg funcall")
+		      (message "%s %s " func-name arg)
                       (funcall func arg)))
                   (error (message "Error executing %s: %s" func-name (error-message-string))))
 		(while compilation-in-progress
@@ -50,14 +50,8 @@ Example usage:
 
 (defun projectile-shell ()
   (interactive)
-  (let ((default-directory projectile-root))	  
+  (let ((default-directory projectile-root))
     (projectile-run-shell)))
-
-(defun projectile-compile-uboot ()
-  "Run projectile-compile-project with uboot-make-cmd as the compile command."
-  (interactive)
-  (let ((projectile-project-compilation-cmd uboot-make-cmd))
-    (projectile-compile-project nil)))
 
 (defun send-to-uboot (string)
   "Send a string to the buffer 'usb0'."
@@ -118,7 +112,7 @@ This function runs in a loop every 1 second."
 (define-skeleton sk-ex-tfab-ubootb
   "In-buffer settings info for a emacs-org file."
   "Title: "
-  "switch-project trusted-firmware-a relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit dfu-boot nil serial-usb0 nil monitor-buffer-for-autoboot nil switch-project ti-linux-kernel-cgit sleep-for-n 5 m-root nil cp-image nil um-root nil serial-usb0 nil comint-interrupt-subjob nil send-to-uboot boot sk-ex-cmd-uboot nil"
+  "switch-project trusted-firmware-a projectile-compile-project n relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit projectile-compile-project n delete-other-windows n split-window-right n serial-usb0 nil other-window n dfu-boot nil monitor-buffer-for-autoboot nil "
   )
 
 (define-skeleton sk-ex-clean-save
@@ -126,3 +120,10 @@ This function runs in a loop every 1 second."
   "Title: "
   "untabify n tabify n whitespace-cleanup n single-lines n"
   )
+
+(defun toggle-compilation-read-command ()
+  "Toggle the value of compilation-read-command between t and nil."
+  (interactive)
+  (setq compilation-read-command (not compilation-read-command))
+  (message "compilation-read-command is now %s" 
+           (if compilation-read-command "enabled" "disabled")))
