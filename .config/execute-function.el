@@ -96,3 +96,27 @@ This function runs in a loop every 1 second."
       (message "Buffer '%s' not found." buffer-name))
     (unless autoboot-sent
       (run-at-time 1 nil 'monitor-buffer-for-autoboot-loop buffer-name send-string))))
+
+
+(define-skeleton sk-ex-cmd-uboot
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  (process-send-string (get-buffer-process (current-buffer)) "\r"))
+
+(define-skeleton sk-ex-cp-Image
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  "relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit dfu-boot nil serial-usb0 nil monitor-buffer-for-autoboot nil switch-project ti-linux-kernel-cgit sleep-for-n 5 m-root nil cp-image nil um-root nil serial-usb0 nil comint-interrupt-subjob nil send-to-uboot boot sk-ex-cmd-uboot nil"
+  )
+
+(define-skeleton sk-ex-tfab-ubootb
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  "switch-project trusted-firmware-a relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit dfu-boot nil serial-usb0 nil monitor-buffer-for-autoboot nil switch-project ti-linux-kernel-cgit sleep-for-n 5 m-root nil cp-image nil um-root nil serial-usb0 nil comint-interrupt-subjob nil send-to-uboot boot sk-ex-cmd-uboot nil"
+  )
+
+(define-skeleton sk-ex-clean-save
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  "untabify n tabify n whitespace-cleanup n single-lines n"
+  )
