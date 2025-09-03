@@ -53,6 +53,12 @@ Example usage:
   (let ((default-directory projectile-root))	  
     (projectile-run-shell)))
 
+(defun projectile-compile-uboot ()
+  "Run projectile-compile-project with uboot-make-cmd as the compile command."
+  (interactive)
+  (let ((projectile-project-compilation-cmd uboot-make-cmd))
+    (projectile-compile-project nil)))
+
 (defun send-to-uboot (string)
   "Send a string to the buffer 'usb0'."
   (interactive "sEnter string to send: ")
