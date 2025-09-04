@@ -38,18 +38,29 @@ Example usage:
             (error "Function %s not found" func-name)))
         (setq i (+ i 2))))))
 
-(defun switch-project (buffer-name)
-  "Update the projectile project root to the path of the given buffer."
-  (let ((buffer (get-buffer buffer-name)))
-    (if buffer
-        (with-current-buffer buffer
-          ;; (setq projectile-project-root default-directory) ;;
-	  (message "default-directory %s " default-directory)
-	  (message "Buffer-name %s " buffer-name)
-	  (switch-to-buffer buffer-name)
-	  (setq projectile-root (file-truename buffer-name))
-          (message "Projectile project root updated to %s" projectile-root))
-      (message "Buffer %s not found" buffer-name))))
+(defun switch-project (bufname)
+  "Switch to a Projectile project using BUFNAME's project root.
+If BUFNAME is a file buffer, use its file path.
+If BUFNAME is a Dired buffer, use its directory path.
+Otherwise, fall back to prompting like `projectile-switch-project`."
+  (interactive
+   (list (read-buffer "Buffer (default current): "
+                      (buffer-name (current-buffer)) t)))
+  (let* ((buf (get-buffer bufname))
+         (path (when buf
+                 (with-current-buffer buf
+                   (cond
+                    (buffer-file-name buffer-file-name)
+                    ((derived-mode-p 'dired-mode) (dired-current-directory))
+                    (t default-directory)))))
+         (project-root (when path
+                         (let ((default-directory (if (file-directory-p path)
+                                                      path
+                                                    (file-name-directory path))))
+                           (projectile-project-root)))))
+    (if project-root
+        (projectile-switch-project-by-name project-root)
+      (projectile-switch-project))))  ;; fallback: normal prompt
 
 (defun projectile-shell ()
   (interactive)
@@ -112,10 +123,16 @@ This function runs in a loop every 1 second."
   "relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit dfu-boot nil serial-usb0 nil monitor-buffer-for-autoboot nil switch-project ti-linux-kernel-cgit sleep-for-n 5 m-root nil cp-image nil um-root nil serial-usb0 nil comint-interrupt-subjob nil send-to-uboot boot sk-ex-cmd-uboot nil"
   )
 
-(define-skeleton sk-ex-tfab-ubootb
+(define-skeleton sk-ex-tfab-ubootb-1
   "In-buffer settings info for a emacs-org file."
   "Title: "
   "switch-project trusted-firmware-a projectile-compile-project n relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit projectile-compile-project n delete-other-windows n split-window-right n serial-usb0 nil other-window n dfu-boot nil monitor-buffer-for-autoboot nil "
+  )
+
+(define-skeleton sk-ex-tfab-ubootb
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  "switch-project trusted-firmware-a projectile-compile-project n relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit projectile-compile-project n delete-other-windows n serial-usb0 nil dfu-boot nil monitor-buffer-for-autoboot nil"
   )
 
 (define-skeleton sk-ex-clean-save
