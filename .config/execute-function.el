@@ -20,7 +20,7 @@ Example usage:
           (if func
               (let ((default-directory projectile-root))
                 (progn
-                  (message "exec %s %s %s %s" func-name projectile-project-root projectile-root default-directory)
+                  (message "exec fn=%s\n ppr=%s\n pr=%s\n dd=%s " func-name projectile-project-root projectile-root default-directory)
                   (condition-case nil
                       (cond
                        ((equal arg "n")
@@ -43,10 +43,12 @@ Example usage:
   (let ((buffer (get-buffer buffer-name)))
     (if buffer
         (with-current-buffer buffer
-          (setq projectile-project-root default-directory)
-	  (setq projectile-root (file-truename default-directory))
+          ;; (setq projectile-project-root default-directory) ;;
+	  (message "default-directory %s " default-directory)
+	  (message "Buffer-name %s " buffer-name)
 	  (switch-to-buffer buffer-name)
-          (message "Projectile project root updated to %s" projectile-project-root))
+	  (setq projectile-root (file-truename buffer-name))
+          (message "Projectile project root updated to %s" projectile-root))
       (message "Buffer %s not found" buffer-name))))
 
 (defun projectile-shell ()
