@@ -75,3 +75,75 @@ Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only
              "cd build && make run-only\n")))))
     (message "qemu-term: Not in an optee_os project (current project: %s)" 
              (or projectile-root "none"))))
+
+(defun fvp-term ()
+  "Create FVP terminal windows for optee_os project.
+Creates five terminals: telnet localhost on ports 5000, 5001, 5002, 5003, and 5004."
+  (interactive)
+  (if (and projectile-root 
+           (string-match-p "optee_os" projectile-root))
+    (let ((default-directory projectile-root))
+      (setq kill-buffer-query-functions
+            (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+      
+      ;; Terminal 1: telnet localhost 5000
+      (let ((buffer-name-1 "fvp-telnet-5000"))
+        (if (get-buffer buffer-name-1)
+            (switch-to-buffer buffer-name-1)
+          (message "Creating FVP terminal buffer: %s" buffer-name-1)
+          (shell buffer-name-1)
+          (sit-for 0.5)  ; Wait for shell to be ready
+          (when (get-buffer-process buffer-name-1)
+            (process-send-string
+             (get-buffer-process buffer-name-1)
+             "telnet localhost 5000\n"))))
+      
+      ;; Terminal 2: telnet localhost 5001
+      (let ((buffer-name-2 "fvp-telnet-5001"))
+        (if (get-buffer buffer-name-2)
+            (switch-to-buffer buffer-name-2)
+          (message "Creating FVP terminal buffer: %s" buffer-name-2)
+          (shell buffer-name-2)
+          (sit-for 0.5)  ; Wait for shell to be ready
+          (when (get-buffer-process buffer-name-2)
+            (process-send-string
+             (get-buffer-process buffer-name-2)
+             "telnet localhost 5001\n"))))
+      
+      ;; Terminal 3: telnet localhost 5002
+      (let ((buffer-name-3 "fvp-telnet-5002"))
+        (if (get-buffer buffer-name-3)
+            (switch-to-buffer buffer-name-3)
+          (message "Creating FVP terminal buffer: %s" buffer-name-3)
+          (shell buffer-name-3)
+          (sit-for 0.5)  ; Wait for shell to be ready
+          (when (get-buffer-process buffer-name-3)
+            (process-send-string
+             (get-buffer-process buffer-name-3)
+             "telnet localhost 5002\n"))))
+      
+      ;; Terminal 4: telnet localhost 5003
+      (let ((buffer-name-4 "fvp-telnet-5003"))
+        (if (get-buffer buffer-name-4)
+            (switch-to-buffer buffer-name-4)
+          (message "Creating FVP terminal buffer: %s" buffer-name-4)
+          (shell buffer-name-4)
+          (sit-for 0.5)  ; Wait for shell to be ready
+          (when (get-buffer-process buffer-name-4)
+            (process-send-string
+             (get-buffer-process buffer-name-4)
+             "telnet localhost 5003\n"))))
+      
+      ;; Terminal 5: telnet localhost 5004
+      (let ((buffer-name-5 "fvp-telnet-5004"))
+        (if (get-buffer buffer-name-5)
+            (switch-to-buffer buffer-name-5)
+          (message "Creating FVP terminal buffer: %s" buffer-name-5)
+          (shell buffer-name-5)
+          (sit-for 0.5)  ; Wait for shell to be ready
+          (when (get-buffer-process buffer-name-5)
+            (process-send-string
+             (get-buffer-process buffer-name-5)
+             "telnet localhost 5004\n")))))
+    (message "fvp-term: Not in an optee_os project (current project: %s)" 
+             (or projectile-root "none"))))
