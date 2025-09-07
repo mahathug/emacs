@@ -33,7 +33,7 @@ DEVICE-NUMBER: USB device number (0-7)"
 Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only."
   (interactive)
   (if (and projectile-root 
-           (string-match-p "optee_os" projectile-root))
+           (string-match-p "optee_qemu_master" projectile-root))
     (let ((default-directory projectile-root))
       (setq kill-buffer-query-functions
             (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
@@ -73,7 +73,7 @@ Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only
             (process-send-string
              (get-buffer-process buffer-name-3)
              "cd build && make run-only\n")))))
-    (message "qemu-term: Not in an optee_os project (current project: %s)" 
+    (message "qemu-term: Not in an optee_qemu_master project (current project: %s)" 
              (or projectile-root "none"))))
 
 (defun fvp-term ()

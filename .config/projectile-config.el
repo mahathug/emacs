@@ -33,7 +33,7 @@
                                         "~/ti-processor-sdk-linux-am62xx-evm-11.00.09.04"
                                         "~/am62/binman/processor-sdk-doc"
 					"~/am62/binman/optee_projects/optee"
-					("~/am62/binman/optee_projects/" . 1) ;;
+					("~/am62/binman/optee_projects/" . 2) ;;
                                         ("~/am62/binman/am62l-wakeup/" . 1))) ;;
 (define-key projectile-mode-map (kbd "M-e") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "M-a") 'projectile-commander)
