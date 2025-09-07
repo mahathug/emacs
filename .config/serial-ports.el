@@ -81,7 +81,7 @@ Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only
 Creates five terminals: telnet localhost on ports 5000, 5001, 5002, 5003, and 5004."
   (interactive)
   (if (and projectile-root 
-           (string-match-p "optee_os" projectile-root))
+           (string-match-p "optee" projectile-root))
     (let ((default-directory projectile-root))
       (setq kill-buffer-query-functions
             (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
@@ -135,7 +135,7 @@ Creates five terminals: telnet localhost on ports 5000, 5001, 5002, 5003, and 50
              "telnet localhost 5003\n"))))
       
       ;; Terminal 5: telnet localhost 5004
-      (let ((buffer-name-5 "fvp-telnet-5004"))
+      (let ((buffer-name-5 "fvp-make"))
         (if (get-buffer buffer-name-5)
             (switch-to-buffer buffer-name-5)
           (message "Creating FVP terminal buffer: %s" buffer-name-5)
@@ -144,6 +144,6 @@ Creates five terminals: telnet localhost on ports 5000, 5001, 5002, 5003, and 50
           (when (get-buffer-process buffer-name-5)
             (process-send-string
              (get-buffer-process buffer-name-5)
-             "telnet localhost 5004\n")))))
+             "cd build && make run-only\n")))))
     (message "fvp-term: Not in an optee_os project (current project: %s)" 
              (or projectile-root "none"))))

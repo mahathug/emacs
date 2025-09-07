@@ -1,8 +1,9 @@
+(load "aidermacs-config.el")
 (load "projectile-config.el")
 (load "project-specific-config.el")
 (load "skeleton-config.el")
 (load "execute-function.el")
-(load "aidermacs-config.el")
+
 
 (setq relay-toggle-cmd (concat "ssh admin@relay-kamlesh -t \"if uom get relay/outlets/"relay-number"/state | grep -q \"true\"; then uom set relay/outlets/"relay-number"/state false  ;else uom set relay/outlets/"relay-number"/state true;fi\""))
 
