@@ -96,7 +96,7 @@ Creates five terminals: make run-only first, then telnet localhost on ports 5000
           (when (get-buffer-process buffer-name-5)
             (process-send-string
              (get-buffer-process buffer-name-5)
-             "cd build && FVP_NO_VISUALISATION=y make run-only\n"))))
+             "cd build && MEASURED_BOOT=y MEASURED_BOOT_FTPM=y FVP_NO_VISUALISATION=y make run-only\n"))))
       
       ;; Wait 3 seconds before opening telnet terminals
       (sit-for 3)
