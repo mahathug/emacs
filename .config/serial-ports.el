@@ -96,7 +96,7 @@ Creates five terminals: make run-only first, then telnet localhost on ports 5000
           (when (get-buffer-process buffer-name-5)
             (process-send-string
              (get-buffer-process buffer-name-5)
-             "cd build && make run-only\n"))))
+             "cd build && FVP_NO_VISUALISATION=y make run-only\n"))))
       
       ;; Wait 3 seconds before opening telnet terminals
       (sit-for 3)
@@ -124,29 +124,6 @@ Creates five terminals: make run-only first, then telnet localhost on ports 5000
             (process-send-string
              (get-buffer-process buffer-name-2)
              "telnet localhost 5001\n"))))
-      
-      ;; Terminal 3: telnet localhost 5002
-      (let ((buffer-name-3 "fvp-telnet-5002"))
-        (if (get-buffer buffer-name-3)
-            (switch-to-buffer buffer-name-3)
-          (message "Creating FVP terminal buffer: %s" buffer-name-3)
-          (shell buffer-name-3)
-          (sit-for 0.5)  ; Wait for shell to be ready
-          (when (get-buffer-process buffer-name-3)
-            (process-send-string
-             (get-buffer-process buffer-name-3)
-             "telnet localhost 5002\n"))))
-      
-      ;; Terminal 4: telnet localhost 5003
-      (let ((buffer-name-4 "fvp-telnet-5003"))
-        (if (get-buffer buffer-name-4)
-            (switch-to-buffer buffer-name-4)
-          (message "Creating FVP terminal buffer: %s" buffer-name-4)
-          (shell buffer-name-4)
-          (sit-for 0.5)  ; Wait for shell to be ready
-          (when (get-buffer-process buffer-name-4)
-            (process-send-string
-             (get-buffer-process buffer-name-4)
-             "telnet localhost 5003\n")))))
+            )
     (message "fvp-term: Not in an optee_os project (current project: %s)" 
              (or projectile-root "none"))))
