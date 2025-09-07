@@ -1,4 +1,4 @@
-(setq atf-make-cmd "make CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3low TARGET_BOARD=am62lx LOG_LEVEL=50 && cp build/k3low/am62lx/release/bl31.bin ../bin/bl31.bin")
+(setq atf-make-cmd "make CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3low TARGET_BOARD=am62lx LOG_LEVEL=50 && cp build/k3low/release/bl31.bin ../bin/bl31.bin")
 
 (setq optee-make-cmd "make CROSS_COMPILE=arm-none-linux-gnueabihf- CROSS_COMPILE64=aarch64-none-linux-gnu- CFG_ARM64_core=y CFG_WITH_SOFTWARE_PRNG=y PLATFORM=k3-am62lx -j8 CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y && cp out/arm-plat-k3/core/tee-pager_v2.bin ../bin/bl32.bin")
 

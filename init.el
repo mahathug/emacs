@@ -34,16 +34,16 @@
  '(org-hide-emphasis-markers t)
  '(package-check-signature nil)
  '(package-selected-packages
-   '(aidermacs auto-complete bash-completion codeium company compat
-	       consult copilot copilot-chat corfu counsel dired-single
-	       docker docker-tramp doom-themes editorconfig embark
-	       embark-consult expand-region highlight highlight-80+
-	       magit mailscripts marginalia multi-term mutt-mode
-	       notmuch orderless paredit projectile realgud smart-tab
-	       smart-tabs-mode solarized-theme sr-speedbar
-	       stock-tracker sudo-edit use-package vala-mode vertico
-	       visual-regexp visual-regexp-steroids which-key xcscope
-	       zlc zone-tmux-clock zones))
+   '(aider aidermacs auto-complete bash-completion codeium company compat
+	   consult copilot copilot-chat corfu counsel dired-single
+	   docker docker-tramp doom-themes editorconfig embark
+	   embark-consult expand-region highlight highlight-80+ magit
+	   mailscripts marginalia multi-term mutt-mode notmuch
+	   orderless paredit projectile realgud smart-tab
+	   smart-tabs-mode solarized-theme sr-speedbar stock-tracker
+	   sudo-edit use-package vala-mode vertico visual-regexp
+	   visual-regexp-steroids which-key xcscope zlc
+	   zone-tmux-clock zones))
  '(package-vc-selected-packages
    '((copilot-chat :vc-backend Git :url
 		   "https://github.com/chep/copilot-chat.el")
