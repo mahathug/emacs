@@ -78,13 +78,28 @@ Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only
 
 (defun fvp-term ()
   "Create FVP terminal windows for optee_os project.
-Creates five terminals: telnet localhost on ports 5000, 5001, 5002, 5003, and 5004."
+Creates five terminals: make run-only first, then telnet localhost on ports 5000-5003 after 3 seconds."
   (interactive)
   (if (and projectile-root 
            (string-match-p "optee" projectile-root))
     (let ((default-directory projectile-root))
       (setq kill-buffer-query-functions
             (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+      
+      ;; Terminal 5: make run-only (runs first)
+      (let ((buffer-name-5 "fvp-make"))
+        (if (get-buffer buffer-name-5)
+            (switch-to-buffer buffer-name-5)
+          (message "Creating FVP terminal buffer: %s" buffer-name-5)
+          (shell buffer-name-5)
+          (sit-for 0.5)  ; Wait for shell to be ready
+          (when (get-buffer-process buffer-name-5)
+            (process-send-string
+             (get-buffer-process buffer-name-5)
+             "cd build && make run-only\n"))))
+      
+      ;; Wait 3 seconds before opening telnet terminals
+      (sit-for 3)
       
       ;; Terminal 1: telnet localhost 5000
       (let ((buffer-name-1 "fvp-telnet-5000"))
@@ -132,18 +147,6 @@ Creates five terminals: telnet localhost on ports 5000, 5001, 5002, 5003, and 50
           (when (get-buffer-process buffer-name-4)
             (process-send-string
              (get-buffer-process buffer-name-4)
-             "telnet localhost 5003\n"))))
-      
-      ;; Terminal 5: telnet localhost 5004
-      (let ((buffer-name-5 "fvp-make"))
-        (if (get-buffer buffer-name-5)
-            (switch-to-buffer buffer-name-5)
-          (message "Creating FVP terminal buffer: %s" buffer-name-5)
-          (shell buffer-name-5)
-          (sit-for 0.5)  ; Wait for shell to be ready
-          (when (get-buffer-process buffer-name-5)
-            (process-send-string
-             (get-buffer-process buffer-name-5)
-             "cd build && make run-only\n")))))
+             "telnet localhost 5003\n")))))
     (message "fvp-term: Not in an optee_os project (current project: %s)" 
              (or projectile-root "none"))))
