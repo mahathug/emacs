@@ -61,8 +61,18 @@ Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only
             (process-send-string
              (get-buffer-process buffer-name-2)
              "./build/soc_term.py 54321\n"))))
-      
       ;; Terminal 3: make run-only
+      (let ((buffer-name-3 "qemu-make-run-only"))
+        (if (get-buffer buffer-name-3)
+            (switch-to-buffer buffer-name-3)
+          (message "Creating QEMU terminal buffer: %s" buffer-name-3)
+          (shell buffer-name-3)
+          (sit-for 0.5)  ; Wait for shell to be ready
+          (when (get-buffer-process buffer-name-3)
+            (process-send-string
+             (get-buffer-process buffer-name-3)
+             "cd build &&  MEASURED_BOOT_FTPM=y make run-only\n"))))
+          ;; Terminal 4: make run
       (let ((buffer-name-3 "qemu-make-run"))
         (if (get-buffer buffer-name-3)
             (switch-to-buffer buffer-name-3)
@@ -72,9 +82,9 @@ Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only
           (when (get-buffer-process buffer-name-3)
             (process-send-string
              (get-buffer-process buffer-name-3)
-             "cd build && make run-only\n")))))
+             "cd build && MEASURED_BOOT_FTPM=y make run -j32\n"))))
     (message "qemu-term: Not in an optee_qemu_master project (current project: %s)" 
-             (or projectile-root "none"))))
+             (or projectile-root "none")))))
 
 (defun fvp-term ()
   "Create FVP terminal windows for optee_os project.
