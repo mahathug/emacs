@@ -178,6 +178,15 @@ overrides the current directory, which would otherwise be used."
       mail-envelope-from 'header)	        ;;
 (global-set-key (kbd "M-m") 'notmuch)        ;;
 
+(defun mailscripts--check-out-branch (branch)
+  "Check out or create BRANCH in the current git repository."
+  (if (string-empty-p branch)
+      (message "Applying to current HEAD")
+    (let ((result (call-process "git" nil nil nil "checkout" "-b" branch)))
+      (when (not (= result 0))
+        ;; Branch might already exist, try to check it out
+        (call-process "git" nil nil nil "checkout" branch)))))
+
 (defun notmuch-check-patch (repo branch &optional reroll-count)
   "Extract patch series in current thread to branch BRANCH in repo REPO.
 
@@ -223,17 +232,49 @@ threads to the notmuch-extract-patch(1) command."
          (default-directory (expand-file-name projectile-root)) ;;
 	 )
 
-    ;; (message (format "git checkout -b %s" message-id));; ;; ;;
-    (call-process-shell-command (format (concat "git am --abort  > b4-check-patch 2>&1"))) ;; ;; ;; ;;
-    (call-process-shell-command (format (concat "git checkout master" " >> b4-check-patch 2>&1" )))
-    (call-process-shell-command (format (concat "git pull origin master" " >> b4-check-patch 2>&1" )))
-    (call-process-shell-command (format (concat "git branch |grep \"\\.\" | xargs git branch -D" " > b4-check-patch 2>&1" )))
+    ;; Check if we have a valid message-id
+    (unless message-id
+      (error "No message-id found. Make sure you're in a notmuch-show buffer"))
     
-    (call-process-shell-command (format (concat "git checkout -b " message-id " >> b4-check-patch 2>&1"))) ;; ;;
-    ;; (message (format "git checkout  %s" message-id));; ;; ;;
-    (message "message-id %s" message-id)
-    (call-process-shell-command  ;;
-     (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/direct/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \" stdyle problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)	   ;;   ;;   ;;	  ;;   ;;
+    ;; Check if projectile-root is set
+    (unless (and (boundp 'projectile-root) projectile-root)
+      (error "projectile-root is not set. Make sure you're in a projectile project"))
+    
+    ;; Check if the directory exists
+    (unless (file-directory-p (expand-file-name projectile-root))
+      (error "Project directory does not exist: %s" projectile-root))
+
+    ;; Check if we're in a git repository
+    (unless (file-directory-p (expand-file-name ".git" projectile-root))
+      (error "Not in a git repository: %s" projectile-root))
+
+    (message "Processing patch for message-id: %s" message-id)
+    
+    ;; Clean up any previous git am operation
+    (let ((result (call-process-shell-command (format "git am --abort > b4-check-patch 2>&1"))))
+      (message "Git am abort result: %d" result))
+    
+    ;; Switch to master and pull latest changes
+    (let ((result (call-process-shell-command (format "git checkout master >> b4-check-patch 2>&1"))))
+      (unless (= result 0)
+        (error "Failed to checkout master branch. Check b4-check-patch for details")))
+    
+    (let ((result (call-process-shell-command (format "git pull origin master >> b4-check-patch 2>&1"))))
+      (unless (= result 0)
+        (message "Warning: Failed to pull from origin master. Continuing anyway...")))
+    
+    ;; Clean up old branches
+    (call-process-shell-command (format "git branch |grep \"\\.\" | xargs git branch -D > b4-check-patch 2>&1"))
+    
+    ;; Create new branch
+    (let ((result (call-process-shell-command (format "git checkout -b %s >> b4-check-patch 2>&1" message-id))))
+      (unless (= result 0)
+        (error "Failed to create branch %s. Check b4-check-patch for details" message-id)))
+    
+    ;; Process the patch with b4
+    (let ((result (call-process-shell-command  ;;
+                   (format (concat "rm -rf b4-patch; mkdir -p b4-patch && b4 am -Q " message-id " -o b4-patch >> b4-check-patch 2>&1 || b4 am -Q -m ~/Mail/direct/ " message-id " -o b4-patch >> b4-check-patch 2>&1" "; ./scripts/checkpatch.pl --strict b4-patch/*.patches/*.patch >> b4-check-patch 2>&1;"  "cat b4-check-patch | " "if grep -q \" style problems\"; then : ;else git am b4-patch/*.mbx >> b4-check-patch 2>&1;fi ")) nil t nil)))
+      (message "b4 processing completed with result: %d" result))
     )
   
   (let ( (default-directory (expand-file-name projectile-root)) ;;
@@ -254,7 +295,7 @@ threads to the notmuch-extract-patch(1) command."
 messages will be written to the file ~/tmp-check-patch (overwriting it)."
   (interactive)
   (let* ((search-terms-list (notmuch-show-get-message-ids-for-open-messages))
-	 (default-directory work_dir_1)
+	 (default-directory (or (bound-and-true-p work_dir_1) default-directory))
 	 (buffer (get-buffer-create "output-mbox")))
     (set-buffer buffer)
     (setq buffer-read-only nil)
