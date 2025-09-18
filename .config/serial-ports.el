@@ -73,16 +73,16 @@ Creates three terminals: soc_term.py on ports 54320 and 54321, and make run-only
              (get-buffer-process buffer-name-3)
              "cd build &&  MEASURED_BOOT_FTPM=y make run-only\n"))))
           ;; Terminal 4: make run
-      (let ((buffer-name-3 "qemu-make-run"))
-        (if (get-buffer buffer-name-3)
-            (switch-to-buffer buffer-name-3)
-          (message "Creating QEMU terminal buffer: %s" buffer-name-3)
-          (shell buffer-name-3)
+      (let ((buffer-name-4 "qemu-make-run"))
+        (if (get-buffer buffer-name-4)
+            (switch-to-buffer buffer-name-4)
+          (message "Creating QEMU terminal buffer: %s" buffer-name-4)
+          (shell buffer-name-4)
           (sit-for 0.5)  ; Wait for shell to be ready
-          (when (get-buffer-process buffer-name-3)
+          (when (get-buffer-process buffer-name-4)
             (process-send-string
-             (get-buffer-process buffer-name-3)
-             "cd build && MEASURED_BOOT_FTPM=y make run -j32\n"))))
+             (get-buffer-process buffer-name-4)
+             "cd build && #MEASURED_BOOT_FTPM=y make run -j32\n"))))
     (message "qemu-term: Not in an optee_qemu_master project (current project: %s)" 
              (or projectile-root "none")))))
 
