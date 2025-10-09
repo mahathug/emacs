@@ -26,6 +26,8 @@
 ;; Recommended keymap prefix on Windows/Linux
 (setq projectile-ignored-projects '("~/")) ;;
 (setq projectile-project-search-path '("~/.emacs.d/"
+				       "~/best-practice/"
+				       "~/cryptohub/"
                                         "~/am62/binman/cryptodev-2.6"
                                         "~/am62/binman/linux-next-upstream"
                                         "~/am62/binman/u-boot"
@@ -33,6 +35,7 @@
                                         "~/ti-processor-sdk-linux-am62xx-evm-11.00.09.04"
                                         "~/am62/binman/processor-sdk-doc"
 					"~/am62/binman/optee_projects/optee"
+				        "~/am62/binman/optee_projects/optee_qemu_master/ftpm-rs/"
 					("~/am62/binman/optee_projects/" . 2) ;;
                                         ("~/am62/binman/am62l-wakeup/" . 1))) ;;
 (define-key projectile-mode-map (kbd "M-e") 'projectile-command-map)

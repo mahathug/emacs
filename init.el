@@ -37,12 +37,12 @@
    '(aider aidermacs auto-complete bash-completion codeium company compat
 	   consult copilot copilot-chat corfu counsel dired-single
 	   docker docker-tramp doom-themes editorconfig embark
-	   embark-consult expand-region highlight highlight-80+ magit
-	   mailscripts marginalia multi-term mutt-mode notmuch
-	   orderless paredit projectile realgud smart-tab
-	   smart-tabs-mode solarized-theme sr-speedbar stock-tracker
-	   sudo-edit use-package vala-mode vertico visual-regexp
-	   visual-regexp-steroids which-key xcscope zlc
+	   embark-consult expand-region flycheck highlight
+	   highlight-80+ magit mailscripts marginalia multi-term
+	   mutt-mode notmuch orderless paredit projectile realgud
+	   smart-tab smart-tabs-mode solarized-theme sr-speedbar
+	   stock-tracker sudo-edit use-package vala-mode vertico
+	   visual-regexp visual-regexp-steroids which-key xcscope zlc
 	   zone-tmux-clock zones))
  '(package-vc-selected-packages
    '((copilot-chat :vc-backend Git :url
@@ -955,79 +955,12 @@ kernel."
 ;;      fi
 ;;              }
 
-
-
-
-
-;; shortcuts
-;; (global-unset-key (kbd "<left>") ) ;;
-;; (global-unset-key (kbd "<right>") ) ;;
-;; (global-unset-key (kbd "<up>") ) ;;
-;; (global-unset-key (kbd "<down>") ) ;;
-
+;;flycheck
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 (load "shortcuts.el")
 
-
 (load "compile-config.el")
-
-
-(defun shell-working-dir()
-  (interactive )
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name-1 "shell-working-dir")
-
-  (if (get-buffer buffer-name-1)
-      (switch-to-buffer buffer-name-1)
-    (let ((default-directory "~/")) (shell buffer-name-1) (format "cd am62lite-presil-build\r")))
-  )
-
-(defun shell-pico()
-  (interactive)
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "pico")
-  
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    
-    (let ((default-directory work_dir_1))
-      (multi-term)
-      ;; (term)
-      (term-send-string
-       (get-buffer-process (rename-buffer buffer-name))
-       (format pico-cmd)))))
-
-(defun shell-extra()
-  (interactive)
-  (setq extra-cmd "python3 ~/pycrc/src/pycrc.py --width 64 --poly 0x000000000000001b --reflect-in False --xor-in 0x0000000000000000 --reflect-out False --xor-out 0x0000000000000000 --check-hexstring 44332211 -v")
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "extra")
-  (define-skeleton extra-cmd
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format extra-cmd)
-    )
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    (let ((default-directory "~/")) (shell buffer-name) (format "cd ~/pycrc/src/\r")))
-  )
-
-(defun shell-zebu-bash()
-  (interactive)
-  (setq extra-cmd "python3 ~/pycrc/src/pycrc.py --width 64 --poly 0x000000000000001b --reflect-in False --xor-in 0x0000000000000000 --reflect-out False --xor-out 0x0000000000000000 --check-hexstring 44332211 -v")
-  (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-  (setq buffer-name "zebu-bash")
-  (define-skeleton extra-cmd
-    "In-buffer settings info for a emacs-org file."
-    "Title: "
-    (format extra-cmd)
-    )
-  (if (get-buffer buffer-name)
-      (switch-to-buffer buffer-name)
-    (let ((default-directory work_dir_1)) (shell buffer-name) (format "cd ~/am62lite-presil-build/\r")))
-  )
-
-
 
 (defun send-invisible-in-other-window()
   (interactive)

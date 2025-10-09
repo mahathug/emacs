@@ -26,6 +26,17 @@
     (setq cp-image-compile-cmd (concat "sudo cp " projectile-root "/arch/arm64/boot/Image " root-dir-compile "/boot/"))
     (compile cp-image-compile-cmd)))
 
+(defun cp-dtb()
+  (interactive)
+  (let ((default-directory (concat "/sudo::" projectile-root)))
+    (setq cp-dtb-compile-cmd (concat "sudo cp " projectile-root "/arch/arm64/boot/dts/ti/k3-am62l3-evm.dtb " root-dir-compile "/boot/dtb/ti/"))
+    (compile cp-dtb-compile-cmd)))
+
+(defun modules-install()
+  (interactive)
+  (let ((default-directory (concat "/sudo::" projectile-root)))
+    (setq modules-install-compile-cmd (concat "sudo make -j16 ARCH=arm64 INSTALL_MOD_PATH=" root-dir-compile " modules_install"))
+    (compile modules-install-compile-cmd)))
 
 (defun sleep-for-n (num-of-sec)
   (interactive)
