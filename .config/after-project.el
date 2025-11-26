@@ -1,4 +1,4 @@
-(load "aidermacs-config.el") ;;
+;; (load "aidermacs-config.el") ;; ;;
 ;; (load "aider-config.el") ;;
 (load "projectile-config.el")
 (load "project-specific-config.el")

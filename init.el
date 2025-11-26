@@ -42,8 +42,8 @@
 	   mutt-mode notmuch orderless paredit projectile realgud
 	   smart-tab smart-tabs-mode solarized-theme sr-speedbar
 	   stock-tracker sudo-edit use-package vala-mode vertico
-	   visual-regexp visual-regexp-steroids which-key xcscope zlc
-	   zone-tmux-clock zones))
+	   visual-regexp visual-regexp-steroids which-key
+	   xcscope zlc zone-tmux-clock zones))
  '(package-vc-selected-packages
    '((copilot-chat :vc-backend Git :url
 		   "https://github.com/chep/copilot-chat.el")

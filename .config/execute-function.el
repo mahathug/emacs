@@ -141,10 +141,16 @@ This function runs in a loop every 1 second."
   "switch-project trusted-firmware-a projectile-compile-project n relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit projectile-compile-project n delete-other-windows n split-window-right n serial-usb0 nil other-window n dfu-boot nil monitor-buffer-for-autoboot nil "
   )
 
-(define-skeleton sk-ex-tfab-ubootb
+(define-skeleton sk-ex-tfab-ubootb-monitor
   "In-buffer settings info for a emacs-org file."
   "Title: "
   "switch-project trusted-firmware-a projectile-compile-project n relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit projectile-compile-project n delete-other-windows n serial-usb0 nil dfu-boot nil monitor-buffer-for-autoboot nil"
+  )
+
+(define-skeleton sk-ex-tfab-ubootb
+  "In-buffer settings info for a emacs-org file."
+  "Title: "
+  "switch-project trusted-firmware-a projectile-compile-project n relay-reset nil sleep-for-n 2 switch-project ti-u-boot-cgit projectile-compile-project n delete-other-windows n serial-usb0 nil dfu-boot nil"
   )
 
 (define-skeleton sk-ex-clean-save

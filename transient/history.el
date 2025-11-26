@@ -1,4 +1,7 @@
-((magit-am
+((aider-transient-menu nil)
+ (aidermacs-transient-menu nil)
+ (claude-code-transient nil)
+ (magit-am
   ("--3way")
   nil)
  (magit-blame
@@ -8,7 +11,8 @@
   ("--ff")
   nil)
  (magit-commit nil
-	       ("--allow-empty"))
+	       ("--allow-empty")
+	       ("--reuse-message=ORIG_HEAD"))
  (magit-diff
   ("--no-ext-diff" "--stat"))
  (magit-dispatch nil)
@@ -19,45 +23,38 @@
  (magit-gitignore nil)
  (magit-log
   ("-n256" "--graph" "--decorate")
+  nil
   ("-n256"
-   ("--" "arch/arm/dts/k3-*")
+   ("--" ".config/project-specific-config.el")
    "--graph" "--decorate")
-  ("-n256"
-   ("--" "dts/upstream/src/arm64/ti/*")
-   "--graph" "--decorate")
-  ("-n256"
-   ("--" "include/lib/trace.h")
-   "--graph" "--decorate")
-  ("-n256" "--author=Eric" "--graph" "--decorate")
-  ("-n256"
-   ("--" "meta-ti-bsp/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti.inc")
-   "--graph" "--decorate")
-  ("-n256" "--author=Andrew Davis <afd@ti.com>" "--graph" "--decorate")
-  ("-n256" "--author=Andrew davis" "--graph" "--decorate")
-  ("-n256"
-   ("--" "drivers/sysreset/sysreset-ti-sci.c")
-   "--graph" "--decorate")
-  ("-n256"
-   ("--" "graph")
-   "--graph" "--decorate"))
+  ("-n256" "-Gscmi" "--graph" "--decorate")
+  ("-n256" "--author=Alice Guo <alice.guo@nxp.com>" "--graph" "--decorate")
+  ("-n256" "--author=Valentin Caron <valentin.caron@foss.st.com>" "--graph" "--decorate")
+  ("-n256" "--author=heinrich" "--graph" "--decorate")
+  ("-n256" "--author=Peng Fan <peng.fan@nxp.com>" "--graph" "--decorate")
+  ("-n256" "--author=Dhruva Gole <d-gole@ti.com>" "--graph" "--decorate")
+  ("-n256" "--author=dhruva" "--graph" "--decorate"))
  (magit-log:--grep "MCRC" "mcrc")
+ (magit-log:-G "scmi")
+ (magit-merge nil)
  (magit-patch nil)
  (magit-patch-apply nil)
- (magit-patch-create
-  ("--output-directory=/home/kamlesh/am62/binman/am62l-wakeup/arm-trusted-firmware-github-fork/70_warning/")
+ (magit-patch-create nil
+		     ("--output-directory=/home/kamlesh/am62/binman/am62l-wakeup/arm-trusted-firmware-github-fork/70_warning/")
+		     ("--output-directory=/home/kamlesh/am62/binman/am62lite-presil-build/trusted-firmware-a/patches/set-parent/")
+		     ("--output-directory=/home/kamlesh/am62/binman/linux-next-gitlab/patches/")
+		     ("--output-directory=/home/kamlesh/am62/binman/ti-linux-kernel/patches/working-openssl-sha/")
+		     ("--cover-letter" "--output-directory=/home/kamlesh/am62/mcrc/ti-linux-kernel/patches/dma-mcrc64/")
+		     ("--output-directory=/home/kamlesh/am62/binman/linux-next/patches/mcrc-upstream/")
+		     ("--subject-prefix=PATCH" "--output-directory=/home/kamlesh/am62/mainline/linux-next/patches/sa3ul-power-domain/v2/")
+		     ("--subject-prefix=tiU23.04 PATCH v2" "--cover-letter" "--output-directory=/home/kamlesh/am62/binman/ti-u-boot/patches/fsstub-lpr/v2/")
+		     ("--subject-prefix=tiU23.04 PATCH" "--cover-letter" "--output-directory=/home/kamlesh/am62/binman/ti-u-boot/patches/fsstub-lpr/v2/"))
+ (magit-pull nil
+	     ("--force"))
+ (magit-push
+  ("--force")
   nil
-  ("--output-directory=/home/kamlesh/am62/binman/am62lite-presil-build/trusted-firmware-a/patches/set-parent/")
-  ("--output-directory=/home/kamlesh/am62/binman/linux-next-gitlab/patches/")
-  ("--output-directory=/home/kamlesh/am62/binman/ti-linux-kernel/patches/working-openssl-sha/")
-  ("--cover-letter" "--output-directory=/home/kamlesh/am62/mcrc/ti-linux-kernel/patches/dma-mcrc64/")
-  ("--output-directory=/home/kamlesh/am62/binman/linux-next/patches/mcrc-upstream/")
-  ("--subject-prefix=PATCH" "--output-directory=/home/kamlesh/am62/mainline/linux-next/patches/sa3ul-power-domain/v2/")
-  ("--subject-prefix=tiU23.04 PATCH v2" "--cover-letter" "--output-directory=/home/kamlesh/am62/binman/ti-u-boot/patches/fsstub-lpr/v2/")
-  ("--subject-prefix=tiU23.04 PATCH" "--cover-letter" "--output-directory=/home/kamlesh/am62/binman/ti-u-boot/patches/fsstub-lpr/v2/"))
- (magit-pull nil)
- (magit-push nil
-	     ("--force")
-	     ("--force-with-lease" "--force"))
+  ("--force-with-lease" "--force"))
  (magit-rebase
   ("--autostash")
   nil
@@ -67,7 +64,8 @@
  (magit-revert
   ("--edit")
   nil)
+ (magit-revision-history "ORIG_HEAD")
  (magit-stash nil)
  (magit-submodule nil)
- (magit:-- "arch/arm/dts/k3-*" "" "dts/upstream/src/arm64/ti/*" "include/lib/trace.h" "meta-ti-bsp/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti.inc" "drivers/sysreset/sysreset-ti-sci.c" "graph" "arch/arm/dts/k3-am642-evm-u-boot.dtsi" "author=kamlesh" "arch/arm64/boot/dts/ti/k3-am62-main.dtsi")
- (magit:--author "Eric" "Andrew Davis <afd@ti.com>" "Andrew davis" "Andrew Davis" "Kamlesh Gurudasani <kamlesh@ti.com>" "Manorit" "manorit"))
+ (magit:-- ".config/project-specific-config.el" "" "drivers/pmdomain/core.c" "arch/arm/dts/k3-*" "dts/upstream/src/arm64/ti/*" "include/lib/trace.h" "meta-ti-bsp/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti.inc" "drivers/sysreset/sysreset-ti-sci.c" "graph" "arch/arm/dts/k3-am642-evm-u-boot.dtsi")
+ (magit:--author "Alice Guo <alice.guo@nxp.com>" "Valentin Caron <valentin.caron@foss.st.com>" "heinrich" "Peng Fan <peng.fan@nxp.com>" "Dhruva Gole <d-gole@ti.com>" "dhruva" "Vignesh Raghavendra <vigneshr@ti.com>" "Kamlesh Gurudasani <kamlesh@ti.com>" "Eric" "Andrew Davis <afd@ti.com>"))
