@@ -10,3 +10,8 @@
 ;; --- CONTROL KEYS ---
 (setq ns-control-modifier 'control)    ;; Left Control -> Control (Default behavior)
 (setq ns-right-control-modifier 'control) ;; Right Control -> Control (Default behavior)
+
+;; Load Gemini Code integration
+(load (expand-file-name "gemini-code.el" user-emacs-directory))
+;; Optional: Bind keys
+(global-set-key (kbd "C-c g") 'gemini-code-toggle)

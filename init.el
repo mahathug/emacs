@@ -37,9 +37,9 @@
  '(package-selected-packages
    '(aider aidermacs auto-complete bash-completion codeium company compat
 	   consult copilot copilot-chat corfu counsel dired-single
-	   docker docker-tramp doom-themes editorconfig embark
+	   docker docker-tramp doom-themes eat editorconfig embark
 	   embark-consult expand-region flycheck highlight
-	   highlight-80+ magit mailscripts marginalia multi-term
+	   highlight-80+ inheritenv magit mailscripts marginalia multi-term
 	   mutt-mode notmuch orderless paredit projectile realgud
 	   smart-tab smart-tabs-mode solarized-theme sr-speedbar
 	   stock-tracker sudo-edit use-package vala-mode vertico
@@ -407,6 +407,7 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
                                    ("melpa" . 5))
       package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://stable.melpa.org/packages/")
+			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa-devel" . "https://melpa.org/packages/")))
 
 (package-initialize)
