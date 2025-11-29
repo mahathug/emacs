@@ -13,5 +13,14 @@
 
 ;; Load Gemini Code integration
 (load (expand-file-name "gemini-code.el" user-emacs-directory))
+
+;; Configure Gemini to open in a normal window and ensure focus
+(defun gemini-code-display-normal (buffer)
+  "Display Gemini buffer in a normal window and focus it."
+  (pop-to-buffer buffer)
+  (get-buffer-window buffer))
+
+(setq gemini-code-display-window-fn #'gemini-code-display-normal)
+
 ;; Optional: Bind keys
 (global-set-key (kbd "C-c g") 'gemini-code-toggle)
