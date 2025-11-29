@@ -401,15 +401,6 @@ messages will be written to the file ~/tmp-mbox (overwriting it)."
 
 					;(with-eval-after-load 'gnutls
 					;    (add-to-list 'gnutls-trustfiles "/etc/ssl/certs/ca-certificates.crt"))
-;;(setq url-using-proxy t)
-(setq url-debug t)
-;;(url-retrieve-synchronously (url-generic-parse-url "https://elpa.gnu.org/"))
-(setq url-proxy-services
-      '(("no_proxy" . "ti.com")
-        ("http" . "webproxy.ext.ti.com:80")
-        ("https" . "webproxy.ext.ti.com:80")
-        ("ftp" . "webproxy.ext.ti.com:80")))
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")  ;; ;;
 
 (setq package-archive-priorities '(("gnu" . 10)
                                    ("melpa" . 5))
