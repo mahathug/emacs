@@ -35,18 +35,21 @@
  '(org-hide-emphasis-markers t)
  '(package-check-signature nil)
  '(package-selected-packages
-   '(aider aidermacs auto-complete bash-completion codeium company compat
-	   consult copilot copilot-chat corfu counsel dired-single
-	   docker docker-tramp doom-themes eat editorconfig embark
-	   embark-consult expand-region flycheck highlight
-	   highlight-80+ inheritenv magit mailscripts marginalia multi-term
-	   mutt-mode notmuch orderless paredit projectile realgud
-	   smart-tab smart-tabs-mode solarized-theme sr-speedbar
-	   stock-tracker sudo-edit use-package vala-mode vertico
-	   visual-regexp visual-regexp-steroids vterm-hotkey which-key
-	   xcscope zlc zone-tmux-clock zones))
+   '(aider aidermacs auto-complete bash-completion claude-code-ide
+	   codeium company compat consult copilot copilot-chat corfu
+	   counsel dired-single docker docker-tramp doom-themes eat
+	   editorconfig embark embark-consult expand-region flycheck
+	   highlight highlight-80+ inheritenv magit mailscripts
+	   marginalia multi-term mutt-mode notmuch orderless paredit
+	   projectile realgud smart-tab smart-tabs-mode
+	   solarized-theme sr-speedbar stock-tracker sudo-edit
+	   use-package vala-mode vertico visual-regexp
+	   visual-regexp-steroids vterm-hotkey which-key xcscope zlc
+	   zone-tmux-clock zones))
  '(package-vc-selected-packages
-   '((copilot-chat :vc-backend Git :url
+   '((claude-code-ide :url
+		      "https://github.com/manzaltu/claude-code-ide.el")
+     (copilot-chat :vc-backend Git :url
 		   "https://github.com/chep/copilot-chat.el")
      (copilot :vc-backend Git :url
 	      "https://github.com/copilot-emacs/copilot.el")

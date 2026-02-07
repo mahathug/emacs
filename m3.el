@@ -12,19 +12,10 @@
 (setq ns-right-control-modifier 'control) ;; Right Control -> Control (Default behavior)
 
 ;; Load Gemini Code integration
-(load (expand-file-name "gemini-code.el" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "gemini-code" user-emacs-directory))
+(require 'gemini-code)
 (load (expand-file-name ".config/vterm-config.el" user-emacs-directory))
-
-;; Configure Gemini to open in a normal window and ensure focus
-(defun gemini-code-display-normal (buffer)
-  "Display Gemini buffer in a normal window and focus it."
-  (pop-to-buffer buffer)
-  (get-buffer-window buffer))
-
-(setq gemini-code-display-window-fn #'gemini-code-display-normal)
-
-;; Optional: Bind keys
-(global-set-key (kbd "C-c g") 'gemini-code-toggle)
+(load (expand-file-name ".config/gemini-code-config.el" user-emacs-directory))
 
 
 (global-set-key (kbd "C-c 5") 'projectile-run-vterm)
