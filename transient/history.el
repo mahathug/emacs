@@ -51,10 +51,9 @@
 		     ("--subject-prefix=tiU23.04 PATCH" "--cover-letter" "--output-directory=/home/kamlesh/am62/binman/ti-u-boot/patches/fsstub-lpr/v2/"))
  (magit-pull nil
 	     ("--force"))
- (magit-push
-  ("--force")
-  nil
-  ("--force-with-lease" "--force"))
+ (magit-push nil
+	     ("--force")
+	     ("--force-with-lease" "--force"))
  (magit-rebase
   ("--autostash")
   nil

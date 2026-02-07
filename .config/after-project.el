@@ -1,6 +1,5 @@
 ;; (load "aidermacs-config.el") ;; ;;
 ;; (load "aider-config.el") ;;
-(load "projectile-config.el")
 (load "project-specific-config.el")
 (load "skeleton-config.el")
 (load "execute-function.el")

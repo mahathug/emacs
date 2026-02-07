@@ -13,6 +13,7 @@
 
 ;; Load Gemini Code integration
 (load (expand-file-name "gemini-code.el" user-emacs-directory))
+(load (expand-file-name ".config/vterm-config.el" user-emacs-directory))
 
 ;; Configure Gemini to open in a normal window and ensure focus
 (defun gemini-code-display-normal (buffer)
@@ -24,3 +25,5 @@
 
 ;; Optional: Bind keys
 (global-set-key (kbd "C-c g") 'gemini-code-toggle)
+
+  (global-set-key (kbd "C-c 5") 'projectile-run-vterm)

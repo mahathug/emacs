@@ -82,6 +82,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Menlo" :foundry "nil" :slant normal :weight regular :height 180 :width normal))))
  '(ediff-current-diff-A ((t (:foreground "black" :background "brown"))))
  '(ediff-current-diff-B ((t (:foreground "black" :background "green"))))
  '(ediff-current-diff-C ((t (:foreground "White" :background "orange"))))
@@ -917,7 +918,12 @@ kernel."
 
 (setq compilation-scroll-output 'first-error)
 
+(cond
+ ((eq system-type 'darwin)
+  (load "~/.emacs.d/m3.el" t))
 
+ ((eq system-type 'gnu/linux)
+  (load "~/.emacs.d/ubuntu.el" t)))
 
 
 
@@ -965,5 +971,6 @@ kernel."
 (load "keyboard-macros.el")
 (load "serial-ports.el")
 (load "final.el")
+(load "projectile-config.el")
 
 (put 'list-timers 'disabled nil)

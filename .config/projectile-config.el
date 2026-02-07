@@ -29,6 +29,7 @@
 				       "~/best-practice/"
 				       "~/cryptohub/"
 				       "/system-firmware/"
+				       "~/attack-udero/"
 				       "~/openssf/"
                                         "~/am62/binman/cryptodev-2.6"
                                         "~/am62/binman/linux-next-upstream"
