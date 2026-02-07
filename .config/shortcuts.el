@@ -10,7 +10,7 @@
 
 (defun shortcuts-after-setup()
   (interactive)
-  (global-set-key (kbd "C-c i") 'send-invisible-in-other-window) ;
+  (global-set-key (kbd "C-c i") 'send-invisible-in-other-window)
 
   (global-set-key (kbd "M-s") 'tags-search)
   (global-unset-key (kbd "M-z"))

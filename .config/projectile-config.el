@@ -28,6 +28,7 @@
 (setq projectile-project-search-path '("~/.emacs.d/"
 				       "~/best-practice/"
 				       "~/cryptohub/"
+				       "/system-firmware/"
 				       "~/openssf/"
                                         "~/am62/binman/cryptodev-2.6"
                                         "~/am62/binman/linux-next-upstream"

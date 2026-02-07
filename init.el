@@ -3,6 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(claude-code-ide-terminal-backend 'vterm)
  '(column-number-mode t)
  '(comment-multi-line t)
  '(comment-style 'aligned)
@@ -42,7 +43,7 @@
 	   mutt-mode notmuch orderless paredit projectile realgud
 	   smart-tab smart-tabs-mode solarized-theme sr-speedbar
 	   stock-tracker sudo-edit use-package vala-mode vertico
-	   visual-regexp visual-regexp-steroids which-key
+	   visual-regexp visual-regexp-steroids vterm-hotkey which-key
 	   xcscope zlc zone-tmux-clock zones))
  '(package-vc-selected-packages
    '((copilot-chat :vc-backend Git :url
