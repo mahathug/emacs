@@ -26,4 +26,6 @@
 ;; Optional: Bind keys
 (global-set-key (kbd "C-c g") 'gemini-code-toggle)
 
-  (global-set-key (kbd "C-c 5") 'projectile-run-vterm)
+
+(global-set-key (kbd "C-c 5") 'projectile-run-vterm)
+(load (expand-file-name "m3-color-solarized.el" user-emacs-directory))
