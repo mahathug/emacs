@@ -33,6 +33,7 @@
 				       "~/attack-udero/"
 				       "~/openssf/"
 				       "~/rust/"
+				       "~/cra/"
                                         "~/am62/binman/cryptodev-2.6"
                                         "~/am62/binman/linux-next-upstream"
                                         "~/am62/binman/u-boot"
