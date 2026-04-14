@@ -37,10 +37,10 @@
  '(package-selected-packages
    '(aider aidermacs auto-complete bash-completion claude-code-ide
 	   codeium company compat consult copilot copilot-chat corfu
-	   counsel dired-single docker docker-tramp doom-themes eat
+	   counsel dired-single docker docker-tramp doom-themes
 	   editorconfig embark embark-consult expand-region flycheck
-	   highlight highlight-80+ inheritenv magit mailscripts
-	   marginalia multi-term mutt-mode notmuch orderless paredit
+	   highlight highlight-80+ magit mailscripts marginalia
+	   mcp-server multi-term mutt-mode notmuch orderless paredit
 	   projectile realgud smart-tab smart-tabs-mode
 	   solarized-theme sr-speedbar stock-tracker sudo-edit
 	   use-package vala-mode vertico visual-regexp
@@ -49,6 +49,7 @@
  '(package-vc-selected-packages
    '((claude-code-ide :url
 		      "https://github.com/manzaltu/claude-code-ide.el")
+   '((mcp-server :url "https://github.com/rhblind/emacs-mcp-server")
      (copilot-chat :vc-backend Git :url
 		   "https://github.com/chep/copilot-chat.el")
      (copilot :vc-backend Git :url
