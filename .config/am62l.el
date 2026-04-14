@@ -1,4 +1,4 @@
-(setq atf-make-cmd "make CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3low TARGET_BOARD=am62lx LOG_LEVEL=50 && cp build/k3low/am62lx/release/bl31.bin ../bin/bl31.bin")
+(setq atf-make-cmd "make CROSS_COMPILE=aarch64-none-linux-gnu- PLAT=k3low TARGET_BOARD=am62lx-evm LOG_LEVEL=50 && cp build/k3low/am62lx-evm/release/bl31.bin ../bin/bl31.bin")
 
 (setq atf-checkpatch-cmd "make CROSS_COMPILE=aarch64-none-linux-gnu- CHECKPATCH=../ti-linux-kernel/scripts/checkpatch.pl BASE_COMMIT=HEAD^1 checkpatch")
 
