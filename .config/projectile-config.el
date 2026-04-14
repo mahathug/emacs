@@ -33,7 +33,9 @@
 				       "~/attack-udero/"
 				       "~/openssf/"
 				       "~/rust/"
+				       "~/best-practice/cip-project/cip-core/isar-cip-core"
 				       "~/cra/"
+				       "~/cip-projects/isar-cip-core"
                                         "~/am62/binman/cryptodev-2.6"
                                         "~/am62/binman/linux-next-upstream"
                                         "~/am62/binman/u-boot"
@@ -42,6 +44,7 @@
                                         "~/am62/binman/processor-sdk-doc"
 					"~/am62/binman/optee_projects/optee"
 					"~/am62/binman/rm_pm_hal"
+					"~/sdk-yocto"
 				        "~/am62/binman/optee_projects/optee_qemu_master/ftpm-rs/"
 					("~/am62/binman/optee_projects/" . 2) ;;
                                         ("~/am62/binman/am62l-wakeup/" . 1))) ;;
