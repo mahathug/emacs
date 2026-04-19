@@ -1,3 +1,36 @@
+(defun skeleton-to-vterm (skeleton-fn)
+  "Run SKELETON-FN and send its output to the current vterm buffer.
+If not in a vterm buffer, runs the skeleton normally."
+  (interactive
+   (list (intern (completing-read "Skeleton: "
+                                  (all-completions "" obarray
+                                                   (lambda (s)
+                                                     (and (fboundp s)
+                                                          (let ((doc (ignore-errors (documentation s))))
+                                                            (and doc (string-match-p "This is a skeleton command" doc))))))))))
+  (if (eq major-mode 'vterm-mode)
+      (let ((content (with-temp-buffer
+                       (funcall skeleton-fn nil)
+                       (buffer-string))))
+        (vterm-insert content))
+    (funcall skeleton-fn nil)))
+
+(defun function-name-to-vterm ()
+  "Pick an interactive function and paste its name into vterm."
+  (interactive)
+  (let* ((fns (let (result)
+                (mapatoms (lambda (s)
+                            (when (and (fboundp s)
+                                       (commandp s)
+                                       (let ((file (symbol-file s 'defun)))
+                                         (and file (string-match-p "\\.emacs\\.d" file))))
+                              (push (symbol-name s) result))))
+                result))
+         (selected (completing-read "Function: " (sort fns #'string<))))
+    (if (eq major-mode 'vterm-mode)
+        (vterm-insert selected)
+      (insert selected))))
+
 (defun skeleton-setup ()
   (interactive )
 

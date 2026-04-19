@@ -77,7 +77,8 @@ Updates both the in-memory list and the config file."
 				        "~/am62/binman/optee_projects/optee_qemu_master/ftpm-rs/"
 					("~/am62/binman/optee_projects/" . 2) ;;
                                         ("~/am62/binman/am62l-wakeup/" . 1)
-                                        "~/trusted-firmware-cve/"))
+                                        "~/trusted-firmware-cve/"
+                                        "~/am62/binman/am62l-wakeup/trusted-firmware-a/tf-a-ci-scripts/"))
 (define-key projectile-mode-map (kbd "M-e") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "M-a") 'projectile-commander)
 (projectile-mode +1)

@@ -975,6 +975,7 @@ kernel."
 (load "keyboard-macros.el")
 (load "serial-ports.el")
 (load "mcp-server-config.el")
+(load "kerberos-config.el")
 (load "final.el")
 (load "projectile-config.el")
 
